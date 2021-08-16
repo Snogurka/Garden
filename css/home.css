@@ -66,12 +66,6 @@ h3 {
   width: 5vw;
 }
 
-/* li {
-  list-style-image: url("/pictures/bltCog2.png");
-  list-style-position: outside;
-  margin-left: 2em;
-} */
-
 /* container keeps all the articles; mobile settings */
 main {
   font-family: Optima, sans-serif;
