@@ -1,4 +1,4 @@
-/********** v.7.4.2 **********/
+/********** v.8.0.0 **********/
 /* this css file contains styles shared by all garden pages
 
    units:
@@ -10,6 +10,8 @@
 
 * {
   box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
 /* Current navbar link, i.e. selected page */
@@ -21,42 +23,50 @@
 /* The overall body of this page has a background that changes from darker blue at the top to lighter blue at the bottom. 
 Font family is set for the entire page, unless specified otherwise. The margin and padding set the start of content starts, at 0.*/
 body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+  color: navy;
+  font-family: FontAwesome, 'Big Caslon', 'Book Antiqua', 'Palatino Linotype', 'Georgia', 'serif';
+  height: 100vh;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-image: linear-gradient(#99ccff, #e6faff);
-/*   background-image: url("../pictures/CurrPic.jpg"); */
-  color: navy;
-  /* Safari 5.1, iOS 5.0-6.1, Chrome 10-25, Android 4.0-4.3 */
-  background-image:-webkit-linear-gradient(#99ccff, #e6faff);
-/*   background-image: url("../pictures/CurrPic.jpg"); */
-  font-family: FontAwesome, 'Big Caslon', 'Book Antiqua', 'Palatino Linotype', 'Georgia', 'serif';
+  background-image: -webkit-linear-gradient(#99ccff, #e6faff);
+  background-image: -moz-linear-gradient(#99ccff, #e6faff);
+  background-image: -o-linear-gradient(#99ccff, #e6faff);
+}
+
+/* closing button on the initial hint text for home and design */
+.btnClose {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.btnHelper {
+  border:   none;
+  width:    3em;
+  height:   3em;
 }
 
 /* UP AND DOWN SPEEDY BUTTONS */
-#btnDn, #btnUp {
+.btnDn, .btnUp {
   position: fixed;
-  border:   none;
   right:    2%;
-  width:    3em;
-  height:   3em;
-  opacity:  0.2;
   z-index:  11;
+  opacity:  0.2;
 }
 
-#btnDn { /*this button shows up on scroll to take the user to the top*/
+.btnDn { /*this button shows up on scroll to take the user to the top*/
   top: 90px;
 }
-#btnUp { /*this button shows up on scroll to take the user to the top*/
+.btnUp { /*this button shows up on scroll to take the user to the top*/
   bottom: 10px;
 }
-#btnUp:hover, #btnDn:hover {
+
+.btnHelper:hover {
   opacity: 0.7;
 }
 
-/* settings button, top left, displayed on Db (as Full, initially) and Vis pages */
+/* settings button, top left corner, displayed on Data & Design pages */
 #btnView, #btnExportImport, #btnCustomCols, #btnClearAllFilters {
    /* mobile first, see @media for desktop */
   display: block;
@@ -64,22 +74,15 @@ body {
   float: left;
   z-index: 6; /* above navbar and page title */
   top: 2px;
-  margin: 3px;
+  margin: 0 0.1em;
   max-height: 3em;
   padding: 7px;
 }
 
-#btnView i {
-  -webkit-transition: -webkit-transform .8s;
-  transition: transform .8s;
-}
-#btnView i:hover {
-  -webkit-transform: rotate(360deg);        
-  transform: rotate(360deg);
-}
-#btnView img:click {
-  -webkit-transform: rotate(360deg);        
-  transform: rotate(360deg);
+article li {
+  list-style-image: url("/pictures/bltCog2.png");
+  list-style-position: outside;
+  margin: 0.5em 0 0.5em 2em;
 }
 
 /* general settings for all buttons */
@@ -93,34 +96,30 @@ button {
   max-width: 7em;
 }
 
-/* Settings for the styling of a drop down column choices on hover */
+/* drop down choices */
+/* .customChoice {
+  list-style: none;
+  margin-left: 0.5em;
+} */
 .customChoice:hover {
   color: #999999;
   cursor: pointer;
 }
 
 /* h1 styling is used for the page name in the nav bar */
-/* mobile, see @media for desktop */
 h1 {
   position: fixed;
+  font-size: 1em;
+  margin-top: 0.5em;
   width: 100%;
-/*   margin: 0 35%; */
-  font-size: 100%;
   white-space: nowrap;
   color: #ffffcc;
 /* don't allow selection, so that user can drag objects on visual tab without selecting the title */
-  -webkit-user-select: none; /* Safari */        
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE10+/Edge */
-  user-select: none; /* Standard */
+  -webkit-user-select: none;   
+  -moz-user-select: none; 
+  -ms-user-select: none; 
+  user-select: none;
   z-index: 5;
-}
-
-@media only screen and (min-width: 768px) {
-  h1 {
-    margin: 0;
-    font-size: 200%;
-  }
 }
 
 /* The animation code, applied to the navigation bar on all pages */
@@ -147,18 +146,41 @@ h1 {
   100%  {background-color: #004d00;}  
 }
 
-/* The navigation bar is fixed on the page, doesn't move with scrolling;
-   it has a changing background (coloranima); a background color is 
-   specified, in case animation doesn't work. */
+@-o-keyframes coloranima {
+    0%  {background-color: #004d00;}
+   25%  {background-color: #99cc00;}
+   30%  {background-color: orange;}
+   35%  {background-color: #990000;}
+   41%  {background-color: #804000;}  
+   50%  {background-color: #e0e0d1;}  
+   60%  {background-color: #b3e6ff;}  
+   75%  {background-color: #004d00;}  
+  100%  {background-color: #004d00;}  
+}
+
+/* todo: try to get this to work */
+/* :root {
+  --anim-colors: {
+    0%  {background-color: #004d00;}
+    25%  {background-color: #99cc00;}
+    30%  {background-color: orange;}
+    35%  {background-color: #990000;}
+    41%  {background-color: #804000;}  
+    50%  {background-color: #e0e0d1;}  
+    60%  {background-color: #b3e6ff;}  
+    75%  {background-color: #004d00;}  
+   100%  {background-color: #004d00;} 
+  }
+} */
+
+/* nav bar has a changing background (coloranima) */
 .navbar {
-/* z-index 4 puts nav bar behind view buttons and in front of everything else.*/
-  z-index: 4;
   position: fixed;
   width: 100%;
   display: inline-block;
   text-align: center;
-  padding: 0;
   border:  1pt outset #99ccff;
+  padding: 0.5em 0;
   -webkit-animation-name: coloranima;
   -webkit-animation-duration: 150s;
   -webkit-animation-iteration-count: infinite;
@@ -166,6 +188,16 @@ h1 {
   animation-duration: 150s;
   animation-iteration-count: infinite;
   background-color: #004d00;
+  /* z-index 4 puts nav bar behind view buttons and in front of everything else.*/
+  z-index: 4;
+}
+
+@media only screen and (min-width: 768px) {
+  h1 {
+    font-size: 1.5em;
+    margin-top: 0.1em;
+  }
+
 }
 
 /* links in nav bar */
@@ -175,12 +207,15 @@ h1 {
   float: right;
   z-index: 6; /* above navbar and page title */
   padding: 0.4em;
-  margin: 0.25em 0.25em 0.25em 0;
+  /* margin: 0.25em 0.25em 0.25em 0; */
   color: #ffffcc;
   text-decoration: none;
-  text-shadow: -1px 0 navy, 0 1px navy, 1px 0 navy, 0 -1px navy;
-  font-family: Arial, Helvetica, sans-serif;
 }
+
+.navbar .fa-fw {
+  margin-top: 0.1em;
+}
+
 .navbar a:hover, a:focus {
   background-color: rgb(0, 26, 51);
   border-radius: 7px;
@@ -222,32 +257,4 @@ h1 {
     768 - medium, 992 - large, 1200 - extra large)
 */
 
-
-/*******************************/
-/* css animation - start of work */
-/* slides the image, not div from left */
-/*******************************/
-/* #picGal {
-    position: absolute;
-    left: -600px;
-    animation: slide 0.5s forwards;
-    animation-delay: 0s;
-}
-@keyframes slide {
-    100% { left: 0; }
-} */
-/*******************************/
-/*******************************/
-
 /*************************************************************************************/
-/* Possible language buttons*/
-#btnRu {
-  display: none;
-  position: relative;
-  float: right; 
-  outline: none;
-  width: 3.125em;
-  height: 2.5em;
-  margin: 5px;
-  text-align: center;
-}

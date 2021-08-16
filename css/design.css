@@ -1,4 +1,4 @@
-/********** v7.4.1 **********/
+/********** v7.4.2 **********/
 /********** visual page **********/
 
 /* variables - currently just colors used in the page */
@@ -7,17 +7,6 @@
   --tool-text-color: rgba(101, 105, 70, 0.75);
 /*   plant and garden names are in dark green */
   --plant-text-color: darkgreen;
-}
-
-/* closing button on the initial hint text */
-.btnClose {
-  position: absolute;
-  right:    0;
-  top: 1%;
-  border:   none;
-  width:    2em;
-  height:   2em;
-  opacity:  0.2;
 }
 
 /* svg place uses a canvas */

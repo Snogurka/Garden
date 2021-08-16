@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<!--   v.7.4.2  -->
+  <head>
+    <title>Garden - Design</title>
+    <meta name="description" content="Information about plants mostly local to eastern USA">
+    <meta name="keywords" content="garden, gardening, design, local, plants">
+    <meta name="author" content="Anna Stafford">
+    <meta charset="utf-8"/>
+    <link rel="icon" href="/favicon.ico"/>
+    <link rel="icon" href="/faviconDes.ico"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/design.css">
+
+    <script src="js/design.js"></script>
+  </head>
+  <body onkeyup='tapClickKey(event)'>
+    <nav class="navbar">
+      <button id="btnView" onclick="settingsMenu(event.target)">
+        <i title="Settings" class="fa fa-fw fa-cog"></i>
+      </button>
+      <h1>Garden Design</h1>
+      <a id="active" href="design.html"><i title="Design" class="fa fa-fw fa-tree"></i></a>
+      <a href="data.html"><i title="Data" class="fa fa-fw fa-table"></i></a>
+      <a href="index.html"><i title="Home" class="fa fa-fw fa-home"></i></a>
+    </nav>
+      <svg id="svgArea" xmlns="http://www.w3.org/2000/svg"  xmlns:xlink="http://www.w3.org/1999/xlink"
+           onmousedown="touchDown(evt)" 
+           onmousemove="dragging(evt)" 
+           onmouseup="touchUp(evt)"
+           onmouseleave="touchUp(evt)"
+           ondblclick="dblTouch(evt)"
+           ontouchstart="touchDown(evt)"
+           ontouchmove="dragging(evt)" 
+           ontouchend="touchUp(evt)" 
+           ontouchleave="touchUp(evt)" 
+           ontouchcancel="touchUp(evt)"
+           onfocusout="focusOut(evt.target)"
+           >
+        <defs>
+<!--           <linearGradient id="sunSoilGrad" x1="50%" y1="0" x2="50%" y2="100%">
+            <stop class="stop1" offset="0%"/>
+            <stop class="stop2" offset="50%"/>
+            <stop class="stop3" offset="90%"/>
+            <stop class="stop4" offset="97%"/>
+          </linearGradient> -->
+        </defs>
+        <title>Double click to add or remove a plant or a garden</title>
+        Sorry, your browser does not support inline SVG.
+    </svg>
+    <button onclick="goUp()" class="btnHelper btnUp" title="To the Top">Home</button>
+    <script>
+      window.onload = myMain();
+    </script>
+  </body>
+</html>

@@ -1,15 +1,9 @@
-/********** v.7.4.1 **********/
+/********** v.7.4.2 **********/
 
 /*  changes:
 
   *** DONE ***
-  - added functionality to display instructions for when the page is first loaded and there is no design  
-  - limited plant name length to 15 characters
-  - changed size var to 6
-  - garden toolbox: add all plants to garden
-  - when adding a plant from garden's settings, the plant needs to be added to that garden
-  - when adding a plant or a garden, make sure it doesn't go beyond boundaries
-  - fix toggle all photos - availability can't be based on first plant
+  
   
   *** ToDo ***  
   
@@ -30,6 +24,11 @@
   toolbox:
     - round vs rect garden shape?
     - garden zooming in/out
+    
+  - delete confirm using common name, not Latin 
+  - gardens could be small pretty pictures of themselves and on click, zoom in to see what’s planted;  
+  - maybe tap to bring up tools, double tap to zoom, delete is an option in toolbox? 
+  - if double tap to zoom, then maybe tap & hold for adding new plant/garden & lines like in digging with choices
 */
 
 
@@ -217,6 +216,7 @@ function loadExistingDesign() {
       "Disable local storage restrictions at your own risk.".toUpperCase()
     let closeButton = document.createElement("button");
     closeButton.textContent = "x";
+    closeButton.classList.add("btnHelper");
     closeButton.classList.add("btnClose");
     closeButton.addEventListener("click", function(evt) {
       document.body.removeChild(evt.target.parentElement);

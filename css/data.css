@@ -1,0 +1,322 @@
+/********** v.8.0.0 **********/
+/*to prevent zoom in safari and chrome, font-size has to be at least 16*/
+/********** database page styles **********/
+
+/* VARIABLES */
+:root {
+  --dark-color: navy;
+  --light-color: #ffffcc;
+  --edits-allowed: true;
+}
+
+/* SCROLL SNAPPING */
+body {
+  scroll-snap-type: x proximity;
+}
+
+/* NAV BAR BUTTONS */
+/* eye button for toggling columns' display */
+#btnCustomCols {
+  background: radial-gradient(var(--light-color) 30%, rgba(255,255,255,0) 70%);
+}
+/* scissors button for clearing all the filters */
+#btnCustomCols, #btnClearAllFilters {
+  display: none;
+  width: 2em;
+}
+
+/* EDITING BUTTONS */
+.btnInner {
+  top: 0;
+  position: absolute;
+  z-index: 7;
+}
+.btnLeft {
+  left: 0.07em;
+  text-align: start;
+  padding-left: 0.3em;
+}
+.btnRight {
+  right: 0.07em;
+  text-align: end;
+  padding-right: 0.3em;
+}
+
+/* image within inner buttons */
+.btnImg { 
+  width: 2em;
+  height: 2em;
+}
+
+/* icons within table headers - eye */
+i:hover {
+  cursor: pointer;
+}
+
+/* small inner buttons for adding and modifying user added plants */
+#btnNewPlantAdd, #btnNewPlantClear, #btnNewPlantCopy, #btnNewPlantSubmit {
+  position: absolute;
+  background: transparent;
+  top: 65%;
+  display: none;
+}
+#btnNewPlantAdd {
+  left: 25%;
+}
+
+#btnNewPlantCopy {
+  left: 0;
+  display: initial;
+}
+#btnNewPlantCopy ~ .dropUnqVals {
+  top: 115%;
+  left: 0;
+}
+#btnNewPlantSubmit {
+  left: 50%;
+}
+
+/* ============== */
+/* TABLE SETTINGS */
+/* table id - #plants */
+#plants {
+  table-layout: fixed;
+  position: relative;
+  top: 3em;
+  border-collapse: collapse;
+  z-index: 2;
+  width: 100%;
+  height: 50%;
+  margin: 0 0 5em 0;
+}
+
+td, th {
+  border: 1px solid #ddd;
+  padding: 1em 0 0 1em;
+  white-space: normal;
+  font-size: 16px;
+/*   overflow-x: hidden; - doing so hides the new plant buttons; move those buttons out of the td first*/
+}
+/* table headers */
+th {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 3em;
+  padding: 0.5em;
+  text-align: left;
+  color: var(--light-color);
+  background-color: rgba(0, 0, 128, 1);
+  z-index: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* first cell - name */
+th:nth-child(1){
+  background-color: var(--dark-color);
+  z-index: 4;
+}
+
+/* column width classes, table width has to be set for these to work */
+.colWidth1, .colWidth2, .colWidth3 {
+  width: calc(75vw / 2);
+  scroll-snap-align: end;
+}
+
+/* the editable columns are notes, action, and garden location */
+.editableCol {
+  font-style: italic;
+}
+
+/* name column - sticky to ensure that plant names are always shown */
+.frozenCol {
+  position: sticky;
+  position: -webkit-sticky;
+  left: 0;
+  background-color: #99ccff; /*here*/
+  z-index: 2;
+  width: 25vw;
+  padding: 0 0 0 0.3em;
+}
+
+.filterInput {
+  display: none;
+}
+/* filter row freezing style, ensures that filter row is frozen and always shown on top */
+.filterRow, .filterCell {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 5em;
+  background-color: rgba(0, 0, 128, 1);
+  padding: 0;
+  /* height: 0; */
+  z-index: 2;
+}
+/* the common name (first cell) of the filter freeze is done separately */
+.filterCell {
+  left: 0;
+  text-align: left;
+  z-index: 4;
+}
+/* filtering by size input fields */
+.inputRangeMin, .inputRangeMax {
+  max-width: 4em;
+  height: 2em;
+  margin-right: 5px;
+  text-align: right;
+  position: absolute;
+  right: 0;
+}
+
+/* IMAGES & GALLERY SETTINGS */
+th.pic{
+  text-align: center;
+}
+.pic:hover {
+  cursor: pointer;
+}
+#picGal {
+  top: 1.8em;
+  right: 10%;
+}
+#picGal button {
+  position: absolute;
+  top: 50%;
+  margin: 0 1em;
+  height: 3em;
+  width: 3em;
+  background: transparent;
+}
+#picGal p {
+  position: absolute;
+  bottom: 0;
+  color: white;
+}
+/* images - settings for the last column, all the way to the right */
+img {
+  width: 4em;
+  border: 0;
+  margin: 0 10%;
+}
+
+/* EXPORT/IMPORT */
+/* export/import window */
+div.expImp > button {
+  top: 1px;
+  z-index: 9;
+  text-align: center;
+}
+div.expImp {
+  display:inline-block;
+  position:fixed;
+  left: 2em;
+  top: 2em;
+  z-index: 8;
+  padding: 0 35px;
+  opacity: 0.9;
+  border: 1px solid #001539;
+  box-shadow: 3px 3px #00179d;
+  background-color: rgb(255, 251, 244);
+}
+/* export/import text area - needed? */
+textarea {
+  padding: 5px ;
+  border: 1px solid #001539;
+  background-color: rgb(255, 251, 244);
+  font-size: 16px;
+}
+
+/* DROP DOWN MENU SETTINGS */
+#dropColNames, #dropExportImport {
+  position: absolute;
+  float: right;
+  top: 1em;
+  left: 1em;
+  display: none;
+}
+#dropColNames, .dropUnqVals, #dropExportImport {
+  z-index: 7;
+  max-height: 30em;
+  overflow: auto;
+/*   added on 9/24/20 for iPad scroll support */
+  -webkit-overflow-scrolling: auto;
+  border-radius: 7px;
+  list-style-type: none; 
+  text-align: left;
+  padding: 5px;
+  line-height: 150%;
+  color: var(--dark-color);
+  background-color: rgba(204, 255, 153, 0.95);
+}
+.dropUnqVals {
+  position: absolute;
+  top: 50%;
+  min-width: 6em;
+  max-width: 12em;
+  overflow: auto;
+}
+
+/* OTHER */
+/* text at the bottom of the page, describing new plant functionality */
+.addPlant {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  display: none;
+}
+/* the new plant row is located at the bottom of the table */
+#newPlantRow {
+  background-color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  display: none;
+}
+
+/* 
+  Responsiveness for desktop and tablet, width greater than 768px
+  600 for small devices; 400 for phones, with mobile first - the default
+*/
+@media only screen and (min-width: 400px) {
+  body {
+    scroll-snap-type: none;
+  }
+  img {
+    width: 6em;
+    max-height: auto;
+  }
+  .filterRow, .filterCell {
+    height: 2em;
+  }
+  .frozenCol {
+    color: var(--light-color);
+    background-color: var(--dark-color);
+  }
+  .colWidth1 {
+    width: 6em;
+  }
+  .colWidth2 {
+    width: 9em;
+  }
+  .colWidth3 {
+    width: 12em;
+  }
+  /* color even rows for readability */
+  tr:nth-child(even) {
+    background-color: #afd6fd;
+  }
+  /* the following are not displayed on mobile: filtering, adding new plants */
+  .filterInput {
+    display: block;
+    padding-left: 2.3em; 
+    color: var(--dark-color);
+    width: 100%;
+    height: 110%;
+    font-size: 16px;
+  }
+  #newPlantRow {
+    display: table-row;
+    height: 3em;
+  }
+  .addPlant {
+    top: -1em;
+    display: inline;
+  }
+}
