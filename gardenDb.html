@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<!-- v.7.3 -->
+<!-- changes: 
+  -- btnView allow click-scrolling through views
+  -- custom view is a separate eye button now
+  -- import/export data is a separate I/E button now
+  -- columns have an eye to hide them
+  -- added a scissors button to navbar to clear all filters at once
+-->
+<html lang="en-US">
+  <head profile="http://www.w3.org/2005/10/profile">
+  <head>
+    <title>Garden Data</title>
+    
+<!--     <link rel="icon" type="image/x-icon" href="/favicon.ico"> -->
+<!--     <link rel="icon" type="image/png" href="/favicon.png"> -->
+<!--     <link rel="apple-touch-icon" href="favicon.ico"> -->
+<!--     <link rel="mask-icon" href="favicon.ico"> -->
+<!--     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" /> -->
+    <link rel="icon" href="/favicon.ico"/>
+    
+    <meta name="description" content="Information about plants mostly local to Eastern USA">
+    <meta name="keywords" content="garden, gardening, design, local, plants">
+    <meta name="author" content="Anna Stafford">
+    <meta charset="utf-8"/>
+<!--     Research setting , maximum-scale=1.0"> below; it prevents users from resizing the document per w3.org -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+<!--     The following meta tag has been removed from HTML 5; in HTML 4 it was needed for event handlers -->
+<!--     <meta http-equiv="Content-Script-Type" content="text/javascript">     -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--     To use font awesome 5, download their library or create and account and update the code referenced below -->
+<!--     <script src="https://kit.fontawesome.com/a076d05399.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="js/dbCode.js" defer></script>
+
+    <noscript>JavaScript must be enabled to fully use the webpage</noscript>
+    
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/db.css">
+  </head>
+  <body 
+        ondblclick="allClicks(event)"
+        onclick="allClicks(event)" 
+        onkeyup="allClicks(event)" 
+        onpaste="allClicks(event)" 
+        oncut="allClicks(event)"
+        >
+    <div class="navbar">
+      <h1>Garden Data</h1>
+      <button type="button" id="btnExportImport" title="Export or Import Data">I/E</button>
+      <ul id="dropExportImport"></ul>
+      <button type="button" id="btnView" title="View Type">Full</button>
+      <i id="btnCustomCols" title="Column Choices for a Custom View" class="fas fa-eye">
+        <ul id="dropColNames"></ul>
+      </i>
+      <i id="btnClearAllFilters" title="Clear All Filters">
+        <img class='btnImg' src='pictures/btnCut.png'>
+      </i>
+<!--       <button type="button" id="btnUploadPictures" onClick="()">Upload</button> -->
+<!--       <button type="button" id="btnSubmitPlant" onClick="()">Submit</button> -->
+<!--         <a href="gardenEdi.html"><i title="Edible" class="fa fa-fw fa-cutlery"></i></a> -->
+        <a href="gardenVis.html"><i title="Design" class="fa fa-fw fa-tree"></i></a>
+        <a id="active" href="gardenDb.html"><i title="Data" class="fa fa-fw fa-table"></i></a>
+        <a href="index.html"><i title="Home" class="fa fa-fw fa-home"></i></a>
+    <!--     the language version below is currently hidden -->
+        <a href="gardenRu.html" id="btnRu">Ru</a>
+    </div>
+
+    <div id="picGal" class="wrapper">
+<!--       in the line below, the value of the image is set to 1 - this creates a value 
+      attribute that's then used in js to capture the total number of images available -->
+      <img value="1" onerror="this.onerror=null; this.src='\pictures\btnCog.png'"></img>
+      <button type="button" class="btnLeft"><img class="btnImg" src="pictures/btnLeftBird.png" border=0></button>
+      <button type="button" class="btnRight"><img class="btnImg" src="pictures/btnRightBird.png" border=0></button>
+      <p>Plant Name</p>
+    </div>
+    
+    <div>
+      <table id="plants">
+        <!--  the table contents are dynamically loaded from a separate JSON file  -->
+        <!--        so that the data can be used by this and visual tabs -->
+      </table>
+    </div>
+
+    <div class="addPlant">
+      <p>
+        Use the blank row above to add new plants to your table view. The data will be saved to your own computer using Local Storage (similar to cookies).
+        Do NOT store any personal or sensitive information here.
+        <br>
+        The data above has been collected from various nurseries, my own experience and the internet, especially the very informative websites listed on the Home
+        <a href="index.html"><i title="Home" class="fa fa-fw fa-home"></i></a> tab.
+      </p>
+    </div>
+    
+    <button id="btnDn" title="To the Bottom">Down</button>
+    <button id="btnUp" title="To the Top">Up</button>
+
+  </body>
+</html>

@@ -1,0 +1,325 @@
+/********** v.7.4.2 **********/
+/*to prevent zoom in safari and chrome, font-size has to be at least 16*/
+/********** database page styles **********/
+
+
+/* text at the bottom of the page, describing new plant functionality */
+.addPlant {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+/* eye button that allows toggling columns' display */
+#btnCustomCols {
+  background: radial-gradient(#ffffcc 30%, rgba(255,255,255,0) 70%);
+  display: none;
+}
+
+/* scissors button that allow clearing all the filters */
+#btnClearAllFilters {
+  top: 0;
+  height: 2px;
+  width: 2px;
+  margin: 0;
+  display: none;
+}
+
+/* small inner buttons: leaves, scissors, shovels, watering cans */
+.btnInner {
+  top: -1px;
+  position: absolute;
+  width: 4em;
+	height: 3em;
+  border-style: unset;
+  background: transparent;
+  z-index: 7;
+}
+/* image within inner buttons */
+.btnImg { 
+  width: 2em;
+  height: 2em;
+}
+/* placing the buttons on the left, used  */
+.btnLeft {
+  left: -5px;
+}
+.btnRight {
+  right: 0;
+}
+
+/* small inner buttons for adding and modifying user added plants */
+#btnNewPlantAdd, #btnNewPlantClear, #btnNewPlantCopy, #btnNewPlantSubmit {
+  position: absolute;
+  background: transparent;
+  top: 100%;
+  width: 3em;
+  height: 3em;
+  border-style: unset;
+  display: none;
+}
+#btnNewPlantAdd {
+  left: 25%;
+}
+#btnNewPlantClear {
+  right: 0;
+}
+#btnNewPlantCopy {
+  left: 0;
+  display: initial;
+}
+#btnNewPlantCopy ~ .dropUnqVals {
+  top: 115%;
+  left: 0;
+}
+#btnNewPlantSubmit {
+  left: 50%;
+}
+
+/* button for recording changes within notes, action, quantity */
+.btnUpdatePlant { 
+  top: 0;
+  background: rgba(178, 246, 23, 0.5);
+}
+
+.colWidth1 {
+  width: 6em;
+}
+.colWidth2 {
+  width: 9em;
+}
+.colWidth3 {
+  width: 12em;
+}
+
+/* export/import window */
+div.expImp > button {
+  top: 1px;
+  padding: 10px;
+  z-index: 9;
+  color: red;
+}
+
+div.expImp {
+  display:inline-block;
+  position:fixed;
+  left: 2em;
+  top: 2em;
+  z-index: 8;
+  padding: 0 35px;
+  opacity: 0.9;
+  border: 1px solid #001539;
+  box-shadow: 3px 3px #00179d;
+  background-color: rgb(255, 251, 244);
+}
+
+#dropColNames, #dropExportImport {
+  position: absolute;
+  float: right;
+  top: 1em;
+  left: 1em;
+  display: none;
+}
+
+#dropColNames, .dropUnqVals, #dropExportImport {
+  z-index: 7;
+  max-height: 30em;
+  overflow: auto;
+/*   added on 9/24/20 for iPad scroll support */
+  webkit-overflow-scrolling: auto;
+  border-radius: 7px;
+  list-style-type: none; 
+  text-align: left;
+  padding: 5px;
+  line-height: 150%;
+  color: navy;
+  background-color: rgba(204, 255, 153, 0.95);
+}
+
+.dropUnqVals {
+  position: absolute;
+  top: 50%;
+  width: 12em;
+  overflow: auto;
+}
+
+/* common name column, freezing style, ensures that plant names are always shown */
+.frozenCol {
+  position: sticky;
+  position: -webkit-sticky;
+  left: 0;
+  color:#ffffcc;
+  background-color: rgba(0, 39, 128, 0.85);
+  z-index: 2;
+}
+.frozenCol input {
+  width: 100%;
+  min-height: 3em;
+  font-style: italic;
+}
+
+/* filter row freezing style, ensures that filter row is frozen and always shown on top */
+.frozenFilterRow {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 4.2em;
+  background-color: rgba(0, 0, 128, 1);
+  z-index: 2;
+}
+/* the common name (first column) of the filter freeze is done separately */
+.filterFreeze {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 4.2em;
+  left: 0;
+  text-align: left;
+  background-color: rgba(0, 0, 128, 1); /*opaque navy*/
+  z-index: 4;
+}
+.filterInput {
+  padding: 0 0 0 1.5em;
+  color: navy;
+  width: 100%;
+  height: 100%;
+}
+.filterInput:focus {
+  font-size: 16px;
+}
+
+.frozenFilterRow tr:hover {
+  background-color: rgba(0, 0, 128, 1);
+}
+
+i:hover {
+  cursor: pointer;
+}
+
+/* images - settings for the last column, all the way to the right */
+img {
+  width: 4em;
+  border: 0;
+  margin: 0 20%;
+}
+
+.inputRangeMin, .inputRangeMax {
+  max-width: 3em;
+  max-height: 1.2em;
+  margin-right: 5px;
+  text-align: right;
+  position: absolute;
+  right: 0;
+}
+
+/* the new plant row is located at the bottom of the table */
+#newPlantRow {
+  background-color: rgba(255, 255, 255, 0.5);
+  visibility: hidden;
+  font-style: italic;
+}
+
+.pic:hover {
+  cursor: pointer;
+}
+
+#picGal {
+  top: 1.8em;
+  right: 10%;
+}
+
+#picGal button {
+  position: absolute;
+  top: 50%;
+  margin: 0 1em;
+  height: 3em;
+  width: 3em;
+  background: transparent;
+}
+
+#picGal p {
+  position: absolute;
+  bottom: 0;
+  color: white;
+}
+
+/* plants table settings */
+#plants {
+  table-layout: fixed;
+  position: relative;
+  top: 2.5em;
+  width: 100%;
+  height: 50%;
+  border-collapse: collapse;
+  z-index: 2;
+  margin: 0 0 5em 0;
+}
+
+td, th {
+  border: 1px solid #ddd;
+  padding: 5px;
+  white-space: normal;
+  font-size: 16px;
+/*   overflow-x: hidden; - doing so hides the new plant buttons; move those buttons out of the td first*/
+}
+
+/* table headers style settings and freezing */
+th {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 2.5em;
+  padding: 4px 10px;
+  text-align: left;
+  color:#ffffcc;
+  background-color: rgba(0, 0, 128, 1);
+  z-index: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+th > i {
+  position: absolute;
+  right: 1px;
+  opacity: 0.7;
+  font-size: 150%;
+  color: gray;
+}
+
+tr:nth-child(even) {
+  background-color: rgba(208, 218, 225, 0.5);
+}
+
+/* resizable class currently only applies to common name column */
+.resizable {
+  top: 5px; 
+  right: 0px; 
+  width: 15px;
+  height: 15px;
+  border-top: 10px solid transparent;
+  border-left: 10px solid rgba(255, 255, 204, 0.7);
+  border-bottom: 10px solid transparent;
+  position: absolute; 
+}
+.resizable:hover {
+  cursor: pointer;
+}
+
+/* export/import text area - needed? */
+textarea {
+  padding: 5px ;
+  border: 1px solid #001539;
+  background-color: rgb(255, 251, 244);
+}
+
+/* 
+  Responsiveness for desktop and tablet, width greater than 768px
+  600 for small devices; 400 for phones, with mobile first - the default
+*/
+@media only screen and (min-width: 768px) {
+  #dropColNames, .dropUnqVals, #dropExportImport {
+/*     font-size: 90%; */
+  }
+  img {
+    width: 4em;
+    max-height: auto;
+  }
+}
+

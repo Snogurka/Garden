@@ -1,0 +1,185 @@
+/********** v7.4.1 **********/
+/********** visual page **********/
+
+/* variables - currently just colors used in the page */
+:root {
+/*   the main color for tool text is gray  */
+  --tool-text-color: rgba(101, 105, 70, 0.75);
+/*   plant and garden names are in dark green */
+  --plant-text-color: darkgreen;
+}
+
+/* closing button on the initial hint text */
+.btnClose {
+  position: absolute;
+  right:    0;
+  top: 1%;
+  border:   none;
+  width:    2em;
+  height:   2em;
+  opacity:  0.2;
+}
+
+/* svg place uses a canvas */
+canvas {
+  position: relative;
+  top: 3em;
+}
+
+/* faux drop down, used for Sun, Soil, Tools */
+.fauxUl { 
+  font-size: medium;
+  position: relative;
+  fill: var(--tool-text-color);
+}
+
+/* hovering over false drop downs */
+.fauxUl:hover, .fauxLi:hover {
+  cursor: pointer;
+  font-size: large;
+}
+
+/* imitating LI in UL, for SVG; used for color, sun, soil, tools drop down choices */
+.fauxLi { 
+  font-size: small;
+  /* text-anchor: middle; */
+  position: relative;
+  fill: var(--tool-text-color);
+}
+
+.garden:hover, .plantGrp:hover {
+  cursor: grab;
+}
+
+/* initial text displayed when the page is first loaded and nothing's been created yet */
+/* #initText {
+  lineHeight: 2em;
+} */
+#initText {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  line-height: 2em;
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+}
+
+/* input fields are: garden name */
+input {
+  background: none;
+  border: 0;
+  color: var(--plant-text-color);
+  font-size: 14px;
+  font-family: cursive;
+  width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  cursor: text;
+  caret-color:var(--plant-text-color);
+
+}
+
+/* todo: when implementing custom icon below, use this to add html
+<span class='icon'></span> */
+/* the icon below is a new addition, not in use yet, to be developed maybe */
+/* .icon {
+    background: url('iconZinnia.jpg');
+    height: 20px;
+    width: 20px;
+    display: block;
+} */
+
+/* settings and add plant menu */
+li {
+  padding: 2px;
+  font-size: medium;
+}
+
+@media only screen and (min-width: 768px) {
+  .fauxUl { 
+    font-size: small;
+  }
+  .fauxLi { 
+    font-size: small;
+  }
+}
+
+
+.plant {
+  width: 10em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* plant bloom colors and additional info, below text name */
+.plantInfo {
+  font-family: cursive;
+  overflow-x: auto;
+  color: navy;
+}
+
+/* plant photo and size, above the text name */
+.plantLook {
+  fill: var(--tool-text-color);
+  text-anchor: middle;
+  font-size: smaller;
+}
+
+/* garden resizing triangle in the corner */
+.resize {
+  fill: rgba(65, 68, 65, 0.15);
+  cursor: nwse-resize;
+}
+
+/* garden size (height and width) indicators  */
+.sizeInd {
+  font-size: smaller;
+  fill: var(--tool-text-color);
+}
+
+/*  testing garden background colors */
+/* the garden fill color is set in colorchoice()  */
+/* .garden {
+  fill: url(#sunSoilGrad); 
+  #d1e0e0;
+} */
+/* linear gradient color stops */
+/* .stop1 { 
+  stop-color: #ffe922; stop-opacity: 0.8;
+}
+.stop2 { 
+  stop-color: #d1e0e0; stop-opacity: 0.3;
+}
+.stop3 { 
+  stop-color: #d1e0e0; stop-opacity: 0.8;
+}
+.stop4 { 
+  stop-color: rgb(137, 214, 60); stop-opacity: 0.8;
+} */
+
+svg {
+  font-family: FontAwesome;
+  font-size: 14px;
+}
+
+/* the following list format is used in NavBar settings button dd, Add plant/garden dd */
+ul.dropDown { 
+  position: absolute;
+  max-height: 19em;
+  min-width: 10em;
+  overflow: auto;
+  border-radius: 7px;
+  list-style-type: none;
+  text-align: left;
+  padding: 3px;
+  color: rgba(204, 255, 153, 0.90);
+  font-size: small;
+  background-color: rgba(0, 0, 50, 0.75);
+  display: block;
+}

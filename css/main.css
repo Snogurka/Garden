@@ -1,0 +1,253 @@
+/********** v.7.4.2 **********/
+/* this css file contains styles shared by all garden pages
+
+   units:
+   1in = 72pt
+   1in = 96px
+	 1em is equal to the current font size
+   1em = 16px, based on the default font size of 16px
+*/
+
+* {
+  box-sizing: border-box;
+}
+
+/* Current navbar link, i.e. selected page */
+#active {
+  background-color: rgb(0, 0, 70);
+  border-radius: 7px;
+}
+
+/* The overall body of this page has a background that changes from darker blue at the top to lighter blue at the bottom. 
+Font family is set for the entire page, unless specified otherwise. The margin and padding set the start of content starts, at 0.*/
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-image: linear-gradient(#99ccff, #e6faff);
+/*   background-image: url("../pictures/CurrPic.jpg"); */
+  color: navy;
+  /* Safari 5.1, iOS 5.0-6.1, Chrome 10-25, Android 4.0-4.3 */
+  background-image:-webkit-linear-gradient(#99ccff, #e6faff);
+/*   background-image: url("../pictures/CurrPic.jpg"); */
+  font-family: FontAwesome, 'Big Caslon', 'Book Antiqua', 'Palatino Linotype', 'Georgia', 'serif';
+}
+
+/* UP AND DOWN SPEEDY BUTTONS */
+#btnDn, #btnUp {
+  position: fixed;
+  border:   none;
+  right:    2%;
+  width:    3em;
+  height:   3em;
+  opacity:  0.2;
+  z-index:  11;
+}
+
+#btnDn { /*this button shows up on scroll to take the user to the top*/
+  top: 90px;
+}
+#btnUp { /*this button shows up on scroll to take the user to the top*/
+  bottom: 10px;
+}
+#btnUp:hover, #btnDn:hover {
+  opacity: 0.7;
+}
+
+/* settings button, top left, displayed on Db (as Full, initially) and Vis pages */
+#btnView, #btnExportImport, #btnCustomCols, #btnClearAllFilters {
+   /* mobile first, see @media for desktop */
+  display: block;
+  position: relative;
+  float: left;
+  z-index: 6; /* above navbar and page title */
+  top: 2px;
+  margin: 3px;
+  max-height: 3em;
+  padding: 7px;
+}
+
+#btnView i {
+  -webkit-transition: -webkit-transform .8s;
+  transition: transform .8s;
+}
+#btnView i:hover {
+  -webkit-transform: rotate(360deg);        
+  transform: rotate(360deg);
+}
+#btnView img:click {
+  -webkit-transform: rotate(360deg);        
+  transform: rotate(360deg);
+}
+
+/* general settings for all buttons */
+button {
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 2px;
+  border-radius: 7px;
+  background-color: rgb(0, 0, 77); 
+  color: white;
+  cursor: pointer;
+  max-width: 7em;
+}
+
+/* Settings for the styling of a drop down column choices on hover */
+.customChoice:hover {
+  color: #999999;
+  cursor: pointer;
+}
+
+/* h1 styling is used for the page name in the nav bar */
+/* mobile, see @media for desktop */
+h1 {
+  position: fixed;
+  width: 100%;
+/*   margin: 0 35%; */
+  font-size: 100%;
+  white-space: nowrap;
+  color: #ffffcc;
+/* don't allow selection, so that user can drag objects on visual tab without selecting the title */
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+  z-index: 5;
+}
+
+@media only screen and (min-width: 768px) {
+  h1 {
+    margin: 0;
+    font-size: 200%;
+  }
+}
+
+/* The animation code, applied to the navigation bar on all pages */
+@keyframes coloranima {
+    0%  {background-color: #004d00;}
+   25%  {background-color: #99cc00;}
+   30%  {background-color: orange;}
+   35%  {background-color: #990000;}
+   41%  {background-color: #804000;}  
+   50%  {background-color: #e0e0d1;}  
+   60%  {background-color: #b3e6ff;}  
+   75%  {background-color: #004d00;}  
+  100%  {background-color: #004d00;}  
+}  
+@-webkit-keyframes coloranima {
+    0%  {background-color: #004d00;}
+   25%  {background-color: #99cc00;}
+   30%  {background-color: orange;}
+   35%  {background-color: #990000;}
+   41%  {background-color: #804000;}  
+   50%  {background-color: #e0e0d1;}  
+   60%  {background-color: #b3e6ff;}  
+   75%  {background-color: #004d00;}  
+  100%  {background-color: #004d00;}  
+}
+
+/* The navigation bar is fixed on the page, doesn't move with scrolling;
+   it has a changing background (coloranima); a background color is 
+   specified, in case animation doesn't work. */
+.navbar {
+/* z-index 4 puts nav bar behind view buttons and in front of everything else.*/
+  z-index: 4;
+  position: fixed;
+  width: 100%;
+  display: inline-block;
+  text-align: center;
+  padding: 0;
+  border:  1pt outset #99ccff;
+  -webkit-animation-name: coloranima;
+  -webkit-animation-duration: 150s;
+  -webkit-animation-iteration-count: infinite;
+  animation-name: coloranima;
+  animation-duration: 150s;
+  animation-iteration-count: infinite;
+  background-color: #004d00;
+}
+
+/* links in nav bar */
+.navbar a {
+  display: block;
+  position: relative;
+  float: right;
+  z-index: 6; /* above navbar and page title */
+  padding: 0.4em;
+  margin: 0.25em 0.25em 0.25em 0;
+  color: #ffffcc;
+  text-decoration: none;
+  text-shadow: -1px 0 navy, 0 1px navy, 1px 0 navy, 0 -1px navy;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.navbar a:hover, a:focus {
+  background-color: rgb(0, 26, 51);
+  border-radius: 7px;
+}
+
+/* this normal class is used to position text other than bars and table. */
+.normal {
+  position: relative;
+  top: 5em;
+  left: 0.625em;
+}
+
+/* PICTURE GALLERY */
+#picGal {
+  display: none;
+  position: fixed;
+  z-index: 11;
+  height: 80%;
+  top: 10%;
+  width: 90%;
+  left: 5%;
+  padding: 0 2%;
+  background-color: rgba(0,0,0,0.2);
+}
+
+#picGal img {
+  margin: auto;
+  position: relative;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* For desktop and tablet with width greater than 768px
+   (600 for small devices; 400 for phones; 
+    768 - medium, 992 - large, 1200 - extra large)
+*/
+
+
+/*******************************/
+/* css animation - start of work */
+/* slides the image, not div from left */
+/*******************************/
+/* #picGal {
+    position: absolute;
+    left: -600px;
+    animation: slide 0.5s forwards;
+    animation-delay: 0s;
+}
+@keyframes slide {
+    100% { left: 0; }
+} */
+/*******************************/
+/*******************************/
+
+/*************************************************************************************/
+/* Possible language buttons*/
+#btnRu {
+  display: none;
+  position: relative;
+  float: right; 
+  outline: none;
+  width: 3.125em;
+  height: 2.5em;
+  margin: 5px;
+  text-align: center;
+}

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<!-- v.7.1 -->
+<html lang="en-US">
+  <head>
+    <title>Garden - Home</title>
+    <link rel="icon" type="image/png" href="pictures/favicon.png">
+    <meta name="description" content="Information about plants mostly local to eastern USA">
+    <meta name="keywords" content="garden, gardening, design, local, plants">
+    <meta name="author" content="Anna Stafford">
+    <meta charset="utf-8"/>
+<!--     Research setting , maximum-scale=1.0"> below; it prevents users from resizing the document per w3.org -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--     The following meta tag has been removed from HTML 5; in HTML 4 it was needed for event handlers -->
+<!--     <meta http-equiv="Content-Script-Type" content="text/javascript"> -->    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--     To use font awesome 5, download their library or create and account and update the code referenced below -->
+<!--     <script src="https://kit.fontawesome.com/a076d05399.js"></script> -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/home.css">
+  </head>
+  <body>
+    <div class="navbar">
+      <h1>Home Garden</h1>
+  <!--     edible, below, is currently hidden until developed -->
+<!--       <a href="gardenEdi.html"><i title="Edible" class="fa fa-fw fa-cutlery"></i></a> -->
+      <a href="gardenVis.html"><i title="Design" class="fa fa-fw fa-tree"></i></a>
+      <a href="gardenDb.html"><i title="Data" class="fa fa-fw fa-table"></i></a>
+      <a id="active" href="index.html"><i title="Home" class="fa fa-fw fa-home"></i></a>
+<!--       <a id="active" href="index.html"><img title="Home" class="icons" src="pictures/icoHome.png" alt="Home"></img></a> -->
+  <!--     the language version below is currently hidden -->
+      <a href="gardenRu.html" id="btnRu">Ru</a>
+    </div>
+    <div class="leftSide">
+      <img src="pictures/dogwoodBaseL.png" alt="Dogwood tree on the side"/>
+    </div>
+    <div class="rightSide">
+      <img src="pictures/dogwoodBaseR.png" alt="Dogwood tree on the side"/>
+    </div>
+    <div class="container" onclick="containerClick(event.target)">
+      <div class="header">
+        <h3><strong>Welcome</Strong> to my gardening page.</h3>
+        My goal is to support the plants native to US South East, however there are a few non-locals here too.
+        The table on the data <a href="gardenDb.html"><i class="fa fa-fw fa-table"></i></a> tab, has all the data I've collected so far. 
+        It is only a fraction of the local flora. 
+        I continue to add to the database and appreciate any feedback, which can be provided once I add the needed functionality.  
+        The visual <a href="gardenVis.html"><i class="fa fa-fw fa-tree"></i></a> tab (under construction) is intended for designing the garden. 
+        Plant choices in the visual tab are limited to those in database.
+        If you need to "plant" something I don't have, you have to add it to the database first. 
+        Any information you add will be saved on your machine only. Clearing your browsing history will also erase that data. 
+      </div>
+      
+      <div id="picGal">
+        <img onerror="this.onerror=null; this.src='\pictures\btnCog.png'"></img>
+      </div>
+    
+      <div>
+        <img class="righty" loading="lazy" src="pictures/Home9.jpg" alt="Bumblebee in Swamp Leather Flower">
+        <img class="lefty" loading="lazy" src="pictures/Home8.jpg" alt="Bumblebee in Swamp Leather Flower">
+        To the left: a beautiful butterfly, maybe Agraulis Vanillae, on the Blood Orange Marigold, neat match of colors. 
+        To the right: also Blood Orange Marigold with a moth, might be an Ailanthus Webworm Moth. 
+      </div>
+      <div>
+        <img class="righty" loading="lazy" src="pictures/Home7.jpg" alt="Bumblbees on Milkweed">
+        The swallowtail butterflies are frequent visitors of the butterfly bush. These butterfly 
+        bushes, Buddleja, are enjoyed by many flying creatures, including different types of bees, 
+        butterflies, hummingbirds and hummingbird moths. It's hard to let go of such an abundant 
+        nectar source but it's something I'd like to do as the bush is not native to North America.
+        I've read that there are non-reseeding varieties now - a great alternative to consider.
+      </div>
+      <div>
+        <img class="lefty" loading="lazy" src="pictures/Home6.jpg" alt="Bumblebee in Swamp Leather Flower">
+        The Swamp Leather Flower doesn't offer abundant foliage but its flowers are delicate, small and very beautiful. 
+        Here is one visited by a bumblebee. I've planted my Swamp Leather Flower with Coral Honeysuckle for more green. 
+        The Swamp Leather Flower dies to the ground in winter and comes back in spring, so it doesn't get as big as its
+        neighboring honeysuckle. The flowers are mostly at your eye level, perfect for viewing pleasure.
+      </div>
+      <div>
+        <img class="righty diag" loading="lazy" src="pictures/Home5.jpg" alt="Bumblbees on Milkweed">
+        The milkweed pictured here must be the healthiest in my garden. 
+        The monarchs tend to ignore it, for reasons not entirely clear to me, maybe because it is on the hairy side. 
+        Whatever the reason, the milkweed continues to thrive and gets to keep all its leaves. 
+        It's been popular with bees, bumble and honey, as well as one butterfly. At one point this summer of 2020, there were 20 bumble bees
+        on it all at once. Towards the end of the summer, the milkweed bugs discovered this plant and sucked lots of juice out of it 
+        but it still produced plenty of healthy seeds. 
+      </div>
+      <div>
+        <img class="lefty" loading="lazy" src="pictures/Home4.jpg" alt="Hummingbird on Beebalm">
+        This year I've started a row of native flowers along the road that gets some sun and some partial sun.
+        The phlox got quickly eaten every time I tried planting it, as well as all of the Black-eyed Susan, that was planted last year and was attempting to come back. 
+        However, the newly planted Bee Balm got visited by a beautiful humming bird.
+      </div>
+      <div class="archive">
+        <img class="righty" loading="lazy" src="pictures/Home3.jpg" alt="Bee on Tickseed">
+        Bumble bees have got to be the most common visitors in my garden. Here is one on a Tickseed. 
+      </div>
+      <div class="archive">
+        <img class="lefty" loading="lazy" src="pictures/Home2.jpg" alt="Swallowtail on Marigolds">  
+        Though Marigolds are not native to North Carolina, they are beneficial for the soil and are liked 
+        by bumblebees, moths, and some butterflies, especially when mixed with other insect favorites. 
+        On the picture to the left, a swallowtail butterfly is visiting the African Marigold planted with 
+        Dwarf Zinnias and Black-Eyed Susan (late summer 2019). Rabbits are fond of the Black-Eyed Susan's leafs and young shoots. 
+        The long-eared ones also eat the Marigold sprouts, although they are supposed to be repelled by them.
+        Sprouts of many other plants, like zinnias, sunflowers, cucumbers, are really liked by rabbits of course. 
+        At the top of bunnies' favorites, in my opinion, are pansies and phlox with latter especially loved. 
+        I've been able to keep mine growing by consistently reapplying a repellent, the "Plantskydd" worked well for me so far. 
+        It doesn't smell horribly, like some do, however somehow it's keeping the phlox and other plants safe from being consumed.
+        I had to reapply it a lot this year, due to abundance of rabbits.
+      </div>
+      <div class="archive">
+        <img class="righty" loading="lazy" src="pictures/Home1.jpg" alt="Goldfinch on Rudbeckia">
+          This photo is of a Goldfinch on a Black-Eyed Susan (Summer 2019). <br>
+          I believe these beautiful birds are only this bright in the summer, grayish in winter. 
+          They like to pluck all the petals off zinnias, coneflowers, rudbeckia, etc. to check the seed but just plant more and it's a win-win. 
+      </div>
+
+<!--       <button type="submit" onclick="showArchive(event.target)">More</button> -->
+      <button type="submit">More</button>
+      <div class="footer">
+        When researching the plants, I found the following sites to be very informative. Please note, that by providing links to other sites, 
+        this web page does not guarantee their safety nor approve, guarantee or endorse the information or products available on these sites.
+        <ul>
+          <li>
+            <a target="blank" href="http://nc.audubon.org/conservation/bird-friendly-communities/bird-friendly-native-plants/native-plant-profiles">NC Audubon</a>
+            or
+            <a target="blank" href="http://www.audubon.org/">Audubon</a>
+          </li>
+          <li>
+            <a target="blank" href="https://www.ncwildflower.org/native_plants/recommendations">NC Native Plant Society</a>
+            or
+            <a target="blank" href="https://www.wildflower.org">Lady Bird Johnson Wildflower Center</a>
+          </li>
+          <li>
+            <a target="blank" href="https://www.ces.ncsu.edu/">NC State Extension</a>
+            or
+            <a target="blank" href="https://plants.ces.ncsu.edu/plants/category/all/">Plant Selection at NC State Extension</a>
+          </li>
+          <li>
+            <a target="blank" href="https://ncbg.unc.edu">NC Botanical Garden</a>
+          </li>
+          <li>
+            <a target="blank" href="http://www.gardening-for-wildlife.com/">Gardening For Wildlife</a>
+          </li>
+          <li>
+            <a target="blank" href="http://www.missouribotanicalgarden.org/gardens-gardening.aspx/">Missouri Botanical Garden</a>
+          </li>
+          <li>
+            <a target="blank" href="https://davesgarden.com/">Dave's Garden</a>
+          </li>
+          <li>
+            <a target="blank" href="https://www.clemson.edu/extension/">Clemson Cooperative Extension</a>
+          </li>
+          <li>
+            <a target="blank" href="https://uswildflowers.com/">US Wildflowers</a>
+          </li>
+          <li>
+            <a target="blank" href="https://en.wikipedia.org/wiki/Main_Page">Wikipedia</a>
+          </li>
+          <li>
+            <a target="blank" href="https://ncmns.wordpress.com">NC Museum of Natural Science Blog</a>
+          </li>
+          <li>
+            <a target="blank" href="https://www.prairiemoon.com/">Prairie Moon Nursery</a>
+          </li>
+          <li>
+            <a target="blank" href="https://www.illinoiswildflowers.info/">Illinois Wildflowers</a>
+          </li>
+          <li>
+            <a target="blank" href="www.americanmeadows.com">American Meadows</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </body>
+  <script src="js/hmCode.js"></script>
+</html>

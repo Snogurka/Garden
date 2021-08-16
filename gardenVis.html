@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<!--   v.7.4.1  -->
+  <head>
+    <title>Garden - Visual</title>
+    <meta name="description" content="Information about plants mostly local to eastern USA">
+    <meta name="keywords" content="garden, gardening, design, local, plants">
+    <meta name="author" content="Anna Stafford">
+    <meta charset="utf-8"/>
+<!--     Research setting , maximum-scale=1.0"> below; it prevents users from resizing the document per w3.org -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--     The following meta tag has been removed from HTML 5; in HTML 4 it was needed for event handlers -->
+<!--     <meta http-equiv="Content-Script-Type" content="text/javascript"> -->    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--     To use font awesome 5, download their library or create and account and update the code referenced below -->
+<!--     <script src="https://kit.fontawesome.com/a076d05399.js"></script> -->
+    <script src="js/visCode.js"></script>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/visual.css">
+  </head>
+  <body onkeyup='tapClickKey(event)'>
+    <div class="navbar">
+      <button id="btnView" onclick="settingsMenu(event.target)">
+        <i title="Settings" class="fa fa-fw fa-cog"></i>
+      </button>
+      <h1>Garden Design</h1>
+<!--       <a href="gardenEdi.html"><i title="Food" class="fa fa-fw fa-cutlery"></i></a> -->
+      <a id="active" href="gardenVis.html"><i title="Design" class="fa fa-fw fa-tree"></i></a>
+      <a href="gardenDb.html"><i title="Data" class="fa fa-fw fa-table"></i></a>
+      <a href="index.html"><i title="Home" class="fa fa-fw fa-home"></i></a>
+  <!--     the language version button below is currently hidden -->
+  <!--       <a href="gardenRu.html" id="btnRu">Ru</a> -->
+    </div>
+      <svg id="svgArea" xmlns="http://www.w3.org/2000/svg"  xmlns:xlink="http://www.w3.org/1999/xlink"
+           onmousedown="touchDown(evt)" 
+           onmousemove="dragging(evt)" 
+           onmouseup="touchUp(evt)"
+           onmouseleave="touchUp(evt)"
+           ondblclick="dblTouch(evt)"
+           ontouchstart="touchDown(evt)"
+           ontouchmove="dragging(evt)" 
+           ontouchend="touchUp(evt)" 
+           ontouchleave="touchUp(evt)" 
+           ontouchcancel="touchUp(evt)"
+           onfocusout="focusOut(evt.target)"
+           >
+        <defs>
+<!--           <linearGradient id="sunSoilGrad" x1="50%" y1="0" x2="50%" y2="100%">
+            <stop class="stop1" offset="0%"/>
+            <stop class="stop2" offset="50%"/>
+            <stop class="stop3" offset="90%"/>
+            <stop class="stop4" offset="97%"/>
+          </linearGradient> -->
+        </defs>
+        <title>Double click to add or remove a plant or a garden</title>
+        Sorry, your browser does not support inline SVG.
+    </svg>
+    <button onclick="goUp()" id="btnUp" title="To the Top">Home</button>
+    <script>
+      window.onload = myMain();
+    </script>
+  </body>
+</html>
