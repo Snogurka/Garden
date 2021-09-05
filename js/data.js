@@ -1,8 +1,4 @@
-/********** v.7.4.4 **********/
-/*
-TODO:
-*/
-
+/********** v8 **********/
 /* #################
    ### IMPORTANT ###
    #################
@@ -40,16 +36,16 @@ function main() {
 // call other functions to check local storage for user added plants; 
 // check session storage for filtered plants and hidden columns;
 function putDataInTable(json) {
-  let objNotes = null,
-  objAction = null,
-  objInGarden = null;
-  let myObj = json;
+  var objNotes = null;
+  let objAction = null,
+      objLocation = null,
+      myObj = json;
 
   //start the text string to contain the body of the html table
   let txt = "<tbody>";
-  //l = number of columns
+  //l = number of columns minus 1 (latin name, which is a key)
   let l = myObj[Object.keys(myObj)[0]].length;
-  //k = Latin Name, the name of the key column in headers (first) JSON object entry 
+  //k = Latin Name, the name of the key column in headers (first) JSON object entry
   let k = Object.keys(myObj)[0];
 
   //***** build the HEADERS row
@@ -138,17 +134,17 @@ function putDataInTable(json) {
     //name column
     if (i === 0) {
       //"filterCell" is a filter cell for the name column only
-      txt += "<td class='filterCell'> " + 
-        "<input autocorrect='off' type='text' class='filterInput' placeholder='filter by ...'> " + 
+      txt += `<td class='filterCell'>` + 
+        `<input autocorrect='off' type='text' class='filterInput' placeholder='filter by ...' tabindex='${i+1}'>` + 
         `<i class='btnHelper btnInner btnLeft fa fa-fw fa-filter' title='Filter by ${myObj[k][0].replace("&nbsp"," ")}'></i></td>`;
     }
-    //don't need the filtering button for the last column (picture)
+    //don't need the filtering button for the last column (picture) - todo: change background color from blue to a lighter one
     else if (i === (l)) {
       txt += "<td class='filterRow'></td>";
     }
     //all other columns
     else {
-      txt += "<td class='filterRow'><input type='text' class='filterInput'> ";
+      txt += `<td class='filterRow'><input type='text' class='filterInput' tabindex=${i+1}> `;
       //latin name is key, thus the col title has to be pulled from iterator
       if (i === 1) {
         txt +=  `<i class='btnHelper btnInner btnLeft fa fa-fw fa-filter' title='Filter by ${k.replace("&nbsp"," ")}'></i></td>`;
@@ -164,8 +160,7 @@ function putDataInTable(json) {
   delete myObj[k];
 
   //***** build the REST OF THE TABLE
-  //loop through every row object of data returned from JSON as myObj
-  //in the myObj, latin name(x) is the key, name is ind 0, note is 1, etc.
+  //loop through every row object of data returned from JSON as myObj, where Latin Name(x) is the key, Name is ind 0, Notes is 1, etc.
   for (let x in myObj) {
 
     //add data row <tr> and place a <td> with NAME in it; 
@@ -177,16 +172,16 @@ function putDataInTable(json) {
         objNotes = JSON.parse(localStorage.aas_myGardenDb_Notes);
       } 
       catch (error) {
-        //no Notes in local storage, no problem
+        //no Notes, Action, or Location recorded in local storage, no problem
       }
        try {
-        objAction = JSON.parse(localStorage.aas_myGardenDb_Action); //if stored data is corrupted
+        objAction = JSON.parse(localStorage.aas_myGardenDb_Action); 
       }
       catch (error) {
         //no Action in local storage, no problem
       }
       try {
-        objInGarden = JSON.parse(localStorage.aas_myGardenDb_InGarden);
+        objLocation = JSON.parse(localStorage.aas_myGardenDb_GardenLocation);
       }
       catch (error) {
         //no In Garden in local storage, no problem
@@ -203,16 +198,28 @@ function putDataInTable(json) {
           unqLatinNames.push(x.replaceAll("&nbsp","\xa0"));
           break;
         case 1:
-          //store the length of existing notes in notesLen attribute, 
-          //used to capture just the user added notes in local storage
-          txt += "<td class='editableCol notes' notesLen='" + myObj[x][i].length + "'>";
+          txt += `<td class='editableCol notes'>`;
           //objNotes - all Notes in local storage
           if (objNotes) {
-            //if there is an entry in local storage for the plant, use the data from JSON plus the entry 
+            //if there is a notes entry in local storage, compare it to JSON entry..
             if (objNotes[x]) {
-              // txt += myObj[x][i] + " " + objNotes[x];
-              //changed to use entry only, if one has been made by user
-              txt += objNotes[x];
+              //if identical, use the entry from JSON file and clear the entry from local storage
+              if(objNotes[x].trim() === myObj[x][i].trim()) {
+                txt += myObj[x][i];
+                //clear Notes entry from objNotes variable
+                delete objNotes[x];
+                //update Notes in local storage, delete if objNotes is empty
+                if (Object.entries(objNotes).length) {
+                  localStorage.aas_myGardenDb_Notes = objNotes;
+                } 
+                else {
+                  localStorage.removeItem("aas_myGardenDb_Notes");
+                }
+              }
+              else {
+                //else go with user entry only
+                txt += objNotes[x];
+              }
             } 
             //otherwise, use what's in plants.json
             else {
@@ -237,10 +244,10 @@ function putDataInTable(json) {
         //Garden Location, only load user's saved
         case 12:
           txt += "<td class='editableCol location'>";
-          //objInGarden - all In Garden in local storage
-          if (objInGarden) {
-            if (objInGarden[x]) {
-              txt += objInGarden[x];
+          //objLocation - all In Garden in local storage
+          if (objLocation) {
+            if (objLocation[x]) {
+              txt += objLocation[x];
             } else {
               txt += myObj[x][i];
             }
@@ -273,13 +280,12 @@ function putDataInTable(json) {
     }
     txt += "</tr>";
   }
-  //***** if local storage is enabled, 
-  // add NEW PLANT ROW, used for entering new plants
-  // add storage features and retrieve session variables: filered rows and hidden columns
+  //***** if local storage is enabled, add NEW PLANT ROW, used for entering new plants add storage features and retrieve session variables: filered rows and hidden columns
   if (typeof (Storage) !== "undefined") {
-    txt += "<tr id='newPlantRow' contenteditable=true>"//blank cell <td> for the latin name
+    txt += "<tr id='newPlantRow' contenteditable=true>"
     //blank cell for name is special, containing a div/text plus editing buttons
-    txt += "<td class='frozenCol'><div contenteditable=true></div>"
+    //tab index is set to 31 = number of columns (count of values per key + key - picture)
+    txt += `<td class='frozenCol'><div contenteditable=true tabindex='${l+1}'></div>`
 
     txt += "<i id='btnNewPlantCopy' class='btnHelper btnInner btnLeft fa fa-fw fa-filter' title='Show plant names'></i>"
 
@@ -292,7 +298,7 @@ function putDataInTable(json) {
     txt += "</td>";
     //remaining blank cells for all columns other than the name (above) and picture (below)
     for (let i = 1; i < l; i++) {
-      txt += "<td></td>";
+      txt += `<td tabindex='${l+i+1}'></td>`;
     }
     //blank cell for the picture cell
     txt += "<td title='The upload image functionality is not yet available'>image</td></tr>"
@@ -723,63 +729,74 @@ function addInnerButton(type) {
 //////////////////////////////////////////////////////////////////////
 //this function is triggered on key up within the body of the table
 //it adds buttons to the name of a plant whose notes, action or in garden fields are being modified
-function addBtnUsrChgs(clickedCell) {
-//     console.log(`text: ${clickedCell.innerText}, e.type: ${event.type}, key: ${event.key}, code: ${event.keyCode}`);
-  // exit, if the user is editing a plant that they've added, text
-  // hasn't been entered yet or the cell has just been tabbed into
+function addBtnUsrChgs(clickedCell, e) {
+  // exit, if the user is editing a plant that they've added..
   if (clickedCell.parentElement.className === "addedRows" 
       || clickedCell.parentElement.id === "newPlantRow"
-      //when data is pasted, the cell is blank on key up
-      || !(clickedCell.innerText) && event.type != "paste" //&& event.keyCode != 91 
-      || [9,16,37,38,39,40].includes(event.keyCode)  //tab,shift,left,up,right,down
-//       || event.keyCode === 91 && clickedCell.innerText
+      //..or there is not text and this wasn't a paste (note: cell is blank when the data is just pasted)
+      || !(clickedCell.innerText) && e.type != "paste"  
+      //or a tab, shift, left, up, right, down or window tab keys is pressed
+      || [9, 16, 37, 38, 39, 40, 91].includes(e.keyCode) 
+      //or a backspace(8), enter, or space is pressed and there is no text yet
+      || [13, 32].includes(e.keyCode) && !(clickedCell.innerText.trim().length)
      ) {
     return; 
-  }
-  
-  //if there aren't any children (buttons) in the name column, create a button for saving user changes and include the index number of the updated column in the button's value
-  if (clickedCell.parentElement.children[0].childElementCount === 0) {
-    let btn = addInnerButton('u');
+  };
+
+  //if the text in the cell is a space(30) or a return(10), remove it by replacing with empty quotes
+  if ([10,30].includes(clickedCell.innerText.charCodeAt()) || isNaN(clickedCell.innerText.charCodeAt())) {
+    clickedCell.innerText = "";
+  };
+
+  let colName = arrHeaders[clickedCell.cellIndex].replace(/\s/g,"");
+  //***for special treatment of Notes***
+  //for Notes field, capture the original text in a origNotes attribute; that way when the user makes changes, only the changes are captured in local storage
+  // if (colName === "Notes") {
+  //   if (!clickedCell.attributes.origNotes) {
+  //     clickedCell.attributes.origNotes = clickedCell.innerText;
+  //   }
+  // }
+
+  //retrieve an entry stored in local storage for this plant and field
+  let strStoredText = JSON.parse(localStorage.getItem("aas_myGardenDb_" + colName));
+  //compare user entered text to the text in local storage: 
+  // if no stored text and no text in the cell 
+  // or stored text and typed text is the same as stored 
+  let sameText = !strStoredText && !clickedCell.innerText.trim().length 
+  || strStoredText && clickedCell.innerText.trim() === strStoredText[clickedCell.parentElement.children[1].innerText];
+  //***for special treatment of Notes***
+  // or no stored text and origNotes attribute has been created and the remaining text is blank
+  // or origNotes attribute has been created and the remaining text is the same as stored
+  // || !strStoredText && !clickedCell.innerText.slice(clickedCell.attributes.origNotes.length).trim().length 
+  // || strStoredText && clickedCell.innerText.slice(clickedCell.attributes.origNotes.length).trim() === strStoredText[clickedCell.parentElement.children[1].innerText];
+
+  //the update button is the first child of the first column (name, index 0)
+  let btn = clickedCell.parentElement.children[0].children[0];
+
+  //if there aren't any children (buttons) in the name column
+    if (!btn) {
+    //exit, if the user entry matches local storage
+    if(sameText) {
+      return;
+    };
+    // create a button for saving user changes and include the index number of the updated column in the button's value
+    btn = addInnerButton('u');
     btn.value = clickedCell.cellIndex.toString();
     clickedCell.parentElement.children[0].appendChild(btn);
   }
-  //... if there is already a button in the name column, then, if not already included, update the button's value to include the index number of the updated column or remove the button if the user has deleted or undone all the changes they were typing
+  //... if there is already a button in the name column, then update the button's value to include the index number of the modified column or remove the index if the user has deleted or undone all the changes they were typing
   else {
-    //the button is in the first column (name, index 0)
-    let btn = clickedCell.parentElement.children[0].children[0];
     //the index numbers of modified columns are stored in button's value
     let arrModifiedCols = btn.value.split(",");
     //if the index of modified column isn't already in the button's value, add it
     if (!arrModifiedCols.includes(clickedCell.cellIndex.toString())) {
       arrModifiedCols.push(clickedCell.cellIndex);
     } 
-    //otherwise, if the index of modified column is already in the button's value..
-    else {
-      //if the remaining text in the cell is a space or a return, replace it with empty quotes
-      if ([10,30].includes(clickedCell.innerText.charCodeAt()) || isNaN(clickedCell.innerText.charCodeAt())) {
-        clickedCell.innerText = "";
-      }
-      //..compare user modified text to local storage, ..
-      let strStoredText = localStorage.getItem("aas_myGardenDb_" + 
-                          table.getElementsByTagName("TH")[clickedCell.cellIndex].innerText.replace(/\s/g,""));
-      if (strStoredText) {
-        //..if identical or no stored text and the changes are deleted..
-        if (clickedCell.innerText === 
-            JSON.parse(strStoredText)[clickedCell.parentElement.children[1].innerText]
-           || clickedCell.innerText.length === 0 && 
-           !(JSON.parse(strStoredText)[clickedCell.parentElement.children[1].innerText])
-           ) {
-          //remove the index of modified column from button's value
-          arrModifiedCols.pop(clickedCell.cellIndex);
-        } 
-      }
-      //no stored text for that entire category and the changes are deleted..
-      else if (clickedCell.innerText.length === 0) {
-        arrModifiedCols.pop(clickedCell.cellIndex);
-      }
+    // else, if the index is already in button's value but the text changes have been undone, remove
+    else if (sameText) {
+      arrModifiedCols.pop(clickedCell.cellIndex);
     }
     //remove the button if all the indices have been removed from button's value; 
-    //the button's value is captured and worked with in the array arrModifiedCols
     if (arrModifiedCols.length === 0) {
       btn.parentElement.removeChild(btn);
     } 
@@ -792,10 +809,10 @@ function addBtnUsrChgs(clickedCell) {
 
 //////////////////////////////////////////////////////////////////////
 //this function is called when a user clicks on save changes button 
-//within a plant with modified notes, action, or garden location fields
-//it loads the modifications into local storage
+//for a plant with modified notes, action, or garden location fields
+//it loads the changes into local storage
 function updateExistingPlant(btn) {
-  //record which column(s) were modified. if more than one, the value will have the index numbers separated by commas
+  //record which column(s) were modified; if more than one, the value will have the index numbers separated by commas
   let modifiedFields = btn.value.indexOf(",");
   if (modifiedFields > -1) {
     modifiedFields = btn.value.split(",");
@@ -812,6 +829,7 @@ function updateExistingPlant(btn) {
     if (localStorage.getItem("aas_myGardenDb_" + colName)) {
       parsedStoredData = JSON.parse(localStorage.getItem("aas_myGardenDb_" + colName));
     }
+    //
     let modifiedText = btn.parentElement.parentElement.children[Number(modifiedFields[i])].innerText;
     //if the user cleared the notes, action, etc., delete that entry from local storage
     if (modifiedText.length === 0 || modifiedText === "\n" || modifiedText === "/u21B5") {
@@ -819,11 +837,7 @@ function updateExistingPlant(btn) {
     }
     //otherwise, update/create entry with notes, action, or location
     else {
-      let newNotePos = 0;
-      // if (colName === "Notes") {
-      //   newNotePos=btn.parentElement.parentElement.children[Number(modifiedFields[i])].attributes.notesLen.value;
-      // }
-      parsedStoredData[btn.parentElement.parentElement.children[1].innerText] = modifiedText.slice(newNotePos);
+      parsedStoredData[btn.parentElement.parentElement.children[1].innerText] = modifiedText.trim();
     }
     //if notes, action, location entries has been deleted for all plants 
     if (Object.entries(parsedStoredData).length === 0) {
@@ -973,11 +987,10 @@ function filterBySizeRange(evt) {
 }
 
 //////////////////////////////////////////////////////////////////////
-//respomse filtering fields, other than the special min/max range of width/height
+//response for filtering fields, other than the special min/max range of width/height
 function filterByText(evt){
   let clickedElt = evt.target;
-  //if a value is typed in a width or height column, clear the placeholder, 
-  //which might've been populated before, from using range feature
+  //if a value is typed in a width or height column, clear the placeholder, which might've been populated before, from using range feature
   if (['Width', 'Height'].includes(arrHeaders[clickedElt.parentElement.cellIndex])) {
     clickedElt.placeholder = "";
   }
@@ -989,7 +1002,6 @@ function filterByText(evt){
 
   //create/overwrite an entry in filters object with text typed or pasted    
   filters[clickedElt.parentElement.cellIndex] = (clickedElt.value || ((evt.clipboardData || window.clipboardData).getData("text"))).toUpperCase();
-
 
   //filter the table data; the called function uses filters object, so it must be updated first (above)
   filterData();
@@ -1050,17 +1062,16 @@ function clearFilter(clickedElt) {
 function filterData() {
 
   let tr =  table.rows; //4.12.21 replaced table.getElementsByTagName("tr");
-  // loop through all the rows, starting at 3rd row, skipping the headers and filter rows
+  // loop through all the rows, starting at 3rd row to skip headers and filter rows
   for (let i = 2, len = tr.length - 1; i < len; i++) {
     // set the showFlag to true, meaning every row is shown initially
     let showFlag = true;
     // loop through the filters object to check all fields where filtering criteria are set
     for (let key in filters) {
       // i is the row, td is the cell, ("td")[key] is column index, key is the column number
-      let td = tr[i].children[key]; //was: getElementsByTagName("td")[key]
+      let td = tr[i].children[key];
       let cellContents = null;
-      // because of the frozenCol class, the  name column's value of the user added plants
-      // is inside an input field (child 0), thus has to be accessed through a child's value
+      // because of the frozenCol class, the value of column name for the user added plants is inside an input field (child 0), thus has to be accessed through a child's value
       if (key === "1" && td.children.length > 0) {
         cellContents = td.children[0].value.toUpperCase();
       } else {
@@ -1105,10 +1116,11 @@ function filterData() {
         }
       }
 
-      //cick on fitler(leaf) drop down choices, one or more
+      //cick on fitler drop down choices, one or more
       if (Array.isArray(filters[key])) {
         let inFlag = false;
         for (let i = 0, len = filters[key].length; i < len; i++ ){
+          //if cell contents match filtered-in choice
           if (cellContents.includes(filters[key][i])) {
             inFlag = true;
             break;
@@ -1117,7 +1129,7 @@ function filterData() {
         if (!inFlag) showFlag=false;
       }
 
-      //an entry is typed in filter field
+      //an entry is typed in the filter field
       if (typeof filters[key] === "string") {
         if (!cellContents.includes(filters[key])) {
           showFlag = false;
@@ -1152,6 +1164,7 @@ function getUnqVals(forCell) {
     for (let i = 0; i < 2; i++) {
       let liText = document.createElement("li");
       let liInput = document.createElement("input");
+      // liInput.type = "number";
       //there are only two LIs, min and max
       if (i === 0) {
         liText.appendChild(document.createTextNode("Min''\xa0\xa0\xa0\xa0\xa0"));
@@ -1162,7 +1175,8 @@ function getUnqVals(forCell) {
         liInput.setAttribute("class", "inputRangeMax");
         filters[forCell.cellIndex] ? liInput.value = filters[forCell.cellIndex]["<"] : false;
       }
-      liInput.setAttribute("type", "text");
+      liInput.setAttribute("type", "number");
+      liInput.setAttribute("min", "0");
       liText.appendChild(liInput);
       dropList.append(liText);
     }
@@ -1206,10 +1220,10 @@ function getUnqVals(forCell) {
                            "Origin"].includes(colName)?
             tr[i].children[forCell.cellIndex].innerText.split(/, | \bor\b/):
         [tr[i].children[forCell.cellIndex].innerText];
-        
-        arrCellVals.map(x=>x.replace(/near |along |;/g, "")).forEach(x=> {
-            //only add the value if it's not already in the array, is not
-            //empty and not filtered out using columns other than clicked 
+        //can't replace anything in the string, because otherwise it won't match the clicked filter value
+        // arrCellVals.map(x=>x.replace(/near |along |;/g, ""))
+        arrCellVals.forEach(x=> {
+            //only add the value if it's not already in the array, is not empty and not filtered out using columns other than clicked 
             if (rUnqVals.indexOf(x) === -1 && x.length > 0) {
               rUnqVals.push(x);
             }
@@ -1441,12 +1455,9 @@ function allClicks(e) {
   let tgt = e.target;
   tgt.className==="btnImg"?tgt=tgt.parentElement:tgt;
   
-  // e.preventDefault();
-  // e.stopPropagation();
-
   //make cells editable when user double cicks on editable cell, those within notes, action, garden location
     if (e.type === "dblclick") {
-      // this if block clears selected text that always happens on double click
+      // the following 'if block' clears selected text that always happens on double click
       if(document.selection && document.selection.empty) {
         document.selection.empty();
       } else if(window.getSelection) {
@@ -1469,12 +1480,39 @@ function allClicks(e) {
     }
   }
 
+ function pictureScroll(direction) {
+    let increment = direction==="forward" ? 1 : -1;
+    let arrowChildNum = direction==="forward" ? 1 : 2;
+
+    try {
+      let str = tgt.parentElement.children[0].src;
+      //increase the picture file name number by one 
+      tgt.parentElement.children[0].src = 
+      str.replace(
+        str.match(/\d+.jpg/),
+        parseInt(str.match(/\d+.jpg/))+ increment +'.jpg');
+
+      //show the previous picture (left) button
+      tgt.parentElement.children[arrowChildNum].style.display = "block";
+
+      //if it's the first or last(max) file name number, hide the previous/next picutre button
+      if (parseInt(tgt.parentElement.children[0].src.match(/\d+.jpg/)) === 1){
+        tgt.style.display = "none";
+      }
+      if (parseInt(tgt.parentElement.children[0].src.match(/\d+.jpg/))
+          === Number(tgt.parentElement.children[0].attributes.value.value)){
+        tgt.style.display = "none";
+      }
+    }
+    catch (error) {
+      console.log("Error:"+error+". Unable to load next picture or other issues in response to the image gallery button click.")
+    }
+  }
+
   //-- key entries -------------------------------------------------
   if (e.type === "keyup") {
-    //exit the function if the key clicked is a tab (9) or changing window tabs (91)
-    //and this is not a ctrl(cmd)+delete(backspace) click(91) in the editable fields
-    if ((e.keyCode === 91 && !["filterInput","inputRangeMin","inputRangeMax"].includes(tgt.className)
-        && !tgt.contentEditable) 
+    //exit the function if the key clicked is a tab (9) or changing window tabs (91) and this is not a ctrl(cmd)+delete(backspace) click(91) in the editable fields
+    if ((e.keyCode === 91 && !["filterInput","inputRangeMin","inputRangeMax"].includes(tgt.className) && !tgt.contentEditable) 
        || e.keyCode === 9) {
       return;
     }
@@ -1509,9 +1547,9 @@ function allClicks(e) {
 //       tgt.parentElement.parentElement.querySelector("#btnNewPlantSubmit").style.display = "block";
     }
     
-    //if changes are made to Notes, Action, or In Garden columns
-    else if (["Notes", "Action", "In\xa0Garden"].includes(arrHeaders[tgt.cellIndex])) {
-      addBtnUsrChgs(tgt);
+    //if changes are made to Notes, Action, or Garden Location columns
+    else if (["Notes", "Action", "Garden\xa0Location"].includes(arrHeaders[tgt.cellIndex])) {
+      addBtnUsrChgs(tgt, e);
     }
     
     //keyup in import window
@@ -1524,6 +1562,21 @@ function allClicks(e) {
       }
       else {
         tgt.parentElement.children[2].style.display = "none";
+      }
+    }
+    
+    else if (document.getElementById("picGal").style.display === "block") {
+      let picGal = document.getElementById("picGal");
+      // ["Right", "Down"].includes(e.keyIdentifier)  and  ["Left", "Up"].includes(e.keyIdentifier) //instead of keycode?
+
+      if ([39,40].includes(e.keyCode) && picGal.children[2].style.display === "block") {
+        tgt = picGal.children[2];
+        pictureScroll("forward");
+      }
+      
+      else if ([37,38].includes(e.keyCode) && picGal.children[1].style.display === "block") {
+        tgt = picGal.children[1];
+        pictureScroll("previous");
       }
     }
     
@@ -1551,7 +1604,7 @@ function allClicks(e) {
     }
     //if data is pasted into editable Notes, Action, or In Garden columns (not filter)
     else if (["Notes", "Action", "In\xa0Garden"].includes(arrHeaders[tgt.cellIndex])) {
-      addBtnUsrChgs(tgt);
+      addBtnUsrChgs(tgt, e);
     }
     //if data is pasted into import window
     else if (tgt.classList.contains("imp") && tgt.tagName === "TEXTAREA") {
@@ -1590,7 +1643,7 @@ function allClicks(e) {
     }
     //if changes are made to Notes, Action, or In Garden columns
     else if (["Notes", "Action", "In\xa0Garden"].includes(arrHeaders[tgt.cellIndex])) {
-      addBtnUsrChgs(tgt);
+      addBtnUsrChgs(tgt, e);
     }
     else return;
   }
@@ -1860,39 +1913,12 @@ function allClicks(e) {
     
     //if a next picture (right button) of picture gallery is clicked
     else if (tgt.className === "btnRight" && tgt.parentElement.id === "picGal") {
-      try {
-        let str = tgt.parentElement.children[0].src;
-        //increase the picture file name number by one 
-        tgt.parentElement.children[0].src = str.replace(str.match(/\d+/),Number(str.match(/\d+/))+1);
-        //show the previous picture (left) button
-        tgt.parentElement.children[1].style.display = "block";
-        //if it's the max file name number, hide the next picutre button
-        if (Number(tgt.parentElement.children[0].src.match(/\d+/))
-            === Number(tgt.parentElement.children[0].attributes.value.value)){
-          tgt.style.display = "none";
-        }
-      }
-      catch (error) {
-        console.log("Error:"+error+". Unable to load next picture or other issues in response to the image gallery right button click.")
-      }
+      pictureScroll("forward");
     }
     
     //if a previous picture (left button) of picture gallery is clicked
     else if (tgt.className === "btnLeft" && tgt.parentElement.id === "picGal") {
-      try {
-        let str = tgt.parentElement.children[0].src;
-        //increase the picture file name number by one 
-        tgt.parentElement.children[0].src = str.replace(str.match(/\d+/),Number(str.match(/\d+/))-1);
-        //show the next picture (right) button
-        tgt.parentElement.children[2].style.display = "block";
-        //if the file name number is 1, it's the first photo, thus hide the previous picutre button
-        if (Number(tgt.parentElement.children[0].src.match(/\d+/)) === 1){
-          tgt.style.display = "none";
-        }
-      }
-      catch (error) {
-        console.log("Error:"+error+". Unable to load previous picture or other issues in response to the image gallery left button click.")
-      }
+      pictureScroll("previous");
     }
     //-- all other clicks -------------------------------------------------
     else {

@@ -1,6 +1,5 @@
 /********** v.8.0.0 **********/
 /* this css file contains styles shared by all garden pages
-
    units:
    1in = 72pt
    1in = 96px
@@ -12,6 +11,10 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+}
+
+html {
+  padding: env(safe-area-inset);
 }
 
 /* Current navbar link, i.e. selected page */
@@ -28,10 +31,6 @@ body {
   height: 100vh;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  background-image: linear-gradient(#99ccff, #e6faff);
-  background-image: -webkit-linear-gradient(#99ccff, #e6faff);
-  background-image: -moz-linear-gradient(#99ccff, #e6faff);
-  background-image: -o-linear-gradient(#99ccff, #e6faff);
 }
 
 /* closing button on the initial hint text for home and design */
@@ -43,8 +42,8 @@ body {
 
 .btnHelper {
   border:   none;
-  width:    3em;
-  height:   3em;
+  width:    2em;
+  height:   2em;
 }
 
 /* UP AND DOWN SPEEDY BUTTONS */
@@ -80,9 +79,16 @@ body {
 }
 
 article li {
-  list-style-image: url("/pictures/bltCog2.png");
+  list-style-image: url("../pictures/bltCog2.png");
   list-style-position: outside;
   margin: 0.5em 0 0.5em 2em;
+}
+
+article li:before {    
+  font-family: 'FontAwesome';
+  content: '\f863';
+  margin: 0 0.1em;
+  /* color: #f00; */
 }
 
 /* general settings for all buttons */
@@ -96,11 +102,6 @@ button {
   max-width: 7em;
 }
 
-/* drop down choices */
-/* .customChoice {
-  list-style: none;
-  margin-left: 0.5em;
-} */
 .customChoice:hover {
   color: #999999;
   cursor: pointer;
@@ -158,21 +159,6 @@ h1 {
   100%  {background-color: #004d00;}  
 }
 
-/* todo: try to get this to work */
-/* :root {
-  --anim-colors: {
-    0%  {background-color: #004d00;}
-    25%  {background-color: #99cc00;}
-    30%  {background-color: orange;}
-    35%  {background-color: #990000;}
-    41%  {background-color: #804000;}  
-    50%  {background-color: #e0e0d1;}  
-    60%  {background-color: #b3e6ff;}  
-    75%  {background-color: #004d00;}  
-   100%  {background-color: #004d00;} 
-  }
-} */
-
 /* nav bar has a changing background (coloranima) */
 .navbar {
   position: fixed;
@@ -190,14 +176,6 @@ h1 {
   background-color: #004d00;
   /* z-index 4 puts nav bar behind view buttons and in front of everything else.*/
   z-index: 4;
-}
-
-@media only screen and (min-width: 768px) {
-  h1 {
-    font-size: 1.5em;
-    margin-top: 0.1em;
-  }
-
 }
 
 /* links in nav bar */
@@ -256,5 +234,17 @@ h1 {
    (600 for small devices; 400 for phones; 
     768 - medium, 992 - large, 1200 - extra large)
 */
-
+@media only screen and (min-width: 768px) {
+  h1 {
+    font-size: 1.5em;
+    margin-top: 0.1em;
+  }
+  .btnHelper {
+    width: 2em;
+    height: 2em;
+  }
+  .btnDn, .btnUp {
+    width: 3em;
+  }
+}
 /*************************************************************************************/

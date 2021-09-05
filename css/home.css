@@ -18,6 +18,13 @@ article img {
   height: auto;
 }
 
+body {
+  background-image: linear-gradient(#99ccff, #e6faff);
+  background-image: -webkit-linear-gradient(#99ccff, #e6faff);
+  background-image: -moz-linear-gradient(#99ccff, #e6faff);
+  background-image: -o-linear-gradient(#99ccff, #e6faff);
+}
+
 body, main i {
   color: rgb(61, 61, 61);
 }
@@ -27,6 +34,22 @@ body, main i {
   padding: 0.5em;
 }
 
+.callToAction {
+  border-radius: 7px;
+  border-top-left-radius: 1px;
+  box-shadow: -7px -7px 12px inset #004d00;
+  padding: 0 0.2em;
+  text-decoration: none;
+  color: #ffffcc;
+  
+  -webkit-animation-name: coloranima;
+  -webkit-animation-duration: 150s;
+  -webkit-animation-iteration-count: infinite;
+  animation-name: coloranima;
+  animation-duration: 150s;
+  animation-iteration-count: infinite;
+}
+
 canvas {
   position: fixed;
 }
@@ -34,6 +57,7 @@ canvas {
 .date {
   float: right;
   font-style: italic;
+  font-family: cursive;
   margin-left: auto;
   margin-right: 0.5em;
 }
@@ -43,8 +67,12 @@ h2 {
   margin: 0.5em 0;
 }
 
+h2 > button {
+  margin-top: 1.8em;
+}
+
 h3 {
-  margin-top: 1em;
+  margin-top: 0.5em;
   font-weight: initial;
 }
 

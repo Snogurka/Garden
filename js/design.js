@@ -1,51 +1,18 @@
-/********** v.7.4.2 **********/
-
-/*  changes:
-
-  *** DONE ***
-  
-  
-  *** ToDo ***  
-  
-  - change the trigger of delete to an x-button, instead of double click  
-  
-  - add photo gallery functionality (share with db and home)
-
-  - keep working on filters: shade should not be picked up in part-shade, etc.
-  
-  - add color all plant names, using the first color available, dark green for default
-  - add season simulation: pick a month -> color what's in bloom
-
-- add alphabet or plant type to the right of add p/g menu for speed (same on db?)
-  - switching between inches and cm needs more for to handle plants
-  - add multicolor flowering support, maybe using gradients 
-
-  - maybe change the delete to be triggered by a trashcan button, next to size for the plant and in settings for the garden instead of double click
-  toolbox:
-    - round vs rect garden shape?
-    - garden zooming in/out
-    
-  - delete confirm using common name, not Latin 
-  - gardens could be small pretty pictures of themselves and on click, zoom in to see what’s planted;  
-  - maybe tap to bring up tools, double tap to zoom, delete is an option in toolbox? 
-  - if double tap to zoom, then maybe tap & hold for adding new plant/garden & lines like in digging with choices
-*/
-
-
-/**********************************************************************************
+/********** v.8 **********/
+/*************************
    Important: 
    Ids are created for each plant's and garden's groups and are prefixed 
    with p_ for plants, with g_ for gardens;
 */
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////
+////////////////////////////
 var xmlns = "http://www.w3.org/2000/svg";
 var svgPlace = null;
 var size = 6; //the size of the svg view and port, now only used for the size of the garden rect
 //sizing ratio is set to 1" = 10px (1' = 120px)
-////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////
 //      moving and resizing
-////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////
 var clickedGroup = null;
 var coord = null; //coordinate of touch/click adjusted by CTM
 var offset = null; //coord adjusted by transform/translate
@@ -54,8 +21,8 @@ var resize = false;
 var moving = false;
 var clickPos = {}; //stores cursor location upon first click
 var mobile = false;   //on the mobile devices, both touch and mouse up and down come through, thus ignore mouse on mobile
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////
+////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 //this function is called on window load and loads existing garden design from user's local storage
@@ -739,8 +706,8 @@ function getPlantInfo(clkdElt, displayVal){
         //convert colors to camel case, for when composed of more than one word
         //the text shows normal color name, with spaces, while desc holds camelCased color name
         clkdElt.parentElement.appendChild(makeText(
-          {x:Number(clkdElt.getAttributeNS(null, "x")),
-           y:Number(clkdElt.getAttributeNS(null, "y"))+munit*offset*1.5,
+          {x:Number(clkdElt.getAttributeNS(null, "x")) + munit * clkdElt.innerHTML.length,
+           y:Number(clkdElt.getAttributeNS(null, "y")) + munit * offset * 1.5,
            cls:"fauxLi",
            clr:convertColors(plantColors[i]),
            txt:plantColors[i],
@@ -761,10 +728,10 @@ function getPlantInfo(clkdElt, displayVal){
           continue;
         }
         let infoLine = makeForeignObj({
-          x:Number(clkdElt.getAttributeNS(null, "x")) + munit * 7,
-          y:Number(clkdElt.getAttributeNS(null, "y")) + offset,
-          w:200,
-          h:70,
+          x:Number(clkdElt.getAttributeNS(null, "x")) - munit * 5,
+          y:Number(clkdElt.getAttributeNS(null, "y")) + offset + munit/2,
+          w:100,
+          h:200,
           cls:"plantInfo", 
           tp:"div",
           txt:plantInfoFields[f] + myObj[clkdElt.getAttributeNS(null, "desc")][f]});
@@ -2090,7 +2057,7 @@ function dblTouch(evt, container) {
     
   if (evt.target.parentElement.id[0] === "p") {
     if (!Number(localStorage.getItem("aas_myGardenVs_warnings"))) {
-      if (!confirm("Would you like to remove " + evt.target.getAttributeNS(null, "desc") + "?")){
+      if (!confirm(`Would you like to remove ${evt.target.innerHTML}?`)){
         return; 
       }    
     }

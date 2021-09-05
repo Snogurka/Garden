@@ -1,12 +1,19 @@
-/********** v7.4.2 **********/
-/********** visual page **********/
+/********** v8 **********/
+/********** visual page styles **********/
 
 /* variables - currently just colors used in the page */
 :root {
 /*   the main color for tool text is gray  */
-  --tool-text-color: rgba(101, 105, 70, 0.75);
+  --tool-text-color: rgba(54, 54, 54, 0.75);
 /*   plant and garden names are in dark green */
   --plant-text-color: darkgreen;
+}
+
+body {
+  background-image: repeating-linear-gradient(135deg, #f7f7e2, #e2ebd9, #e9d8aa);
+  background-image: -webkit-repeating-linear-gradient(135deg, #f7f7e2, #e2ebd9, #e9d8aa);
+  background-image: -moz-repeating-linear-gradient(135deg, #f7f7e2, #e2ebd9, #e9d8aa);
+  background-image: -o-repeating-linear-gradient(135deg, #f7f7e2, #e2ebd9, #e9d8aa);
 }
 
 /* svg place uses a canvas */

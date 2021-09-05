@@ -12,6 +12,10 @@
 /* SCROLL SNAPPING */
 body {
   scroll-snap-type: x proximity;
+  background-image: repeating-linear-gradient(45deg, #d5e7e4, #fcfcf0);
+  background-image: -webkit-repeating-linear-gradient(45deg, #d5e7e4, #fcfcf0);
+  background-image: -moz-repeating-linear-gradient(45deg, #d5e7e4, #fcfcf0);
+  background-image: -o-repeating-linear-gradient(45deg, #d5e7e4, #fcfcf0);
 }
 
 /* NAV BAR BUTTONS */
@@ -46,6 +50,10 @@ body {
 .btnImg { 
   width: 2em;
   height: 2em;
+}
+
+.btnUpdatePlant {
+  top: 1em;
 }
 
 /* icons within table headers - eye */
@@ -85,14 +93,14 @@ i:hover {
   top: 3em;
   border-collapse: collapse;
   z-index: 2;
-  width: 100%;
+  width: 100vw;
   height: 50%;
   margin: 0 0 5em 0;
 }
 
 td, th {
   border: 1px solid #ddd;
-  padding: 1em 0 0 1em;
+  padding: 0.2em;
   white-space: normal;
   font-size: 16px;
 /*   overflow-x: hidden; - doing so hides the new plant buttons; move those buttons out of the td first*/
@@ -116,6 +124,11 @@ th:nth-child(1){
   z-index: 4;
 }
 
+  /* color even rows for readability */
+  tr:nth-child(even) {
+    background-color: #f0f1f5;
+  }
+
 /* column width classes, table width has to be set for these to work */
 .colWidth1, .colWidth2, .colWidth3 {
   width: calc(75vw / 2);
@@ -132,7 +145,7 @@ th:nth-child(1){
   position: sticky;
   position: -webkit-sticky;
   left: 0;
-  background-color: #99ccff; /*here*/
+  background-color: #d5e7e4; /*here*/
   z-index: 2;
   width: 25vw;
   padding: 0 0 0 0.3em;
@@ -145,10 +158,9 @@ th:nth-child(1){
 .filterRow, .filterCell {
   position: sticky;
   position: -webkit-sticky;
-  top: 5em;
+  top: 5.2em;
   background-color: rgba(0, 0, 128, 1);
   padding: 0;
-  /* height: 0; */
   z-index: 2;
 }
 /* the common name (first cell) of the filter freeze is done separately */
@@ -165,6 +177,19 @@ th:nth-child(1){
   text-align: right;
   position: absolute;
   right: 0;
+}
+
+.inputRangeMin::-webkit-outer-spin-button,
+.inputRangeMin::-webkit-inner-spin-button,
+.inputRangeMax::-webkit-outer-spin-button,
+.inputRangeMax::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+.inputRangeMin[type=number],
+.inputRangeMax[type=number] {
+  -moz-appearance: textfield;
 }
 
 /* IMAGES & GALLERY SETTINGS */
@@ -193,9 +218,10 @@ th.pic{
 }
 /* images - settings for the last column, all the way to the right */
 img {
+  display: block;
   width: 4em;
   border: 0;
-  margin: 0 10%;
+  margin: auto;
 }
 
 /* EXPORT/IMPORT */
@@ -260,14 +286,32 @@ textarea {
 .addPlant {
   position: relative;
   bottom: 0;
-  width: 100%;
+  width: 50vw;
   display: none;
 }
-/* the new plant row is located at the bottom of the table */
+/* the new plant row, located at the bottom of the table */
 #newPlantRow {
   background-color: rgba(255, 255, 255, 0.5);
   font-style: italic;
   display: none;
+}
+
+.references {
+  position: sticky;
+  position: -webkit-sticky;
+  left: 0;
+  width: 0;
+  padding-bottom: 1em;
+}
+
+.references > p {
+  width: 98vw;
+  padding-left: 2.5em;
+}
+
+.references > ul {
+  overflow-x: visible;
+  white-space: nowrap;
 }
 
 /* 
@@ -300,7 +344,7 @@ textarea {
   }
   /* color even rows for readability */
   tr:nth-child(even) {
-    background-color: #afd6fd;
+    background-color: #f0f1f5;
   }
   /* the following are not displayed on mobile: filtering, adding new plants */
   .filterInput {
