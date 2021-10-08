@@ -703,10 +703,9 @@ function getPlantInfo(clkdElt, displayVal){
       var convertColors = colorCoder;
       let offset = 2;
       for (let i = 0, l = plantColors.length; i<l; i++) {
-        //convert colors to camel case, for when composed of more than one word
-        //the text shows normal color name, with spaces, while desc holds camelCased color name
+        //convert colors to camel case, for those composed of more than one word the text shows normal color name, with spaces, while desc holds camelCased color name; the min/max below ensures that colors aren't place too far or too close to the plant info
         clkdElt.parentElement.appendChild(makeText(
-          {x:Number(clkdElt.getAttributeNS(null, "x")) + munit * clkdElt.innerHTML.length,
+          {x:Number(clkdElt.getAttributeNS(null, "x")) + munit * Math.min(Math.max(clkdElt.innerHTML.length,8), 10),
            y:Number(clkdElt.getAttributeNS(null, "y")) + munit * offset * 1.5,
            cls:"fauxLi",
            clr:convertColors(plantColors[i]),

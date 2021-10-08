@@ -52,6 +52,7 @@ body {
   right:    2%;
   z-index:  11;
   opacity:  0.2;
+  width:    3em;
 }
 
 .btnDn { /*this button shows up on scroll to take the user to the top*/
