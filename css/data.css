@@ -3,18 +3,21 @@
 
 /* VARIABLES */
 :root {
-  --dark-color: navy;
+  --dark-color: rgb(0,0,70);
   --light-color: #ffffcc;
+  --dark-gray-color: rgb(105, 105, 105);;
+  --darker-gray-color: rgb(65,65,65);
   --edits-allowed: true;
 }
 
 /* SCROLL SNAPPING */
 body {
-  scroll-snap-type: x proximity;
-  background-image: repeating-linear-gradient(45deg, #d5e7e4, #fcfcf0);
-  background-image: -webkit-repeating-linear-gradient(45deg, #d5e7e4, #fcfcf0);
-  background-image: -moz-repeating-linear-gradient(45deg, #d5e7e4, #fcfcf0);
-  background-image: -o-repeating-linear-gradient(45deg, #d5e7e4, #fcfcf0);
+  /* scroll-snap-type: x proximity; */
+/*   background-image: -webkit-repeating-linear-gradient(135deg, var(--light-color), var(--dark-gray-color));
+  background-image: -moz-repeating-linear-gradient(135deg, var(--light-color), var(--dark-gray-color));
+  background-image: -o-repeating-linear-gradient(135deg, var(--light-color), var(--dark-gray-color)); */
+/*   background-image: repeating-linear-gradient(135deg, var(--light-color), var(--dark-gray-color)); */
+  background-color: rgb(202,204,155);
 }
 
 /* NAV BAR BUTTONS */
@@ -45,10 +48,10 @@ body {
   padding-right: 0.3em;
 }
 
-/* image within inner buttons */
+/* image within inner buttons - todo: shouldn't be needed once shovel is removed from e/i*/
 .btnImg { 
   width: 2em;
-  height: 2em;
+  height: 2em;z-index: 9;
 }
 
 .btnUpdatePlant {
@@ -56,7 +59,7 @@ body {
 }
 
 /* icons within table headers - eye */
-i:hover {
+i:hover, th:hover {
   cursor: pointer;
 }
 
@@ -102,7 +105,7 @@ td, th {
   padding: 0.2em;
   white-space: normal;
   font-size: 16px;
-/*   overflow-x: hidden; - doing so hides the new plant buttons; move those buttons out of the td first*/
+  z-index: 2;
 }
 /* table headers */
 th {
@@ -112,21 +115,15 @@ th {
   padding: 0.5em;
   text-align: left;
   color: var(--light-color);
-  background-color: rgba(0, 0, 128, 1);
-  z-index: 2;
+  background-color: var(--dark-color);
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* first cell - name */
-th:nth-child(1){
-  background-color: var(--dark-color);
-  z-index: 4;
-}
 
-  /* color even rows for readability */
-  tr:nth-child(even) {
-    background-color: #f0f1f5;
-  }
+/* color even rows for readability */
+tr:nth-child(even) {
+  color: var(--darker-gray-color);
+}
 
 /* column width classes, table width has to be set for these to work */
 .colWidth1, .colWidth2, .colWidth3 {
@@ -140,34 +137,62 @@ th:nth-child(1){
 }
 
 /* name column - sticky to ensure that plant names are always shown */
-.frozenCol {
+.frozenCol, .notesReferences {
   position: sticky;
   position: -webkit-sticky;
   left: 0;
-  background-color: #d5e7e4; /*here*/
-  z-index: 2;
+  color: var(--light-color);
+  background-color: var(--dark-color);
+  z-index: 1;
   width: 25vw;
   padding: 0 0 0 0.3em;
   text-align: center;
 }
 
+th.frozenCol {
+  z-index: 3;
+}
+
+.notesReferences {
+  color: var(--darker-gray-color);
+  font-style: italic;
+  font-weight: 100;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0.3em;
+  z-index: 0;
+}
+  
+.notesReferences > a:first-child {
+  padding-left: 1em;
+  overflow-x: visible;
+  white-space: nowrap;
+}
+
 .filterInput {
-  display: none;
+  /* display: none; */
+  display: block;
+  padding: 0 1em; 
+  color: var(--dark-color);
+  width: 100%;
+  height: 110%;
+  font-size: 16px;
 }
 /* filter row freezing style, ensures that filter row is frozen and always shown on top */
 .filterRow, .filterCell {
   position: sticky;
   position: -webkit-sticky;
   top: 5.2em;
-  background-color: rgba(0, 0, 128, 1);
+  background-color: var(--dark-color);
   padding: 0;
-  z-index: 2;
+/*   z-index: 2; */
 }
 /* the common name (first cell) of the filter freeze is done separately */
 .filterCell {
   left: 0;
   text-align: left;
-  z-index: 4;
+  z-index: 3;
 }
 /* filtering by size input fields */
 .inputRangeMin, .inputRangeMax {
@@ -192,36 +217,21 @@ th:nth-child(1){
   -moz-appearance: textfield;
 }
 
-/* IMAGES & GALLERY SETTINGS */
+/* IMAGES SETTINGS, last column, all the way to the right */
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 0;
+  margin: auto;
+}
+
+/* image gallery */
 th.pic{
   text-align: center;
 }
 .pic:hover {
   cursor: pointer;
-}
-#picGal {
-  top: 1.8em;
-  right: 10%;
-}
-#picGal button {
-  position: absolute;
-  top: 50%;
-  margin: 0 1em;
-  height: 3em;
-  width: 3em;
-  background: transparent;
-}
-#picGal p {
-  position: absolute;
-  bottom: 0;
-  color: white;
-}
-/* images - settings for the last column, all the way to the right */
-img {
-  display: block;
-  width: 4em;
-  border: 0;
-  margin: auto;
 }
 
 /* EXPORT/IMPORT */
@@ -249,6 +259,12 @@ textarea {
   border: 1px solid #001539;
   background-color: rgb(255, 251, 244);
   font-size: 16px;
+}
+i.exp, i.imp {
+  background: var(--dark-color);
+  color: var(--light-color);
+  border-radius: 5px;
+  height: 1.5em;
 }
 
 /* DROP DOWN MENU SETTINGS */
@@ -281,57 +297,27 @@ textarea {
   overflow: auto;
 }
 
-/* OTHER */
-/* text at the bottom of the page, describing new plant functionality */
-.addPlant {
-  position: relative;
-  bottom: 0;
-  width: 50vw;
+/* OTHER  now (11.6.21) not added via js on small screens */
+/* the new plant row and text, describing new plant functionality - bottom of the page, larger screens only*/
+.addPlant, #newPlantRow {
   display: none;
-}
-/* the new plant row, located at the bottom of the table */
-#newPlantRow {
-  background-color: rgba(255, 255, 255, 0.5);
-  font-style: italic;
-  display: none;
-}
-
-.references {
-  position: sticky;
-  position: -webkit-sticky;
-  left: 0;
-  width: 0;
-  padding-bottom: 1em;
-}
-
-.references > p {
-  width: 98vw;
-  padding-left: 2.5em;
-}
-
-.references > ul {
-  overflow-x: visible;
-  white-space: nowrap;
 }
 
 /* 
-  Responsiveness for desktop and tablet, width greater than 768px
-  600 for small devices; 400 for phones, with mobile first - the default
+  Responsiveness for desktop and tablet, width greater than 1000px
+  600 for small devices; 400 for phones (which is default for 'mobile first' approach)
 */
-@media only screen and (min-width: 400px) {
-  body {
-    scroll-snap-type: none;
+@media only screen and (min-width: 1000px) {
+  :root {
+    --dark-gray-color: rgb(80,80,80);
   }
-  img {
-    width: 6em;
-    max-height: auto;
+  body {
+/*     scroll-snap-type: none; */
+    background-image: repeating-linear-gradient(135deg, var(--light-color), var(--dark-gray-color));
   }
   .filterRow, .filterCell {
+    top: 7.4em;
     height: 2em;
-  }
-  .frozenCol {
-    color: var(--light-color);
-    background-color: var(--dark-color);
   }
   .colWidth1 {
     width: 6em;
@@ -342,25 +328,21 @@ textarea {
   .colWidth3 {
     width: 12em;
   }
-  /* color even rows for readability */
-  tr:nth-child(even) {
-    background-color: #f0f1f5;
-  }
-  /* the following are not displayed on mobile: filtering, adding new plants */
-  .filterInput {
+  /* the following can be hidden on mobile: filtering, adding new plants */
+/*   .filterInput {
     display: block;
-    padding-left: 2.3em; 
-    color: var(--dark-color);
-    width: 100%;
-    height: 110%;
-    font-size: 16px;
-  }
+  } */
+  /*  newPlant row is now (11.6.21) not added via js on small screens  */
   #newPlantRow {
-    display: table-row;
+    background-color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
     height: 3em;
   }
   .addPlant {
-    top: -1em;
     display: inline;
+    position: relative;
+    bottom: 0;
+    top: -1em;
+    width: 50vw;
   }
 }

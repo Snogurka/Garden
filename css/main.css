@@ -51,7 +51,7 @@ body {
   position: fixed;
   right:    2%;
   z-index:  11;
-  opacity:  0.2;
+  opacity:  0.5;
   width:    3em;
 }
 
@@ -207,28 +207,38 @@ h1 {
   left: 0.625em;
 }
 
-/* PICTURE GALLERY */
+/* PICTURE GALLERY SETTINGS*/
 #picGal {
   display: none;
   position: fixed;
   z-index: 11;
   height: 80%;
-  top: 10%;
-  width: 90%;
-  left: 5%;
-  padding: 0 2%;
-  background-color: rgba(0,0,0,0.2);
+  width: 80%;
+  margin: 9% auto auto 10%;
+  padding: 0 5%;
+  background-color: rgba(0,0,0,0.3);
 }
 
 #picGal img {
-  margin: auto;
   position: relative;
   height: 100%;
-  width: auto;
-  max-width: 100%;
+  max-width: 80%;
   object-fit: contain;
-  left: 50%;
-  transform: translateX(-50%);
+/*   transform: translateX(-50%); */
+}
+
+#picGal button {
+  position: absolute;
+  top: 50%;
+  margin: 0 1em;
+  height: 3em;
+  width: 3em;
+  background: transparent;
+}
+#picGal p {
+  position: absolute;
+  bottom: 0;
+  color: white;
 }
 
 /* For desktop and tablet with width greater than 768px
@@ -246,6 +256,7 @@ h1 {
   }
   .btnDn, .btnUp {
     width: 3em;
+    height: 3em;
   }
 }
 /*************************************************************************************/

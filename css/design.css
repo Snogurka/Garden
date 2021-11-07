@@ -162,6 +162,8 @@ li {
 svg {
   font-family: FontAwesome;
   font-size: 14px;
+  width: 100vw;
+  height: auto;
 }
 
 /* the following list format is used in NavBar settings button dd, Add plant/garden dd */

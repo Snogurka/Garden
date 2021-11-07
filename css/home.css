@@ -108,7 +108,7 @@ main {
 }
 
 /* desktop settings */
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 900px) {
   main {
     width: 90vw;
     margin: 0 5vw;

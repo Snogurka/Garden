@@ -17,8 +17,8 @@ function containerClick(tgt) {
   } 
   //a click anywhere else, toggles enlarged photo display (gallery)
   else {
-    //exit on mobile
-    if (window.screen.width < 768) return;
+    //exit on smaller screen
+    if (window.screen.width < 900) return;
     let picGallery = document.getElementById("picGal");
     if (picGallery.style.display === "block") {
       picGallery.style.display = "";
