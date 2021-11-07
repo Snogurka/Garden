@@ -220,7 +220,7 @@ th.frozenCol {
 /* IMAGES SETTINGS, last column, all the way to the right */
 img {
   display: block;
-  width: 100%;
+  width: 20%;
   height: auto;
   border: 0;
   margin: auto;
