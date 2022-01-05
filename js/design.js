@@ -33,8 +33,8 @@ function myMain(){
   svgPlace.setAttributeNS(null, "height", window.screen.height*2);
   svgPlace.viewBox.baseVal.x = 0;
   svgPlace.viewBox.baseVal.y = 0;  
-  svgPlace.viewBox.baseVal.width = window.screen.width * 2;
-  svgPlace.viewBox.baseVal.height = window.screen.height * 2;
+  svgPlace.viewBox.baseVal.width = window.screen.width/2;
+  svgPlace.viewBox.baseVal.height = window.screen.height/2;
   
   // munit = my unit, the font size, if set to 14, munit is ~7.11
   munit = Math.round((Number(window.getComputedStyle(svgPlace, null).getPropertyValue("font-size").replace("px",""))/1.9 + Number.EPSILON) * 100) / 100;
@@ -185,6 +185,7 @@ function loadExistingDesign() {
     closeButton.textContent = "x";
     closeButton.classList.add("btnHelper");
     closeButton.classList.add("btnClose");
+    //todo: check the evt - should not be accepted as a parameter
     closeButton.addEventListener("click", function(evt) {
       document.body.removeChild(evt.target.parentElement);
     });
@@ -271,8 +272,7 @@ function getAvgNum(origVal) {
 }
 
 //////////////////////////////////////////////////////////////////////
-//this function returns UL drop down menu with the values either  
-//supplied in the menu parameter or pulled from plants json file
+//this function returns UL drop down menu with the values either supplied in the menu parameter or pulled from plants json file
 function getUL(menu) {
 	//the menu parameter has: xPos, yPos, type, [gId], [values]
   hideDropDown();
@@ -347,8 +347,9 @@ function getUL(menu) {
           liText.textContent = "that match this criteria."
           dropMenu.appendChild(liText);
         } 
+        //todo: temporary fix - don't add "add all plants" option to the "plant in MMM" choice menu as the functionality for that choice is not available yet
         else {
-          if (menu.type != "all") {
+          if (!["all", "timeToPlant"].includes(menu.type)) {
             //add an option to add all filtered plants to the garden
             let liText = document.createElement("li");
             liText.className = "customChoice plant";
@@ -1557,8 +1558,7 @@ function touchDown(evt) {
     evt.target.style.fontSize = "16px";
   }
   
-  //the some() method executes the callback function once for each element in
-  //the array until it finds the one where the call back returns a true value
+  //the some() method executes the callback function once for each element in the array until it finds the one where the call back returns a true value
   if (["garden","plant","resize","plantLook","plantInfo","fauxUl","fauxLi"].some(
   clsName => evt.target.classList.contains(clsName))) {
     
@@ -1665,8 +1665,7 @@ function dragging(evt) {
         Number(rect.getAttributeNS(null, "width"))/2 -
         Number(gName.getAttributeNS(null, "width"))/2);
       
-      //check if enough room: new width newW minus the widths of sun and tools gears, from gName.desc, 
-      //compared to number of characters in the garden name times munit/2 (approximate size of a letter, ~7.11)
+      //check if enough room: new width newW minus the widths of sun and tools gears, from gName.desc, compared to number of characters in the garden name times munit/2 (approximate size of a letter, ~7.11)
       if ((newW - Number(gName.getAttributeNS(null, "desc"))) < 
           Number(gName.getAttributeNS(null, "width"))) {
         gName.setAttributeNS(null, "y", Number(rect.getAttributeNS(null, "y")) - munit * 2.7);

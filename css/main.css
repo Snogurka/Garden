@@ -7,6 +7,12 @@
    1em = 16px, based on the default font size of 16px
 */
 
+/* test and enable code below */
+/* button, input, select, textarea {
+  font-family: inherit;
+  font-size: 100%;
+} */
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -222,7 +228,7 @@ h1 {
 #picGal img {
   position: relative;
   height: 100%;
-  max-width: 80%;
+  width: 80%;
   object-fit: contain;
 /*   transform: translateX(-50%); */
 }

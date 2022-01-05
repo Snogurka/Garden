@@ -64,7 +64,7 @@ function createTblWithData(json) {
       myObj = json;
   
   //determine if the user's device is a desktop or mobile, record it in colSpan to be used next
-  const colSpan = window.matchMedia("only screen and (max-width: 1000px)").matches?3:12;
+  const colSpan = window.matchMedia("only screen and (max-width: 600px)").matches?3:12;
   
   //start the text string to contain the body of the html table
   let txt = "<tbody>";

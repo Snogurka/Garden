@@ -1,5 +1,8 @@
 /********** v.8.0.0 **********/
-
+:root {
+  --dark-blue: rgb(0,0,70);
+  --dark-to-light: linear-gradient(to bottom, var(--dark-blue), white, rgba(255,255,255,0));
+}
 .archive {
   display: none;
 }
@@ -9,13 +12,17 @@ article, h3 {
 }
 
 article img {
-  z-index: 2;
-  margin-right: 0.5em;
+  /* z-index: 2; */
+  margin-right: 1em;
   float: left;
   /* mobile-only */
   margin-bottom: 0.5em;
   width: 80vw;
   height: auto;
+}
+
+article > p {
+  line-height: 2em;
 }
 
 body {
@@ -27,6 +34,10 @@ body {
 
 body, main i {
   color: rgb(61, 61, 61);
+}
+
+button {
+  z-index: 2;
 }
 
 .btnArchive {
@@ -52,6 +63,9 @@ body, main i {
 
 canvas {
   position: fixed;
+  z-index: 1;
+  left: 0vw;
+  width: 100vw;
 }
 
 .date {
@@ -74,25 +88,33 @@ h2 > button {
 h3 {
   margin-top: 0.5em;
   font-weight: initial;
+  color: var(--dark-blue);
 }
 
+header {
+  z-index: 2;
+  border-width: 1px;
+  border-style: solid;
+  border-image: var(--dark-to-light) 1 100%; 
+  border-image-outset: 2px;
+}
 .leftSide, .rightSide {
   position: fixed;
   height: 100vh;
   width: 5vw;
-  margin-right: auto;
-  margin-left: auto;
 }
 .leftSide {
   left: 0;
+  margin-left: 3vw;
 }
 .rightSide {
   right: 0;
+  margin-right: 3vw;
 }
 .leftSide > img, .rightSide > img {
   height: 100%;
   width: 5vw;
-}
+} 
 
 /* container keeps all the articles; mobile settings */
 main {
@@ -109,21 +131,29 @@ main {
 
 /* desktop settings */
 @media only screen and (min-width: 900px) {
+  header {
+    border-image-outset: 2em;
+  }
   main {
-    width: 90vw;
-    margin: 0 5vw;
+    width: 70vw;
+    margin: 0 15vw;
   }
   h2 {
     margin: 1em 0;
   }
-  h3 {
-    margin-bottom: -1em;
+  article {
+    margin-bottom: 3em;
   }
   article img {
-    border: 1px solid #ffffcc;;
-    height: 50vh;
+    height: 65vh;
     width: auto;
-    margin-bottom: 0;
+    border-width: 10px;
+    border-image-slice: 30%;
+    border-image-source: linear-gradient(rgba(0,0,70,0),rgba(50,50,150,0.5), rgba(250,250,255,0.5), rgba(255,255,255,0));
+    /* border-image-repeat: repeat;
+    border-image-source: url('/pictures/icons/snowflakesIced.png');
+    border-image-width: 20px; */
+    border-image-width: 10px;
   }
 }
 

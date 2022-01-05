@@ -297,17 +297,11 @@ i.exp, i.imp {
   overflow: auto;
 }
 
-/* OTHER  now (11.6.21) not added via js on small screens */
-/* the new plant row and text, describing new plant functionality - bottom of the page, larger screens only*/
-.addPlant, #newPlantRow {
-  display: none;
-}
-
 /* 
   Responsiveness for desktop and tablet, width greater than 1000px
   600 for small devices; 400 for phones (which is default for 'mobile first' approach)
 */
-@media only screen and (min-width: 1000px) {
+@media only screen and (min-width: 900px) {
   :root {
     --dark-gray-color: rgb(80,80,80);
   }

@@ -13,32 +13,24 @@ function containerClick(tgt) {
   //a click on the show/hide archive articles
   else if (tgt.classList.contains('btnArchive')) {
     let archives = document.querySelectorAll('.archive');
-    tgt.innerText === "More" ? archives.forEach(x => {x.style.display="block"; tgt.innerText = "Hide Archives";}) : archives.forEach(x => {x.style.display="none"; tgt.innerText = "Hide Archives";});
+    tgt.innerText === "More" ? archives.forEach(x => {x.style.display="block"; tgt.innerText = "Hide Archives";}) : archives.forEach(x => {x.style.display="none"; tgt.innerText = "More";});
   } 
-  //a click anywhere else, toggles enlarged photo display (gallery)
-  else {
-    //exit on smaller screen
-    if (window.screen.width < 900) return;
-    let picGallery = document.getElementById("picGal");
-    if (picGallery.style.display === "block") {
-      picGallery.style.display = "";
-    } else if (tgt.tagName === "IMG") {
-      picGallery.style.display = "block";
-      picGallery.children[0].src = tgt.src;
-    }
-  }
 }
+
+/***********************************************************************************
+ * The following code creates seasonal animation: winter snow, spring flower, summer
+ * rain(?), autumn leaf fall. The animation is triggered by a timeout, 10 seconds 
+ * after the page is loaded. 
+************************************************************************************/
+
+// SET BACK TO 10000
+window.setTimeout(callSeasons, 1000);
+// window.setTimeout(addFlower = setInterval, 1000, spring, 300);
 
 //variables to keep track of number of flowers;
 //the max is a random number betweem 50 and 70;
 var times = 0, maxTimes = 5 + Math.floor(Math.random()*10)*2, timer = null;
-
-// window.onscroll = function() {
-//   spring();
-// }
-
-window.setTimeout(callSeasons, 10000);
-// window.setTimeout(addFlower = setInterval, 1000, spring, 300);
+// window.onscroll = function() {spring();}
 
 function callSeasons() {
   let today = new Date();
@@ -89,7 +81,7 @@ function winter() {
   
   startSnowFall();
   //snow for 5-10 minutes, then pause for 5-10 minutes and resume
-  setInterval(snowSwitch, 10000);
+  setInterval(snowSwitch, 100000);
   function snowSwitch() {
     if (makeSnow) {
       let canvas = document.getElementById("canvas");
@@ -105,34 +97,35 @@ function winter() {
 ////////////////////////////////////////////////////////////////////////////////
 //
 function startSnowFall() {
-/*
-  code is from 
-  http://thecodeplayer.com/walkthrough/html5-canvas-snow-effect
-*/
+
+  // code is from 
+  // http://thecodeplayer.com/walkthrough/html5-canvas-snow-effect
+
+  // get a reference to the canvas element 
   let canvas = document.getElementById("canvas");
+  // get the context, onto which the drawing is rendered
 	let ctx = canvas.getContext("2d");
+  //exit, if the canvas is not supported (for very old versions of browsers)
+  if (!ctx) return;
   
-	//canvas dimensions
-//  to snow in margins only
+	//canvas dimensions to snow within space between margins only
 // 	var W = document.getElementsByClassName("leftSide")[0].getBoundingClientRect().width;
-  let W = window.window.screen.width;
-  let H = window.window.screen.height;
+  const W = window.window.screen.width;
+  const H = window.window.screen.height;
 	canvas.width = W;
 	canvas.height = H;
 	
 	//snowflake particles
-	let mp = parseInt(Math.random()*60); //max particles, up to 60
+	const mp = parseInt(Math.random()*100); //max particles, up to 100
 	let particles = [];
-	for(let i = 0; i < mp; i++) {
+	for (let i = 0; i < mp; i++) {
 		particles.push({
 			x: Math.random()*W, //x-coordinate
 			y: Math.random()*H, //y-coordinate
 			r: Math.random()*3+1, //radius
-//       s: Math.random()+10, //size adjustment
 			d: Math.random()*mp //density
 		})
 	}
-	let intr = 0;
   
 	//drawing snowflakes
 	function draw() {
@@ -146,34 +139,26 @@ function startSnowFall() {
 		ctx.clearRect(0, 0, W, H);
 		ctx.beginPath();
 
+    //create the snowflakes
     for(let i = 0; i < mp; i++) {
-			let p = particles[i];
-      if (i % 2 === 0) {
-        //snowflake TODO: need different sizes
-        ctx.moveTo(p.x+1.5,p.y+1.5);
-        ctx.lineTo(p.x+8.5,p.y+8.5);
-        ctx.moveTo(p.x+5, p.y);
-        ctx.lineTo(p.x+5,p.y+10);
-        ctx.moveTo(p.x+8.5,p.y+1.5);
-        ctx.lineTo(p.x+1.5,p.y+8.5);
-        ctx.moveTo(p.x,p.y+5);
-        ctx.lineTo(p.x+10,p.y+5);
-        ctx.stroke();
-      }
-      else {
-        //TODO: round to one decimal, Math.round(number * 10) / 10
-        ctx.fillStyle = "rgba(255, 255, 255, "+(1-p.r/10)+")";
-        ctx.moveTo(p.x, p.y);
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2, true);
-        ctx.fill();
-      }
-      /////////////
+			const p = particles[i];
+      // size adjuster, a decimal from 0 to 1 to create variety in snoflake size
+      const sz = Math.random();
+      ctx.moveTo(p.x+1.5,p.y+1.5);
+      ctx.lineTo(p.x+8.5,p.y+8.5)*sz;
+      ctx.moveTo(p.x+5, p.y);
+      ctx.lineTo(p.x+5,p.y+10)*sz;
+      ctx.moveTo(p.x+8.5,p.y+1.5);
+      ctx.lineTo(p.x+1.5,p.y+8.5)*sz;
+      ctx.moveTo(p.x,p.y+5);
+      ctx.lineTo(p.x+10,p.y+5)*sz;
+      ctx.lineWidth = 0.1;
+      ctx.stroke();
 		}
 		update();
 	}
 	
-	//Function to move the snowflakes angle is an ongoing incremental flag. 
-  //Sin and Cos functions are applied to it to create vertical and horizontal movements of the flakes
+	//Function to move the snowflakes angle is an ongoing incremental flag. Sin and Cos functions are applied to it to create vertical and horizontal movements of the flakes
 	let angle = 0;
 	function update()
 	{
@@ -182,9 +167,9 @@ function startSnowFall() {
 		{
 			var p = particles[i];
 			//Updating X and Y coordinates
-			//We will add 1 to the cos function to prevent negative values which will lead flakes to move upwards
+			//add 1 to the cos function to prevent negative values which will lead flakes to move upwards
 			//Every particle has its own density which can be used to make the downward movement different for each flake
-			//Lets make it more random by adding in the radius
+			//make it more random by adding in the radius
 			p.y += Math.cos(angle+p.d) + 1 + p.r/2;
 			p.x += Math.sin(angle) * 2;
 			
