@@ -3,17 +3,15 @@
 
 /* variables - currently just colors used in the page */
 :root {
-/*   the main color for tool text is gray  */
   --tool-text-color: rgba(54, 54, 54, 0.75);
-/*   plant and garden names are in dark green */
-  --plant-text-color: darkgreen;
+  --plant-text-color: rgba(35, 55, 40, 0.65);
 }
 
 body {
-  background-image: repeating-linear-gradient(135deg, #f7f7e2, #e2ebd9, #e9d8aa);
-  background-image: -webkit-repeating-linear-gradient(135deg, #f7f7e2, #e2ebd9, #e9d8aa);
-  background-image: -moz-repeating-linear-gradient(135deg, #f7f7e2, #e2ebd9, #e9d8aa);
-  background-image: -o-repeating-linear-gradient(135deg, #f7f7e2, #e2ebd9, #e9d8aa);
+  background-image: repeating-linear-gradient(#d3e9f6, #e2ebd9, #b4b1a8);
+  background-image: -webkit-repeating-linear-gradient(#d3e9f6, #e2ebd9, #b4b1a8);
+  background-image: -moz-repeating-linear-gradient(#d3e9f6, #e2ebd9, #b4b1a8);
+  background-image: -o-repeating-linear-gradient(#d3e9f6, #e2ebd9, #b4b1a8);
 }
 
 /* svg place uses a canvas */
@@ -23,28 +21,34 @@ canvas {
 }
 
 /* faux drop down, used for Sun, Soil, Tools */
-.fauxUl { 
+.gdnBtn { 
   font-size: medium;
   position: relative;
   fill: var(--tool-text-color);
+  padding: 3px;
 }
 
 /* hovering over false drop downs */
-.fauxUl:hover, .fauxLi:hover {
+.gdnBtn:hover, .fauxLi:hover {
   cursor: pointer;
-  font-size: large;
+  font-size: larger;
 }
 
 /* imitating LI in UL, for SVG; used for color, sun, soil, tools drop down choices */
-.fauxLi { 
-  font-size: small;
+/* .fauxLi { 
+  font-size: large; */
   /* text-anchor: middle; */
-  position: relative;
+/*   position: relative;
   fill: var(--tool-text-color);
+  padding: 0 1em;
 }
-
+ */
 .garden:hover, .plantGrp:hover {
   cursor: grab;
+}
+
+.plantColor:hover {
+  cursor: pointer;
 }
 
 /* initial text displayed when the page is first loaded and nothing's been created yet */
@@ -77,7 +81,6 @@ input {
   text-align: center;
   cursor: text;
   caret-color:var(--plant-text-color);
-
 }
 
 /* todo: when implementing custom icon below, use this to add html
@@ -92,45 +95,56 @@ input {
 
 /* settings and add plant menu */
 li {
-  padding: 2px;
+  padding: 3px;
   font-size: medium;
 }
 
-@media only screen and (min-width: 768px) {
-  .fauxUl { 
-    font-size: small;
-  }
-  .fauxLi { 
-    font-size: small;
-  }
-}
-
-
-.plant {
+.plantName {
   width: 10em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: 3px;
+  fill: var(--plant-text-color);
+}
+
+.plantSize {
+  fill: var(--plant-text-color);
+  text-anchor: middle;
+}
+
+.colorGroupRect {
+  fill: transparent;  
 }
 
 /* plant bloom colors and additional info, below text name */
-.plantInfo {
+.plantDetails {
+  padding: 3px;
+  background: transparent;
+  color: var(--dark-blue);
   font-family: cursive;
   overflow-x: auto;
-  color: navy;
-}
-
-/* plant photo and size, above the text name */
-.plantLook {
-  fill: var(--tool-text-color);
-  text-anchor: middle;
-  font-size: smaller;
 }
 
 /* garden resizing triangle in the corner */
 .resize {
   fill: rgba(65, 68, 65, 0.15);
   cursor: nwse-resize;
+}
+
+.shape {
+  fill: transparent;
+  stroke: var(--plant-text-color);
+}
+.shapeH {
+  cursor: ew-resize;
+}
+
+.shapeV {
+  cursor: ns-resize;
+}
+.shapeR {
+  cursor: pointer;
 }
 
 /* garden size (height and width) indicators  */
@@ -161,23 +175,62 @@ li {
 
 svg {
   font-family: FontAwesome;
-  font-size: 14px;
+  /* font-size: 40px;
   width: 100vw;
-  height: auto;
+  height: auto; */
 }
 
 /* the following list format is used in NavBar settings button dd, Add plant/garden dd */
-ul.dropDown { 
+.dropDown, .alphabet {
   position: absolute;
-  max-height: 19em;
-  min-width: 10em;
+  max-height: 25em;
   overflow: auto;
-  border-radius: 7px;
+  scrollbar-width: none;
   list-style-type: none;
-  text-align: left;
-  padding: 3px;
   color: rgba(204, 255, 153, 0.90);
   font-size: small;
   background-color: rgba(0, 0, 50, 0.75);
   display: block;
+}
+.dropDown::-webkit-scrollbar { 
+  display: none;  /* Safari and Chrome */
+}
+.dropDown {
+  min-width: 12em;
+  padding: 4px;
+  text-align: left;
+  border-radius: 7px;
+}
+.alphabet {
+  overflow: hidden;
+  min-width: 2em; 
+  padding: 4px 7px;
+  text-align: center;
+}
+.alpha {
+  border-radius: 7px 0 0 7px;
+}
+.zeta {
+  border-radius: 0 7px 7px 0;
+} 
+
+.plantCls {
+  overflow: hidden;
+  width: 18.5em;
+}
+.plantCls li {
+  float: left;
+  padding: 4px 6px;
+}
+.disabledCustomChoice {
+  color: var(--dark-gray);
+}
+
+@media only screen and (min-width: 768px) {
+  .gdnBtn { 
+    font-size: small;
+  }
+/*   .fauxLi { 
+    font-size: small;
+  } */
 }

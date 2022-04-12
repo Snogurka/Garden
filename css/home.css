@@ -1,6 +1,5 @@
 /********** v.8.0.0 **********/
 :root {
-  --dark-blue: rgb(0,0,70);
   --dark-to-light: linear-gradient(to bottom, var(--dark-blue), white, rgba(255,255,255,0));
 }
 .archive {
@@ -154,6 +153,16 @@ main {
     border-image-source: url('/pictures/icons/snowflakesIced.png');
     border-image-width: 20px; */
     border-image-width: 10px;
+  }
+  article li {
+    list-style-image: url("../pictures/bltCog2.png");
+    list-style-position: outside;
+    margin: 0.5em 0 0.5em 2em;
+  }
+  article li:before {    
+    font-family: 'FontAwesome';
+    content: '\f863';
+    margin: 0 0.1em;
   }
 }
 

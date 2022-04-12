@@ -28,30 +28,26 @@
       <a href="data.html"><i title="Data" class="fa fa-fw fa-table"></i></a>
       <a href="index.html"><i title="Home" class="fa fa-fw fa-home"></i></a>
     </nav>
-      <svg id="svgArea" xmlns="http://www.w3.org/2000/svg"  xmlns:xlink="http://www.w3.org/1999/xlink"
-           onmousedown="touchDown(evt)" 
-           onmousemove="dragging(evt)" 
-           onmouseup="touchUp(evt)"
-           onmouseleave="touchUp(evt)"
-           ondblclick="dblTouch(evt)"
-           ontouchstart="touchDown(evt)"
-           ontouchmove="dragging(evt)" 
-           ontouchend="touchUp(evt)" 
-           ontouchleave="touchUp(evt)" 
-           ontouchcancel="touchUp(evt)"
-           onfocusout="focusOut(evt.target)"
-           >
-        <defs>
-<!--           <linearGradient id="sunSoilGrad" x1="50%" y1="0" x2="50%" y2="100%">
-            <stop class="stop1" offset="0%"/>
-            <stop class="stop2" offset="50%"/>
-            <stop class="stop3" offset="90%"/>
-            <stop class="stop4" offset="97%"/>
-          </linearGradient> -->
-        </defs>
-        <title>Double click to add or remove a plant or a garden</title>
-        Sorry, your browser does not support inline SVG.
+
+    <svg id="svgArea" xmlns="http://www.w3.org/2000/svg"  xmlns:xlink="http://www.w3.org/1999/xlink"
+          onmousedown="touchDown(evt)" 
+          onmousemove="dragging(evt)" 
+          onmouseup="touchUp(evt)"
+          onmouseleave="touchUp(evt)"
+          ondblclick="dblTouch(evt)"
+          ontouchstart="touchDown(evt)"
+          ontouchmove="dragging(evt)" 
+          ontouchend="touchUp(evt)" 
+          ontouchleave="touchUp(evt)" 
+          ontouchcancel="touchUp(evt)"
+          onfocusout="focusOut(evt.target)"
+          >
+      <defs>
+      </defs>
+      <title>Double click to add or remove a plant or a garden</title>
+      Sorry, your browser does not support inline SVG.
     </svg>
+
     <button onclick="goUp()" class="btnHelper btnUp" title="To the Top">Home</button>
     <script>
       window.onload = myMain();

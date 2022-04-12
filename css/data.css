@@ -3,27 +3,29 @@
 
 /* VARIABLES */
 :root {
-  --dark-color: rgb(0,0,70);
-  --light-color: #ffffcc;
-  --dark-gray-color: rgb(105, 105, 105);;
-  --darker-gray-color: rgb(65,65,65);
+  --dark-blue: rgb(0,0,70);
+  --light-yellow: #ffffcc;
+  --bright-green: #aceb6d;
+  --dark-gray: rgb(105, 105, 105);
+  --darker-gray: rgb(65,65,65);
   --edits-allowed: true;
 }
 
 /* SCROLL SNAPPING */
 body {
   /* scroll-snap-type: x proximity; */
-/*   background-image: -webkit-repeating-linear-gradient(135deg, var(--light-color), var(--dark-gray-color));
-  background-image: -moz-repeating-linear-gradient(135deg, var(--light-color), var(--dark-gray-color));
-  background-image: -o-repeating-linear-gradient(135deg, var(--light-color), var(--dark-gray-color)); */
-/*   background-image: repeating-linear-gradient(135deg, var(--light-color), var(--dark-gray-color)); */
+/*   background-image: -webkit-repeating-linear-gradient(135deg, var(--light-yellow), var(--dark-gray));
+  background-image: -moz-repeating-linear-gradient(135deg, var(--light-yellow), var(--dark-gray));
+  background-image: -o-repeating-linear-gradient(135deg, var(--light-yellow), var(--dark-gray)); */
+/*   background-image: repeating-linear-gradient(135deg, var(--light-yellow), var(--dark-gray)); */
   background-color: rgb(202,204,155);
+  color: navy;
 }
 
 /* NAV BAR BUTTONS */
 /* eye button for toggling columns' display */
 #btnCustomCols {
-  background: radial-gradient(var(--light-color) 30%, rgba(255,255,255,0) 70%);
+  background: radial-gradient(var(--light-yellow) 30%, rgba(255,255,255,0) 70%);
 }
 /* scissors button for clearing all the filters */
 #btnCustomCols, #btnClearAllFilters {
@@ -110,19 +112,19 @@ td, th {
 /* table headers */
 th {
   position: sticky;
-  position: -webkit-sticky;
+/*   position: -webkit-sticky; */
   top: 3em;
   padding: 0.5em;
   text-align: left;
-  color: var(--light-color);
-  background-color: var(--dark-color);
+  color: var(--light-yellow);
+  background-color: var(--dark-blue);
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 /* color even rows for readability */
 tr:nth-child(even) {
-  color: var(--darker-gray-color);
+  color: var(--darker-gray);
 }
 
 /* column width classes, table width has to be set for these to work */
@@ -131,7 +133,7 @@ tr:nth-child(even) {
   scroll-snap-align: end;
 }
 
-/* the editable columns are notes, action, and garden location */
+/* the editable columns are notes, status, and garden location */
 .editableCol {
   font-style: italic;
 }
@@ -141,8 +143,8 @@ tr:nth-child(even) {
   position: sticky;
   position: -webkit-sticky;
   left: 0;
-  color: var(--light-color);
-  background-color: var(--dark-color);
+  color: var(--light-yellow);
+  background-color: var(--dark-blue);
   z-index: 1;
   width: 25vw;
   padding: 0 0 0 0.3em;
@@ -154,7 +156,7 @@ th.frozenCol {
 }
 
 .notesReferences {
-  color: var(--darker-gray-color);
+  color: var(--darker-gray);
   font-style: italic;
   font-weight: 100;
   text-align: left;
@@ -174,7 +176,7 @@ th.frozenCol {
   /* display: none; */
   display: block;
   padding: 0 1em; 
-  color: var(--dark-color);
+  color: var(--dark-blue);
   width: 100%;
   height: 110%;
   font-size: 16px;
@@ -183,10 +185,11 @@ th.frozenCol {
 .filterRow, .filterCell {
   position: sticky;
   position: -webkit-sticky;
-  top: 5.2em;
-  background-color: var(--dark-color);
+/*   top 7.5 is too low for a small window on a desktop but works for mobile and simulator */
+  top: 7.5em;
+  background-color: var(--dark-blue);
   padding: 0;
-/*   z-index: 2; */
+  /* z-index: 2; */
 }
 /* the common name (first cell) of the filter freeze is done separately */
 .filterCell {
@@ -261,8 +264,8 @@ textarea {
   font-size: 16px;
 }
 i.exp, i.imp {
-  background: var(--dark-color);
-  color: var(--light-color);
+  background: var(--dark-blue);
+  color: var(--light-yellow);
   border-radius: 5px;
   height: 1.5em;
 }
@@ -286,8 +289,9 @@ i.exp, i.imp {
   text-align: left;
   padding: 5px;
   line-height: 150%;
-  color: var(--dark-color);
-  background-color: rgba(204, 255, 153, 0.95);
+  color: var(--dark-blue);
+  background-color: var(--bright-green);
+/*   was 204, 255, 153, 0.95) */
 }
 .dropUnqVals {
   position: absolute;
@@ -296,21 +300,29 @@ i.exp, i.imp {
   max-width: 12em;
   overflow: auto;
 }
-
+.disabledCustomChoice {
+  color: var(--bright-green);
+  background-image: repeating-radial-gradient(rgba(150,150,150,0.5),var(--bright-green) 99%); 
+/*   color: #757575;
+  background-color: rgba(50, 50, 50, 0.1); */
+}
+.selectedCustomChoice {
+/*   color: var(--dark-gray); */
+  font-weight: bolder;
+  background-image: repeating-radial-gradient(var(--light-yellow), var(--bright-green) 99%); 
+  background-color: var(--light-yellow);
+}
 /* 
   Responsiveness for desktop and tablet, width greater than 1000px
   600 for small devices; 400 for phones (which is default for 'mobile first' approach)
 */
 @media only screen and (min-width: 900px) {
-  :root {
-    --dark-gray-color: rgb(80,80,80);
-  }
   body {
 /*     scroll-snap-type: none; */
-    background-image: repeating-linear-gradient(135deg, var(--light-color), var(--dark-gray-color));
+    background-image: repeating-linear-gradient(135deg, var(--light-yellow), rgb(116, 116, 116));
   }
   .filterRow, .filterCell {
-    top: 7.4em;
+    top: 5.3em;
     height: 2em;
   }
   .colWidth1 {

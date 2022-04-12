@@ -51,16 +51,14 @@
     </nav>
 
     <div id="picGal" class="wrapper">
-<!--       in the line below, the value of the image is set to 1 - this creates a value 
-      attribute that's then used in js to capture the total number of images available -->
+<!--       in the line below, the value of the image is set to 1 - this creates a value attribute that's then used in js to capture the total number of images available -->
       <img value="1" onerror="this.onerror=null; this.src='pictures\btnCog.png'"></img>
       <button type="button" class="btnLeft"><img class="btnImg" src="pictures/btnLeftBird.png"></button>
       <button type="button" class="btnRight"><img class="btnImg" src="pictures/btnRightBird.png"></button>
       <p>Plant Name</p>
     </div>
       <table id="plants" onfocusout="makeUneditable(event.target)">
-        <!--  the table contents are dynamically loaded from a separate JSON file  -->
-        <!--        so that the data can be used by this and visual tabs -->
+        <!--  the table contents are dynamically loaded from a separate JSON file, so that the data can be used by this and visual tabs -->
         
 <!--
 --

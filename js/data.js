@@ -3,7 +3,7 @@
    #################
  - in this script, a plain ID number is reserved for IDs for plants (rows) added by a user;
  - for efficiency, editable contents columns support is designed around the order of those columns, 
- - those are columns Notes (3rd column, index 2, in JSON 1), Action (4th, 3, 2), Garden Location (14th, 13, 12)
+ - those are columns Notes (3rd column, index 2, in JSON 1), Status (4th, 3, 2), Garden Location (14th, 13, 12)
  - should the column order change, update the code in allClicks(), used to be addBtnUsrChgs(),
  - & appendPlantToTable() as well as visual.js code accordingly
 */
@@ -22,35 +22,34 @@
 //////////////////////////////////////////////////////////////////////
 // this function is called from html file on window load to pull data from plant.json file
 function main() {
-  fetch(
-    'plants.json'
-    )
-  .then((resp) => {
-    return resp.json()  
-  })
-  .then((json) => {
-    //create the main and only table - #plants
-    createTblWithData(json);
-  })
-  .then(() => {
-    //menus for import/export and views
-    menuSetup();
-  })
-  .then(() => {
-    //set the newRow - the last row at the bottom of the table designated for entering new plants by user (not displayed on mobile)
-    newRow = document.getElementById("newPlantRow");
-    //set the table row count (td) excluding notes, references and new plant row at the bottom
-    tdRowCnt = table.querySelectorAll("tr:not(.notesRefs):not(#newPlantRow)").length;
-    //check for user-created plants stored in local storage and append them to the table
-    if (typeof (Storage) !== "undefined") {
-      checkStoredData();
-      checkFilteredRowsCols();
-    }
-  })
-  .catch((err) => {
-    console.log("Issue in one of sub-mains");
-    throw err;
-  })
+  fetch('plants.json')
+    .then((resp) => {
+      return resp.json()  
+    })
+    .then((json) => {
+      //create the main and only table - #plants
+      createTblWithData(json);
+    })
+    .then(() => {
+      //menus for import/export and views
+      menuSetup();
+    })
+    .then(() => {
+      //set the newRow - the last row at the bottom of the table designated for entering new plants by user (not displayed on mobile)
+      newRow = document.getElementById("newPlantRow");
+      //set the table row count (td) excluding notes, references and new plant row at the bottom
+      tdRowCnt = table.querySelectorAll("tr:not(.notesRefs):not(#newPlantRow)").length;
+      //check for user-created plants stored in local storage and append them to the table
+      if (typeof (Storage) !== "undefined") {
+        checkStoredData();
+        checkFilteredRowsCols();
+      }
+    })
+    .catch((err) => {
+      console.log("Issue in one of sub-mains");
+      throw err;
+    })
+  ;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -59,7 +58,7 @@ function main() {
 // check session storage for filtered plants and hidden columns;
 function createTblWithData(json) {
   var objNotes = null;
-  let objAction = null,
+  let objStatus = null,
       objLocation = null,
       myObj = json;
   
@@ -96,7 +95,7 @@ function createTblWithData(json) {
     else if (i === 1){
       txt += `<th class='colWidth3' title='Double click to edit'>${myObj[k][i]}`;
     }
-    //Action column header - add unique title, column width is narrow
+    //Status column header - add unique title, column width is narrow
     else if (i === 2){
       txt += `<th class='colWidth1' title='This column is editable.'>${myObj[k][i]}`;
     }
@@ -122,11 +121,15 @@ function createTblWithData(json) {
     }
     //'When To Plant' column header - add unique title, column width is medium
     else if (i === 21){
-      txt += `<th class='colWidth3' title='In NC, first frost is in early Nov, last frost is in early Mar.'>${myObj[k][i]}`;
+      txt += `<th class='colWidth3' title='In NC, first frost is in early Nov, last frost is in early Mar. In general, it's best to plant trees in fall so that the energy is directed into root development, while the top is dormant.>${myObj[k][i]}`;
     }
     //'Days To' column header - add unique title, column width is medium
     else if (i === 22){
       txt += `<th class='colWidth2' title='Days To... g: germination, h: harvest, m: maturity.'>${myObj[k][i]}`;
+    }
+    //'Food And Water' column header - add unique title, column width is medium
+    else if (i === 25){
+      txt += `<th class='colWidth2' title='During the 1st year, while the trees are getting established, they should be watered deeply (3'-5' weekly), to ensure good deep roots.'>${myObj[k][i]}`;
     }
     //narrow column headers, colWidth1
     else if ([3, 4, 5, 6, 7, 11].includes(i)){
@@ -199,13 +202,13 @@ function createTblWithData(json) {
         objNotes = JSON.parse(localStorage.aas_myGardenDb_Notes);
       } 
       catch (error) {
-        //no Notes, Action, or Location recorded in local storage, no problem
+        //no Notes, Status, or Location recorded in local storage, no problem
       }
        try {
-        objAction = JSON.parse(localStorage.aas_myGardenDb_Action); 
+        objStatus = JSON.parse(localStorage.aas_myGardenDb_Status); 
       }
       catch (error) {
-        //no Action in local storage, no problem
+        //no Status in local storage, no problem
       }
       try {
         objLocation = JSON.parse(localStorage.aas_myGardenDb_GardenLocation);
@@ -256,13 +259,13 @@ function createTblWithData(json) {
             txt += myObj[x][i];
           }
           break;
-        //Action, only load user's saved
+        //Status, only load user's saved
         case 2:
-          txt += "<td class='editableCol action'>";
-          //objAction - all Action in local storage
-          if (objAction) {
-            if (objAction[x]) {
-              txt += objAction[x];
+          txt += "<td class='editableCol status'>";
+          //objStatus - all Status in local storage
+          if (objStatus) {
+            if (objStatus[x]) {
+              txt += objStatus[x];
             } else {
               txt += myObj[x][i];
             }
@@ -284,7 +287,7 @@ function createTblWithData(json) {
         //Photo: if value in source file is not 0 then a photo is present: perform a lazy load, record the value indicating how many photos are available for the plant, set the source based on the name with .jpg extension, set the alternative text using the name
         case (l-1):
           if (myObj[x][i] === "0") {
-            txt += `<td><img style="width:3em; heigth: 3em;" src='pictures/btnCog.png' alt='${myObj[x][0]}'></td>`;
+            txt += `<td><img style="width:3em; height: 3em;" src='pictures/btnCog.png' alt='${myObj[x][0]}'></td>`;
           } else {
             txt += "<td loading='lazy'>"
               + "<img class='pic' " 
@@ -463,8 +466,8 @@ function menuSetup() {
   //the Export/Import are separated from the rest of the choice name by no space 
   //on purpose, this is used later in code, the rest needs to not be \xa0
   addDropDown("dropExportImport",
-  ["Export\xa0Notes", "Export\xa0Action", "Export\xa0Garden Location"
-  , "Import\xa0Notes", "Import\xa0Action", "Import\xa0Garden Location"
+  ["Export\xa0Notes", "Export\xa0Status", "Export\xa0Garden Location"
+  , "Import\xa0Notes", "Import\xa0Status", "Import\xa0Garden Location"
   //todo: maybe add an option to export/import user added plants
   // , "Export\xa0Your\xa0Plants", "Import\xa0Your\xa0Plants"
 ]);
@@ -521,7 +524,7 @@ function checkFilteredRowsCols() {
 //////////////////////////////////////////////////////////////////////
 //click on one of Export/Import options
 function impExp(tgt) {
-  //split the text of clicked choice into specs [action, column]
+  //split the text of clicked choice into specs [status, column]
   let specs = tgt.innerText.split("\xa0");
 
   //create a div to hold the text area and the "done" button
@@ -534,6 +537,7 @@ function impExp(tgt) {
   displayTextArea.cols = "20";
   displayTextArea.rows = "10";
   displayDiv.appendChild(displayTextArea);
+  displayTextArea.focus();
   
   //cancel button closes the window
   let displayCancelBtn = document.createElement("button");
@@ -555,7 +559,6 @@ function impExp(tgt) {
     
     displayDoneBtn.classList.add("exp");
     displayDoneBtn.classList.add("fa-cut");
-//     displayDoneBtn.innerHTML = "<i class='fa fa-fw fa-cut'></i>";
     let data = JSON.parse(localStorage.getItem("aas_myGardenDb_" + specs[1].replace(/ /g, "")));
     if (!data) {
       displayTextArea.placeholder = "You don't have any "+specs[1]+" stored in Local Storage";
@@ -591,7 +594,7 @@ function impExp(tgt) {
     
     displayDoneBtn.classList.add("imp");
     displayDoneBtn.classList.add("fa-upload");
-    //the value indicates notes, action or location
+    //the value indicates notes, status or location
     displayDoneBtn.value = specs[1];
     
     //update assisting text for the text area
@@ -626,7 +629,7 @@ function checkStoredData() {
   //check the stored plants column order; the aas_myGardenDb_colOrder stores the column headers in the order that the data is locally stored; whenever the order is changed in plants.json, the headers arrays won't match and the program will rearrange locally stored data and update aas_myGardenDb_colOrder; if there is a plant entry and no aas_myGardenDb_colOrder, it means the entry is very old and is in the original order - thus needs to be rearranged; if there is a change in a column name, the oldName-newName entry needs to be permanently recorded in the colNameChanges object;
   const colOrder = localStorage.getItem("aas_myGardenDb_colOrder");
 
-  const storedColOrder = colOrder?Array.from(colOrder):['Latin\xa0Name','Name','Notes','Action','Class','Height','Width','Color','Leaves','Bloom\xa0Time','Fruit\xa0Time','Sun','Roots','Garden\xa0Location','Natural\xa0Habitat','Origin','Wildlife','Companions','Ally','Enemy','Soil','When\xa0To\xa0Plant','Days\xa0To...','How\xa0To\xa0Prune','When\xa0To\xa0Prune','Food\xa0And\xa0Water','How\xa0To\xa0Plant','When\xa0To\xa0Feed','Propagating','Problems','Picture'];
+  const storedColOrder = colOrder?Array.from(colOrder):['Latin\xa0Name','Name','Notes','Status','Class','Height','Width','Color','Leaves','Bloom\xa0Time','Fruit\xa0Time','Sun','Roots','Garden\xa0Location','Natural\xa0Habitat','Origin','Wildlife','Companions','Ally','Enemy','Soil','When\xa0To\xa0Plant','Days\xa0To...','How\xa0To\xa0Prune','When\xa0To\xa0Prune','Food\xa0And\xa0Water','How\xa0To\xa0Plant','When\xa0To\xa0Feed','Propagating','Problems','Picture'];
 
   let currColOrder = compareArrays(arrHeaders, storedColOrder);
   //loop through user-added stored plants using stored plant counter
@@ -883,7 +886,7 @@ function addInnerButton(type) {
 
 //////////////////////////////////////////////////////////////////////
 //this function is triggered on key up within the body of the table
-//it adds buttons to the name of a plant whose notes, action or garden location fields are being modified
+//it adds buttons to the name of a plant whose notes, status or garden location fields are being modified
 function addBtnUsrChgs(clickedCell, e) {
   // exit, if the user is editing a plant that they've added..
   if (clickedCell.parentElement.className === "addedRows" 
@@ -964,7 +967,7 @@ function addBtnUsrChgs(clickedCell, e) {
 
 //////////////////////////////////////////////////////////////////////
 //this function is called when a user clicks on save changes button 
-//for a plant with modified notes, action, or garden location fields
+//for a plant with modified notes, status, or garden location fields
 //it loads the changes into local storage
 function updateExistingPlant(btn) {
   //record which column(s) were modified; if more than one, the value will have the index numbers separated by commas
@@ -986,15 +989,15 @@ function updateExistingPlant(btn) {
     }
     //
     let modifiedText = btn.parentElement.parentElement.children[Number(modifiedFields[i])].innerText;
-    //if the user cleared the notes, action, etc., delete that entry from local storage
+    //if the user cleared the notes, status, etc., delete that entry from local storage
     if (modifiedText.length === 0 || modifiedText === "\n" || modifiedText === "/u21B5") {
       delete parsedStoredData[btn.parentElement.parentElement.children[1].innerText];
     }
-    //otherwise, update/create entry with notes, action, or location
+    //otherwise, update/create entry with notes, status, or location
     else {
       parsedStoredData[btn.parentElement.parentElement.children[1].innerText] = modifiedText.trim();
     }
-    //if notes, action, location entries has been deleted for all plants 
+    //if notes, status, location entries has been deleted for all plants 
     if (Object.entries(parsedStoredData).length === 0) {
       localStorage.removeItem("aas_myGardenDb_" + colName);
     } 
@@ -1147,7 +1150,7 @@ function filterByText(evt){
     clickedElt.placeholder = "";
   }
 
-  //if a unique to column values dropdown menu is displayed, remove it
+  //if a unique to column values dropdown menu is displayed, remove it - remove all 3
   if (clickedElt.parentElement.getElementsByClassName("dropUnqVals")[0]) {
     clickedElt.parentElement.removeChild(clickedElt.parentElement.getElementsByClassName("dropUnqVals")[0]);
   }
@@ -1310,14 +1313,13 @@ function getUnqVals(forCell) {
 
   //hide any drop down menus
   cleanView();
-  
+
   let dropList = document.createElement("ul");
   dropList.className = "dropUnqVals";
   forCell.appendChild(dropList);
   
   //determine the name of the column by pulling its index from arrHeaders
   const colName = arrHeaders[forCell.cellIndex];
-  
   
   //columns width and height display min and max range input fields instead of unique values
   if (colName === "Height" || colName === "Width") {
@@ -1382,34 +1384,41 @@ function getUnqVals(forCell) {
         
         let arrCellVals = 
             splitableCols.includes(colName)?
-            table.rows[i].children[forCell.cellIndex].innerText.split(/, | \bor\b/):
+            table.rows[i].children[forCell.cellIndex].innerText.split(/, | \bor\b |;/):
             [table.rows[i].children[forCell.cellIndex].innerText];
 
         arrCellVals.forEach(x=> {
-            //only add the value if it's not already in the array, is not empty and not filtered out using columns other than clicked (the last one is taken care of earlier)
-            if (rUnqVals.indexOf(x) === -1 && x.length > 0) {
-              rUnqVals.push(x);
-            }
-          }
-        )
+        //only add the value if it's not already in the array, is not empty and not filtered out using columns other than clicked (the last one is taken care of earlier)
+          if (rUnqVals.indexOf(x.trim()) === -1 && x.length > 0) {
+            rUnqVals.push(x.trim());
+          } 
+        })
         
       }
     }
     
-    
     //sort the drop down values alphabetically
     rUnqVals.sort();
+    
+    let alphaFlag = null;
     
     //add the drop down values to the UL dropList
     for (let i = 0, l = rUnqVals.length; i < l; i++) {
       let liText = document.createElement("li");
       liText.setAttribute("class", "customChoice");
-      //if not pulling names to add a new plant, format already selected values 
+      //create alphabet shortcut classes for the dropdowns
+      if ( !alphaFlag || rUnqVals[i][0] > alphaFlag ) {
+        alphaFlag = rUnqVals[i][0];
+        liText.classList.add(rUnqVals[i][0].toLowerCase());
+      }
+      
+      //format already-selected unique values, uless pulling names to add a new plant
       if (filters[forCell.cellIndex] 
           && forCell.children[1].id.toString().substr(0,11) != "btnNewPlantCopy") {
         if (filters[forCell.cellIndex].includes(rUnqVals[i].toUpperCase())) {
-          liText.style.color = "rgba(204, 255, 153, 0.90)";
-          liText.style.backgroundColor = "navy";
+          liText.classList.add("selectedCustomChoice");
+//           liText.style.color = "rgba(204, 255, 153, 0.90)";
+//           liText.style.backgroundColor = "navy";
         }
       }
       liText.appendChild(document.createTextNode(rUnqVals[i]));
@@ -1492,10 +1501,10 @@ function displayColumns(tgt) {
   //determine which columns to show, based on the view chosen
   switch (tgt.innerText) {
     case "Plan":
-      showColName = ['Name','Notes','Action','Class','Height','Width','Color','Leaves','Bloom\xa0Time','Sun','Roots','Garden\xa0Location','Natural\xa0Habitat','Origin','Wildlife','Companions','Ally','Enemy','Soil','When\xa0To\xa0Plant','Picture'];
+      showColName = ['Name','Notes','Status','Class','Height','Width','Color','Leaves','Bloom\xa0Time','Sun','Roots','Garden\xa0Location','Natural\xa0Habitat','Origin','Wildlife','Companions','Ally','Enemy','Soil','When\xa0To\xa0Plant','Picture'];
       break;
     case "Care":
-      showColName = ['Name','Notes','Action','Soil','How\xa0To\xa0Plant','When\xa0To\xa0Plant','Days\xa0To...','How\xa0To\xa0Prune','When\xa0To\xa0Prune','Food\xa0And\xa0Water','When\xa0To\xa0Feed','Propagating','Problems','Picture'];
+      showColName = ['Name','Notes','Status','Soil','How\xa0To\xa0Plant','When\xa0To\xa0Plant','Days\xa0To...','How\xa0To\xa0Prune','When\xa0To\xa0Prune','Food\xa0And\xa0Water','When\xa0To\xa0Feed','Propagating','Problems','Picture'];
       break;
     case "Min":
       showColName = ['Name','Notes','Picture'];
@@ -1538,15 +1547,13 @@ function customColumnDisplay(colNr, show) {
     //show the clicked column; plus 1 for jQuery;
     $("td:nth-child(" + (colNr+1) + "),th:nth-child(" + (colNr+1) + ")").show();
     //style the clicked column's display in the drop down menu
-    droppedElements.children[colNr].style.color = "navy";
-    droppedElements.children[colNr].style.backgroundColor = "";
+      droppedElements.children[colNr].classList.remove("disabledCustomChoice");
   } 
   else {
     //show the clicked column; plus 1 for jQuery;
     $("td:nth-child(" + (colNr+1) + "),th:nth-child(" + (colNr+1) + ")").hide();
     //style the clicked column's display in the drop down menu
-    droppedElements.children[colNr].style.color = "rgba(50, 50, 50, 0.7)"; //dark grey
-    droppedElements.children[colNr].style.backgroundColor = "rgba(50, 50, 50, 0.1)"; //light grey
+    droppedElements.children[colNr].classList.add("disabledCustomChoice");
   }
 }
 
@@ -1621,13 +1628,13 @@ function allClicks(e) {
 
   let tgt = e.target;
 
-  //make cells editable when user double cicks on editable cell, those within notes, action, garden location
+  //make cells editable when user double cicks on editable cell, those within notes, status, garden location
     if (e.type === "dblclick") {
       if (tgt.classList.contains("editableCol")) {  
         // the following 'if block' clears selected text that always happens on double click
         if(document.selection && document.selection.empty) {
           document.selection.empty();
-        } else if(window.getSelection) {
+        } else if(window.getSelection() && !tgt.innerText.length) {
             var sel = window.getSelection();
             sel.removeAllRanges();
         }
@@ -1637,7 +1644,7 @@ function allClicks(e) {
   }
 
   let impTextFormatCheck = function(txt) {
-    //validate the format of the data to import "Latin Name":"notes, action or location text"
+    //validate the format of the data to import "Latin Name":"notes, status or location text"
     if (txt.search(/(\".+\":\".+\")/g) > -1) {
       return true;
     }
@@ -1677,9 +1684,10 @@ function allClicks(e) {
 
   //-- key entries -------------------------------------------------
   if (e.type === "keyup") {
-    //exit the function if the key clicked is a tab (9) or changing window tabs (91) and this is not a ctrl(cmd)+delete(backspace) click(91) in the editable fields
+    //exit the function if the key clicked is a tab (9) or changing window tabs (91) and this is not a ctrl(cmd)+delete(backspace) click(91) in the editable fields or any key is clicked inside imp/exp text area
     if ((e.keyCode === 91 && !["filterInput","inputRangeMin","inputRangeMax"].includes(tgt.className) && !tgt.contentEditable) 
-       || e.keyCode === 9) {
+       || e.keyCode === 9
+       || tgt.classList.contains("exp")) {
       return;
     }
     //if return (13) or escape (27) keys are clicked
@@ -1713,8 +1721,8 @@ function allClicks(e) {
 //       tgt.parentElement.parentElement.querySelector("#btnNewPlantSubmit").style.display = "block";
     }
     
-    //if changes are made to Notes, Action, or Garden Location columns
-    else if (["Notes", "Action", "Garden\xa0Location"].includes(arrHeaders[tgt.cellIndex])) {
+    //if changes are made to Notes, Status, or Garden Location columns
+    else if (["Notes", "Status", "Garden\xa0Location"].includes(arrHeaders[tgt.cellIndex])) {
       addBtnUsrChgs(tgt, e);
     }
     
@@ -1731,6 +1739,7 @@ function allClicks(e) {
       }
     }
     
+    //scroll through photos in the photo gallery on the arrow clicks
     else if (document.getElementById("picGal").style.display === "block") {
       let picGal = document.getElementById("picGal");
       // ["Right", "Down"].includes(e.keyIdentifier)  and  ["Left", "Up"].includes(e.keyIdentifier) //instead of keycode?
@@ -1744,6 +1753,13 @@ function allClicks(e) {
         tgt = picGal.children[1];
         pictureScroll("previous");
       }
+    }
+    
+    //scroll to the right letters on letter click
+    else if (document.getElementsByClassName("dropUnqVals").length) {
+      let uList = document.getElementsByClassName("dropUnqVals")[0];
+      let lItem = uList.getElementsByClassName(e.key.toLowerCase())[0];
+      if (lItem) uList.scrollTop = lItem.offsetTop - 1;
     }
     
     //all other cases - roll up all the drop down menus
@@ -1768,8 +1784,8 @@ function allClicks(e) {
              && (e.clipboardData || window.clipboardData).getData("text").match(/^.+$/)) {
       filterBySizeRange(e);
     }
-    //if data is pasted into editable Notes, Action, or Garden Location columns (not filter)
-    else if (["Notes", "Action", "Garden\xa0Location"].includes(arrHeaders[tgt.cellIndex])) {
+    //if data is pasted into editable Notes, Status, or Garden Location columns (not filter)
+    else if (["Notes", "Status", "Garden\xa0Location"].includes(arrHeaders[tgt.cellIndex])) {
       addBtnUsrChgs(tgt, e);
     }
     //if data is pasted into import window
@@ -1807,8 +1823,8 @@ function allClicks(e) {
     else if (tgt.classList.contains("imp") && tgt.tagName === "TEXTAREA") {
       tgt.parentElement.children[2].style.display = "none";
     }
-    //if changes are made to Notes, Action, or Garden Location columns
-    else if (["Notes", "Action", "Garden\xa0Location"].includes(arrHeaders[tgt.cellIndex])) {
+    //if changes are made to Notes, Status, or Garden Location columns
+    else if (["Notes", "Status", "Garden\xa0Location"].includes(arrHeaders[tgt.cellIndex])) {
       addBtnUsrChgs(tgt, e);
     }
     else return;
@@ -1847,7 +1863,7 @@ function allClicks(e) {
     }
     
     //a click on one of the custom drop down choices (column choices)
-    else if (tgt.className === "customChoice" && tgt.parentNode.id === "dropColNames") {
+    else if (tgt.classList.contains("customChoice") && tgt.parentNode.id === "dropColNames") {
       if (table.getElementsByTagName("TH")[arrHeaders.indexOf(tgt.innerText)].style.display === "none") {
         customColumnDisplay(arrHeaders.indexOf(tgt.innerText), true);
         storeHiddenCol(tgt.innerText, false);
@@ -1867,8 +1883,8 @@ function allClicks(e) {
       }
     }
     
-    //when one of the Export/Import drop down choices is clicked
-    else if (tgt.className === "customChoice" && tgt.parentNode.id === "dropExportImport") {
+    //when one of the Export/Import drop down choices is clicked - /TODO: replace export/import text area with a form to avoid quote format nightmare
+    else if (tgt.classList.contains("customChoice") && tgt.parentNode.id === "dropExportImport") {
       //hide the Export/Import submenu
       $("#dropExportImport").hide();
       impExp(tgt);
@@ -1889,17 +1905,17 @@ function allClicks(e) {
     else if (tgt.classList.contains("exp") && tgt.classList.contains("btnLeft")) {
       tgt.parentElement.children[0].select();
       tgt.parentElement.children[0].setSelectionRange(0, 99999); //mobile
-      document.execCommand("copy"); //todo: need to replace or remove this functionality cuz it's being deprecated
+      document.execCommand("copy");
       document.body.removeChild(tgt.parentElement);
     }
     
     //tap on the import done/go button: format & load data into local storage
     else if (tgt.classList.contains("imp") && tgt.classList.contains("btnLeft")) {
       
-      // ensure the correct JSON-parseable format of imported data "Latin Name":"notes, action or location text" by splitting the text's key value pairs, replacing double quotes with two singles ane recomposing
+      // ensure the correct JSON-parseable format of imported data "Latin Name":"notes, status or location text" by splitting the text's key value pairs, replacing double quotes with two singles ane recomposing
 
       // ..1. starting at the first double quote, thus skipping optional title, 
-      //      split the text using delimeter: double quote follower by comma follower by optional space
+      //  split the text using delimeter: double quote follower by comma follower by optional space
       //      thus checking that all entries end with a double quote
       let txtEntries = tgt.parentElement.children[0].value.slice(
         tgt.parentElement.children[0].value.search('"')+1, 
@@ -1910,7 +1926,6 @@ function allClicks(e) {
 
       // ..3. scroll through entries
       for (let i = 0, len = txtEntries.length; i < len; i++) {
-
 
         // ..4. check that each entry has a ":" key value separator
         if (txtEntries[i].includes("\":\"")) {
@@ -1957,7 +1972,7 @@ function allClicks(e) {
     //click on a drop down choice
     else if (tgt.parentElement.parentElement
              && ["filterRow", "filterCell"].includes(tgt.parentElement.parentElement.className)
-             && tgt.className === "customChoice") {
+             && tgt.classList.contains("customChoice")) {
 
       //forCell is a table data cell <td> of the Frozen Filter Row
       let forCell = tgt.parentElement.parentElement;
@@ -1971,8 +1986,9 @@ function allClicks(e) {
       if (filters[forCell.cellIndex].includes(event.target.innerText.toUpperCase())) {
         let i = filters[forCell.cellIndex].indexOf(event.target.innerText.toUpperCase());
         filters[forCell.cellIndex].splice(i, 1);
-        tgt.style.color = "navy";
-        tgt.style.backgroundColor = "rgba(204, 255, 153, 0.90)";
+        tgt.classList.remove("selectedCustomChoice");
+//         tgt.style.color = "navy";
+//         tgt.style.backgroundColor = "rgba(204, 255, 153, 0.90)";
         sessionStorage.filters = JSON.stringify(filters);
         //if the removed element was the last one in array, remove the emptying button and delete that whole entry for the object, update sessionStorage
         if (filters[forCell.cellIndex].length === 0) {
@@ -1986,8 +2002,10 @@ function allClicks(e) {
       //else, if the selected choice is not in the filters[], add it, do the formatting
       else {
         filters[forCell.cellIndex].push(event.target.innerText.toUpperCase());
-        tgt.style.color = "rgba(204, 255, 153, 0.90)";
-        tgt.style.backgroundColor = "navy";
+        tgt.classList.add("selectedCustomChoice");
+//         tgt.style.color = var(--dark-gray-color);
+//         tgt.style.color = "rgba(204, 255, 153, 0.90)";
+//         tgt.style.backgroundColor = "navy";
 
         //if one value is selected, display it in the filter field
         if (filters[forCell.cellIndex].length === 1) {
@@ -2048,7 +2066,7 @@ function allClicks(e) {
       }
     }
     //if one of the choices from existing plant menu (triggered above) is clicked
-    else if (tgt.className === "customChoice"
+    else if (tgt.classList.contains("customChoice")
             && tgt.parentElement.parentElement.parentElement.id === "newPlantRow") {
       tgt.parentElement.parentElement.querySelector("#btnNewPlantClear").style.display = "block";
       copyRow(tgt);
@@ -2063,7 +2081,7 @@ function allClicks(e) {
       removeAddedPlant(tgt.parentElement.parentElement);
     }
 
-    //click on save changes button in Notes, Action, or Garden Location columns of existing plants
+    //click on save changes button in Notes, Status, or Garden Location columns of existing plants
     else if (tgt.classList.contains("btnUpdatePlant")) {
       updateExistingPlant(tgt);
     }
