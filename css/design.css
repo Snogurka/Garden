@@ -4,7 +4,7 @@
 /* variables - currently just colors used in the page */
 :root {
   --tool-text-color: rgba(54, 54, 54, 0.75);
-  --plant-text-color: rgba(35, 55, 40, 0.65);
+  --plant-text-color: rgba(35, 55, 40, 0.5);
 }
 
 body {
@@ -20,7 +20,7 @@ canvas {
   top: 3em;
 }
 
-/* faux drop down, used for Sun, Soil, Tools */
+/* drop down, used for Sun, Soil, Tools */
 .gdnBtn { 
   font-size: medium;
   position: relative;
@@ -29,20 +29,11 @@ canvas {
 }
 
 /* hovering over false drop downs */
-.gdnBtn:hover, .fauxLi:hover {
+.gdnBtn:hover {
   cursor: pointer;
   font-size: larger;
 }
 
-/* imitating LI in UL, for SVG; used for color, sun, soil, tools drop down choices */
-/* .fauxLi { 
-  font-size: large; */
-  /* text-anchor: middle; */
-/*   position: relative;
-  fill: var(--tool-text-color);
-  padding: 0 1em;
-}
- */
 .garden:hover, .plantGrp:hover {
   cursor: grab;
 }
@@ -117,11 +108,15 @@ li {
   fill: transparent;  
 }
 
+.orientir {
+  position: fixed;
+  fill: white;
+}
 /* plant bloom colors and additional info, below text name */
 .plantDetails {
   padding: 3px;
   background: transparent;
-  color: var(--dark-blue);
+  color: var(--tool-text-color);
   font-family: cursive;
   overflow-x: auto;
 }
@@ -153,31 +148,8 @@ li {
   fill: var(--tool-text-color);
 }
 
-/*  testing garden background colors */
-/* the garden fill color is set in colorchoice()  */
-/* .garden {
-  fill: url(#sunSoilGrad); 
-  #d1e0e0;
-} */
-/* linear gradient color stops */
-/* .stop1 { 
-  stop-color: #ffe922; stop-opacity: 0.8;
-}
-.stop2 { 
-  stop-color: #d1e0e0; stop-opacity: 0.3;
-}
-.stop3 { 
-  stop-color: #d1e0e0; stop-opacity: 0.8;
-}
-.stop4 { 
-  stop-color: rgb(137, 214, 60); stop-opacity: 0.8;
-} */
-
 svg {
   font-family: FontAwesome;
-  /* font-size: 40px;
-  width: 100vw;
-  height: auto; */
 }
 
 /* the following list format is used in NavBar settings button dd, Add plant/garden dd */

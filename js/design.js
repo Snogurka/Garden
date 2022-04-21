@@ -68,6 +68,20 @@ function myMain(){
   if(checkLocalStorage()){
     loadExistingDesign();
   }
+  
+//   //if mobile, add a little flower in the top left corner
+//   if (window.matchMedia("only screen and (max-width: 600px)").matches) {
+//     document.body.appendChild(
+//       mkCircle({
+//         x:10,
+//         y:parseFloat(window.getComputedStyle(document.querySelector(".navbar")).height) + 10,
+//         r:5,
+//         clr:"",
+//         cls:"orientir",
+//         ttl:""
+//         })
+//     );
+//   }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -75,10 +89,6 @@ function myMain(){
 function addGradient(specs) {
   
   const grad = document.createElementNS(xmlns,`${specs.tp}Gradient`);
-  
-  if(specs.id.includes(" ")) {
-    console.log("Space in the name!!!");
-  }
   
   grad.setAttribute('id', camelCase(specs.id));//id name must not contain spaces
   
@@ -93,8 +103,9 @@ function addGradient(specs) {
     if (specs.id.includes("i_")) {
       const col = colorConverter(specs.id.replace("i_",""));
       specs.stops = {
-        "0%":[col,"0.3"], 
-        "60%":[col,"0.4"]
+        "0%":[col,"0.1"], 
+        "10%":[col,"0.05"], 
+        "60%":[col,"0.2"]
       }
     } else if ( !specs.stops ) {
       const col = colorConverter(specs.id);
@@ -1012,7 +1023,7 @@ function addGarden(elt){
     }
     //record the new garden area data in local storage and update the total garden count; round x,y,w,h to 2 decimal places
     if (isNaN(elt.x) || isNaN(elt.y)) {
-      console.log("x or y is NaN");
+      alert("x or y is NaN");
     }
     localStorage.setItem("aas_myGardenVs_grdn"+elt.gId, 
                          elt.x.toFixed(1) + "," + elt.y.toFixed(1) + "," + 
@@ -1309,8 +1320,12 @@ function gardenFork(clkdElt) {
     
     hideDropDown();
     
-    //if the cicked garden is a simple container, it doesn't have sizers and fauxUls, thus exit
-    if (!clkdElt.parentElement.getElementsByClassName("gdnBtn").length) return;
+    //if the cicked garden is a simple container, it doesn't have sizers, thus exit - WOULD THIS EVER HAPPEN
+    if (!clkdElt.parentElement.getElementsByClassName("gdnBtn").length) 
+      { 
+        alert("a garden with nothing in it, a simple container, with no sizers!");
+        return;
+      }
     
     //number of garden objects to hide - set to 7, instead of 
     //let l = clkdElt.parentElement.childElementCount;
@@ -1363,6 +1378,7 @@ function addPlant(elt) {
       //record new plant id in the local storage plnts counter
       localStorage.aas_myGardenVs_plnts += ","+elt.pId.toString();
     }
+    
     //when a new plant is created, make sure it's not placed outside of screen boundaries
     if (elt.x < 0) elt.x = 1;
     if (elt.x > Number(svgPlace.getAttribute("width"))) {
@@ -1371,7 +1387,7 @@ function addPlant(elt) {
       elt.y = Number(svgPlace.getAttribute("height")) - munit*1.5;}
     
     if (isNaN(elt.x) || isNaN(elt.y) ) {
-      console.log("x or y is NAN");
+      alert("x or y is NAN");
     }
     
     //record the new plant data in the local storage; round x,y,w,h to 2 decimals
@@ -1411,7 +1427,7 @@ function addPlant(elt) {
 //   elt.fntSz = elt.nm.length > 15 ? "smaller" : null;
   grp.appendChild(mkText(elt));
  
-  const plantNameWidth = parseInt(window.getComputedStyle(grp.children[0]).width);
+//   const plantNameWidth = parseInt(window.getComputedStyle(grp.children[0]).width);
   
   function sizeRanger(sz) {
     let szGrp = 8;
@@ -1424,8 +1440,9 @@ function addPlant(elt) {
   //draw the plant's shape: bush, tree, etc.; color the plant if it's blooming this month
   if (elt.shp) {
     drawPlantShape(grp, {
-      x:elt.x - sizeRanger(elt.w),
-      y:elt.y - sizeRanger(elt.h),
+//       x:elt.x - sizeRanger(elt.w),
+      x:elt.x + parseInt(window.getComputedStyle(grp.children[0]).width) / 3 - sizeRanger(elt.w) / 2,
+      y:elt.y - sizeRanger(elt.h) - munit,
       w:sizeRanger(elt.w),
       h:sizeRanger(elt.h),
       cls:"plant",
@@ -1451,17 +1468,16 @@ function plantFork(tgt) {
     const sd = localStorage.getItem("aas_myGardenVs_plnt" + clickedGroup.id.substring(2,clickedGroup.id.length)).split(",");
 
     const specs = {
-      x:Number(tgt.getAttribute("x")),
-      y:Number(tgt.getAttribute("y")),
+      x:Number(clickedGroup.children[0].getAttribute("x")),
+      y:Number(clickedGroup.children[0].getAttribute("y")),
       w:Number(sd[2]),
       h:Number(sd[3]),
       lnm:sd[6], //latin name
-//       clr:sd[8] //saved color chosen for the plant
+//       clr:sd[8] //saved color chosen for the plant, if ever needed
     }
     
-    //toggle the display of plant's info: size, flower colors, info
-    //if plant's size is displayed hide all info
-    if (tgt.parentElement.getElementsByClassName("plantSize")[0]) {
+    //toggle the display of plant's info: size, flower colors, info; if plant's size is displayed hide all info
+    if (clickedGroup.getElementsByClassName("plantSize")[0]) {
       hideDropDown();
     }
     //if size is not displayed, the rest of the info wouldn't be displayed either
@@ -1490,9 +1506,9 @@ function plantFork(tgt) {
         
         //Add COLOR CHOICES
         const inconspicuousFlag = 
-              myObj[tgt.getAttribute("desc")][1].includes("inconspicuous") || myObj[tgt.getAttribute("desc")][6].includes("inconspicuous");
-      //if the plant has flowering colors options, stored in descrition field "desc", capture them into an array, removing 'inconspicuous', any trailing commas or semicolons at the end of the sting;
-        let plantColors = myObj[tgt.getAttribute("desc")][6].replace(/inconspicuous(;|,)? ?|,$|;$/g,"").split(/, ?|; ?/);
+              myObj[tgt.parentElement.children[0].getAttribute("desc")][1].includes("inconspicuous") || myObj[tgt.parentElement.children[0].getAttribute("desc")][6].includes("inconspicuous");
+      //any flower color choices are stored in the descrition field "desc"; capture them into an array, removing 'inconspicuous', trailing commas or semicolons at the end of the sting;
+        let plantColors = myObj[tgt.parentElement.children[0].getAttribute("desc")][6].replace(/inconspicuous(;|,)? ?|,$|;$/g,"").split(/, ?|; ?/);
 
         //if no colors are available, place one default value green in the array
         if (plantColors === "" || !(plantColors.length)) {
@@ -1507,7 +1523,7 @@ function plantFork(tgt) {
         const colorRect = document.createElementNS(xmlns, "rect");
         colorRect.setAttribute("class", "colorGroupRect plantDetails");
         colorRect.setAttribute("x", specs.x + plantNameWidth / 2 - (plantColors.length) * 16 - 2);
-        colorRect.setAttribute("y", parseFloat(tgt.getAttribute("y")) + munit * 4 - 10 - 2);
+        colorRect.setAttribute("y", specs.y + munit * 4 - 10 - 2);
         colorRect.setAttribute("width", plantColors.length * 32 + 4);
         colorRect.setAttribute("height", 20 + 4);
         tgt.parentElement.appendChild(colorRect);
@@ -1516,7 +1532,7 @@ function plantFork(tgt) {
           colorRect.parentElement.appendChild(
             mkCircle({
               x:specs.x + plantNameWidth / 2 - (plantColors.length - 1) * 16 + 32 * i,
-              y:parseFloat(tgt.getAttribute("y")) + munit * 4,
+              y:specs.y + munit * 4,
               r:10,
               clr:colorConverter(camelCase(plantColors[i])),
               cls:"plantColor plantDetails",
@@ -1535,28 +1551,28 @@ function plantFork(tgt) {
         //identify the longest text and use it to center the Other Info details
         let infoFieldLen = 0;
         for (let f in plantInfoFields) {
-          if (myObj[tgt.getAttribute("desc")][f] === "") {
+          if (myObj[tgt.parentElement.children[0].getAttribute("desc")][f] === "") {
             continue;
           }
-          if (myObj[tgt.getAttribute("desc")][f].length > infoFieldLen) {
-            infoFieldLen = myObj[tgt.getAttribute("desc")][f].length;
+          if (myObj[tgt.parentElement.children[0].getAttribute("desc")][f].length > infoFieldLen) {
+            infoFieldLen = myObj[tgt.parentElement.children[0].getAttribute("desc")][f].length;
           }
         }
         //the length of the info field should be no bigger than 200px and no less than plant's name width
         infoFieldLen = Math.min(200, Math.max(plantNameWidth, infoFieldLen * munit * 1.3));
 
         for (let f in plantInfoFields) {
-          if (myObj[tgt.getAttribute("desc")][f] === "") {
+          if (myObj[tgt.parentElement.children[0].getAttribute("desc")][f] === "") {
             continue;
           }
-          let infoLine = mkForeignObj({
+          const infoLine = mkForeignObj({
             x:specs.x + plantNameWidth / 2 - infoFieldLen / 2,
-            y:Number(tgt.getAttribute("y")) + offset + munit * 2,
+            y:specs.y + offset + munit * 2,
             w:infoFieldLen,
             h:150,
             cls:"plantDetails ", 
             tg:"div",
-            txt:plantInfoFields[f] + myObj[tgt.getAttribute("desc")][f]});
+            txt:plantInfoFields[f] + myObj[tgt.parentElement.children[0].getAttribute("desc")][f]});
           tgt.parentElement.appendChild(infoLine);
           offset += infoLine.children[0].getBoundingClientRect().height;
         }
@@ -1640,7 +1656,7 @@ function mkForeignObj(elt) {
   if (elt.tg === "input") {
     txt.value = elt.txt;
   } else {
-    txt.textContent = elt.txt;
+    txt.textContent = elt.txt.replaceAll("&gt;",">").replaceAll("&lt;","<").replaceAll("&leq;","<=").replaceAll("&geq;",">=");
   }
   foreigner.appendChild(txt);
   
@@ -1900,8 +1916,12 @@ function touchDown(evt) {
 //     offset.y -= transforms.getItem(0).matrix.f;
   }
   
+  else if (evt.target.classList.toString().includes("faux")) {
+    alert("FAUX")
+  }
   //hide all shown menus, unless a click is on classes specified above or the faux Ul
-  else if(!evt.target.classList.toString().includes("faux")){
+//   else if(!evt.target.classList.toString().includes("faux"))
+  else {
     hideDropDown();
   }
 }
@@ -2046,7 +2066,7 @@ function dragging(evt) {
 //triggered by mouse or finger up, linked in html
 function touchUp(evt) {
   
-  //exit if the click is on the color group rectangle, click just missed the color circle
+  //exit if the click is on the color group rectangle, because the click just missed the color circle
   if (evt.target.className === "colorGroupRect") return;
   
   if (evt.type.substring(0,5)==="touch") mobile = true;
@@ -2088,15 +2108,16 @@ function touchUp(evt) {
       g_ty = clickedGroup.parentElement.transform.baseVal.getItem("translate").matrix.f;
     }
     
+    //if a plant is being dragged by shape or branch, access the x/y from plant name, 1st child of the group
     updateLocalStorage(
       clickedGroup.id, 
       "x", 
-      parseInt(evt.target.getAttribute("x")) + coord.x - offset.x + g_tx);
+      parseInt(clickedGroup.children[0].getAttribute("x")) + coord.x - offset.x + g_tx);
     
     updateLocalStorage(
       clickedGroup.id, 
       "y", 
-      parseInt(evt.target.getAttribute("y")) + coord.y - offset.y + g_ty);
+      parseInt(clickedGroup.children[0].getAttribute("y")) + coord.y - offset.y + g_ty);
     
   }
 
