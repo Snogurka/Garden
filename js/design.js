@@ -69,19 +69,12 @@ function myMain(){
     loadExistingDesign();
   }
   
-//   //if mobile, add a little flower in the top left corner
-//   if (window.matchMedia("only screen and (max-width: 600px)").matches) {
-//     document.body.appendChild(
-//       mkCircle({
-//         x:10,
-//         y:parseFloat(window.getComputedStyle(document.querySelector(".navbar")).height) + 10,
-//         r:5,
-//         clr:"",
-//         cls:"orientir",
-//         ttl:""
-//         })
-//     );
-//   }
+  //if mobile, add a little flower in the top left corner - check what's needed first
+  if (window.matchMedia("only screen and (max-width: 600px)").matches) {
+    const orientir = document.createElement("div");
+    orientir.className = "orientir";
+    document.body.insertBefore(orientir, document.querySelector("#svgPlace"));
+  }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -661,8 +654,10 @@ function addPlantMenu(menu) {
     const xSp3 = menu.gW / (ar.filter(x => rangeCheck(x.getAttribute("data-avgh"),48,72)).length);
     const xSp4 = menu.gW / (ar.filter(x => Number(x.getAttribute("data-avgh")) >= 72).length);
 
-    //when adding plants to a garden, x-offset variable is calculated for each height group and for current plant's offset
+    //when adding plants to a garden, x-offset variable is calculated for each height group and 1x..4 is for current plant's offset
     let x1 = x2 = x3 = x4 = 0;
+    //for vertical offset, the yOffset is for each plant height group then the y1..4 is the small offset for each plant, so that they're not clustered together
+    let y1 = y2 = y3 = y4 = 0;
     
     //loop through filtered plants and add them; when adding to a garden, the plant is centered within the garden;  otherwise, it's placed to the left of menu; 
     //if the menu was brought up too close to the left edge of the screen, the plant is placed to the right; vertically, the plant is at the position of its listing in the menu
@@ -680,18 +675,19 @@ function addPlantMenu(menu) {
           //using garden height, gH, calculate the desired vertical spacing of plant groups; horizontally, plants are placed at xOffset intervals
           yOffset = menu.gH / 3; //3 spaces between 4 groups
           if (Number(evt.target.parentElement.children[i].getAttribute("data-avgh")) < 24) {
-            yOffset *= 2.5; //the shortest plants go to the front (bottom), thus the biggest offset
+            //the shortest plants go to the front (bottom), thus the biggest offset
+            yOffset *= 2; 
             xOffset = menu.gX + x1 * xSp1;
             x1++;
           } else if (Number(evt.target.parentElement.children[i].getAttribute("data-avgh")) < 48) {
-            yOffset *= 2;
+            yOffset *= 1.5;
             xOffset = menu.gX + x2 * xSp2;
             x2++;
           } else if (Number(evt.target.parentElement.children[i].getAttribute("data-avgh")) < 72) {
-            yOffset *= 1.5;
             xOffset = menu.gX + x3 * xSp3;
             x3++;
           } else {
+            yOffset *= 0.5;
             xOffset = menu.gX + x4 * xSp4;
             x4++;
           }
@@ -699,7 +695,7 @@ function addPlantMenu(menu) {
           yOffset = menu.gY + yOffset;
           
           //alternate vertical position slightly
-          if (i%2) yOffset += munit*1.5;
+          if (i%2) yOffset += Math.max(munit*2, menu.gH/liCnt*4);
 
         }
         else {

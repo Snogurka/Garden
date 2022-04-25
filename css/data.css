@@ -186,7 +186,7 @@ th.frozenCol {
   position: sticky;
   position: -webkit-sticky;
 /*   top 7.5 is too low for a small window on a desktop but works for mobile and simulator */
-  top: 7.5em;
+  top: 5.2em;
   background-color: var(--dark-blue);
   padding: 0;
   /* z-index: 2; */
@@ -301,10 +301,8 @@ i.exp, i.imp {
   overflow: auto;
 }
 .disabledCustomChoice {
-  color: var(--bright-green);
-  background-image: repeating-radial-gradient(rgba(150,150,150,0.5),var(--bright-green) 99%); 
-/*   color: #757575;
-  background-color: rgba(50, 50, 50, 0.1); */
+  color: #d2ffa7;
+  background-image: repeating-radial-gradient(rgba(150,105,150,0.5),var(--bright-green) 99%);
 }
 .selectedCustomChoice {
 /*   color: var(--dark-gray); */
