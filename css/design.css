@@ -151,6 +151,10 @@ li {
   cursor: pointer;
 }
 
+.plantFlowerShapeColor {
+  border-radius: 5px;
+}
+
 /* garden size (height and width) indicators  */
 .sizeInd {
   font-size: smaller;

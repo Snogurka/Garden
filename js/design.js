@@ -9,7 +9,7 @@
 ////////////////////////////
 const xmlns = "http://www.w3.org/2000/svg";
 var svgPlace = null;
-const size = 4; //size variable is used in garden & plant size calculations
+const size = 6; //size variable is used in garden & plant size calculations
 const mos = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"];
 const winterMos = ["Jan", "Feb", "Oct", "Nov", "Dec"];
 ////////////////////////////
@@ -31,12 +31,12 @@ var mobile = false;   //on the mobile devices, both touch and mouse up and down 
 function myMain(){
   
   svgPlace = document.getElementById("svgArea");
-  svgPlace.setAttribute("width", window.screen.width * 2);
-  svgPlace.setAttribute("height", window.screen.height * 2);
+  svgPlace.setAttribute("width", window.screen.width);
+  svgPlace.setAttribute("height", window.screen.height);
   svgPlace.viewBox.baseVal.x = 0;
   svgPlace.viewBox.baseVal.y = 0;  
-  svgPlace.viewBox.baseVal.width = window.screen.width * 2;
-  svgPlace.viewBox.baseVal.height = window.screen.height * 2;
+  svgPlace.viewBox.baseVal.width = window.screen.width;
+  svgPlace.viewBox.baseVal.height = window.screen.height;
   
   // munit = my unit, the font size, if set to 14, munit is ~7.11
   munit = Math.round((Number(window.getComputedStyle(svgPlace, null).getPropertyValue("font-size").replace("px",""))/1.9 + Number.EPSILON) * 100) / 100;
@@ -246,7 +246,7 @@ function settingsMenu(clkdElt) {
           //get the lsPlant element
           const plantElt = document.getElementById("p_" + lsPlants[i]);
           //get the color shapes of the created lsPlant elements
-          const colorShapes = plantElt.getElementsByClassName("shapeColor");
+          const colorShapes = plantElt.getElementsByClassName("plantShapeColor");
 
           //if the chosen month is in winter, remove green from non-evergreens
           flowerGradClr(
@@ -256,29 +256,17 @@ function settingsMenu(clkdElt) {
           //if the lsPlant blooms in the selected month, color its circle
           flowerGradClr(
             colorShapes[1], 
-            lsPlant[9].includes(mos.indexOf(clkdElt.innerText)) ? lsPlant[8] : "transparent");
+            lsPlant[9].includes(mos.indexOf(clkdElt.innerText)) ? lsPlant[8] : "transparent"
+          );
           
-          //for perennials and annuals, adjust their branch height according to the month
-//           if (["a", "p"].includes(lsPlant[7][1])) {
-//             const branches = plantElt.getElementsByClassName("shape");
-//             if (branches.length) {
-//               for (let i = 0, len = branches.length; i < len; i++ ) {
-// //                 branches[i].style.display = "none";
-//                 branches[0].parentElement.removeChild(branches[0]);
-//               }
-//             }
-//             drawBranches(
-//               plantElt, 
-//               {
-//                 x:Number(lsPlant[0]),
-//                 y:Number(lsPlant[1]),
-//                 w:Number(lsPlant[2]),
-//                 h:Number(lsPlant[3]),
-//                 shp:lsPlant[7],
-//                 cls:"shape"
-//               }, 
-//               clkdElt.innerText);
-//           }
+          //if it's an annual, set branches' display=none in cold months
+          if (lsPlant[7][1] === "a") {
+            const paths = colorShapes[0].parentElement.getElementsByTagName("path");
+            for (let i = 0, len = paths.length; i < len; i++ ) {
+              paths[i].style.display = winterMos.indexOf(clkdElt.innerText) > -1 ?  "none" : "inline";
+            }
+          }
+          
         }  
       }
     }
@@ -530,15 +518,24 @@ function getUL(menu) {
               liText.setAttribute("data-avgh",getAvgNum(myObj[x][4]));
               liText.setAttribute("data-avgw",getAvgNum(myObj[x][5]));
    
-              //capture the first letters of plant type and leafyness
+              //capture the first letters of plant type
               let shp = ["flower","tree","vine"].includes(myObj[x][3]) ?
                 myObj[x][3][0] : "b";
-              if (myObj[x][7].includes("semi-evergreen")) {
-                shp += "s"
-              } else if (myObj[x][7].includes("evergreen")) {
+              
+              //capture the leafyness
+//               if (myObj[x][7].includes("semi-evergreen")) {
+//                 shp += "s"
+//               } else //semi-evergreen is rolled into evergreen for now
+                if (myObj[x][7].includes("evergreen")) {
                 shp += "e"
               } else if (myObj[x][7].includes("perennial")) {
                 shp += "p"
+              } else if (myObj[x][7].includes("biennial")) {
+                shp += "b"
+              } else if (myObj[x][7].includes("annual")) {
+                shp += "a"
+              } else if (myObj[x][7].includes("deciduous")) {
+                shp += "d"
               } else {
                 shp += "o"
               }
@@ -695,7 +692,7 @@ function addPlantMenu(menu) {
           yOffset = menu.gY + yOffset;
           
           //alternate vertical position slightly
-          if (i%2) yOffset += Math.max(munit*2, menu.gH/liCnt*4);
+          if (i%2) yOffset += munit*2;
 
         }
         else {
@@ -1018,9 +1015,6 @@ function addGarden(elt){
       localStorage.aas_myGardenVs_grdns += "," + elt.gId.toString();
     }
     //record the new garden area data in local storage and update the total garden count; round x,y,w,h to 2 decimal places
-    if (isNaN(elt.x) || isNaN(elt.y)) {
-      alert("x or y is NaN");
-    }
     localStorage.setItem("aas_myGardenVs_grdn"+elt.gId, 
                          elt.x.toFixed(1) + "," + elt.y.toFixed(1) + "," + 
                          elt.w.toFixed(1) + "," + elt.h.toFixed(1) + "," + 
@@ -1319,7 +1313,7 @@ function gardenFork(clkdElt) {
     //if the cicked garden is a simple container, it doesn't have sizers, thus exit - WOULD THIS EVER HAPPEN
     if (!clkdElt.parentElement.getElementsByClassName("gdnBtn").length) 
       { 
-        alert("a garden with nothing in it, a simple container, with no sizers!");
+        console.log("a garden with nothing in it, a simple container, with no sizers!");
         return;
       }
     
@@ -1382,10 +1376,6 @@ function addPlant(elt) {
     if (elt.y > Number(svgPlace.getAttribute("height"))) {
       elt.y = Number(svgPlace.getAttribute("height")) - munit*1.5;}
     
-    if (isNaN(elt.x) || isNaN(elt.y) ) {
-      alert("x or y is NAN");
-    }
-    
     //record the new plant data in the local storage; round x,y,w,h to 2 decimals
     localStorage.setItem(
       `aas_myGardenVs_plnt${elt.pId}`,
@@ -1418,9 +1408,9 @@ function addPlant(elt) {
   
   //create a text element with plant's common name
   elt.cls += " plantName";
-  elt.txt = elt.nm.length > 15 ? elt.nm.slice(0,15) + "..." : elt.nm;
-  elt.ttl = elt.nm.length > 15 ? elt.nm : null;
-//   elt.fntSz = elt.nm.length > 15 ? "smaller" : null;
+  elt.txt = elt.nm.length > 12 ? elt.nm.slice(0,12) + "..." : elt.nm;
+  elt.ttl = elt.nm.length > 12 && elt.nm; //shorter ternary, for if only
+//   elt.fntSz = elt.nm.length > 15 && "smaller";
   grp.appendChild(mkText(elt));
  
 //   const plantNameWidth = parseInt(window.getComputedStyle(grp.children[0]).width);
@@ -1583,8 +1573,8 @@ function plantFork(tgt) {
   //if one of the color choices is clicked, color the plant shape
   else if (tgt.classList.contains("plantColor")) {
     
-    //set coloredShape to the last element with shapeColor class
-    const coloredShape = clickedGroup.getElementsByClassName("shapeColor")[clickedGroup.getElementsByClassName("shapeColor").length-1];
+    //set coloredShape to the last element with plantShapeColor class
+    const coloredShape = clickedGroup.getElementsByClassName("plantShapeColor")[clickedGroup.getElementsByClassName("plantShapeColor").length-1];
     
     //format the color name - to be used as gradient id, it needs to have i_ for inconspicuous and the rest should be in camelCase
     const col = 
@@ -1667,15 +1657,24 @@ function mkForeignObj(elt) {
 
 //draw plant's shape adding them to the supplied plant group
 function drawPlantShape(plantGroup, specs) {
-
-  const dt = new Date;
-  let leafyShape = null, floweryShape = null;
+  // evergreen tree: always green triangle
+  // evergreen vine: green drooping vine-lines
+  // all other evergreen & biennial: branches & green circle
+  // deciduous vines: greenish-brown vines, green in non-winter months
+  // annual: in warm months only, brances & green circle 
+  // all other (perennial, deciduous): branches, and in warm months - green circle;
   
-  //if it's a tree(t) that's evergreen(e), add a triangle shape
+  const dt = new Date;
+  //leafy and flowery shapes are used to hold shapes with leafs (branches, trianlge) and shapes with flowers
+  let leafyShape = null;
+  let floweryShape = null;
+  
+  //tree(t) evergreen(e)
   if (specs.shp === "te") {
+    
     //make an evergreen tree triangle
     leafyShape = document.createElementNS(xmlns, "polygon");
-    leafyShape.setAttribute("class", specs.cls + " shapeColor");
+    leafyShape.setAttribute("class", specs.cls + " plantShapeColor");
     leafyShape.setAttribute(
       "points", 
       `${specs.x+specs.w/2}, ${specs.y} ${specs.x+specs.w}, ${specs.y+specs.h} ${specs.x}, ${specs.y+specs.h}`
@@ -1684,18 +1683,42 @@ function drawPlantShape(plantGroup, specs) {
     
     //create a smaller triangle to hold the flowering effect for a conical evergreen tree
     floweryShape = document.createElementNS(xmlns, "polygon");
-    floweryShape.setAttribute("class", specs.cls + " shapeColor");
+    floweryShape.setAttribute("class", specs.cls + " plantShapeColor plantFlowerShapeColor");
     floweryShape.setAttribute(
       "points", 
       `${specs.x + specs.w/2}, ${specs.y + specs.h*0.1} ${specs.x + specs.w*0.9}, ${specs.y + specs.h*0.6} ${specs.x + specs.w*0.1}, ${specs.y + specs.h*0.6}`
     );
     plantGroup.appendChild(floweryShape);
+    
   }
   
-  //if not an evergreen tree, add branches;
   else {
+      
+    const numOfBranches = specs.shp[0] === "v" ? 6 : 4;
+    const spread = Math.round(specs.w / numOfBranches);
     
-    drawBranches(plantGroup, specs, mos[dt.getMonth()]);
+    for (let i = 0; i < numOfBranches; i++) {
+      const shapeElt = document.createElementNS(xmlns, "path");
+      shapeElt.setAttributeNS(null, "class", specs.cls + " shape");
+      shapeElt.setAttributeNS(
+        null, 
+        "d", 
+        specs.shp[0] != "v" ? 
+        `m ${specs.x + spread * i} ${specs.y} 
+         c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1} 
+           ${specs.w * 0.2 * (1 - i)} ${specs.w * 0.5} 
+           ${specs.w / 2 - spread * i} ${specs.h}` :
+        `m ${specs.x + specs.w / 2} ${specs.y} 
+         c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1} 
+           ${specs.w * 0.2 * (3 - i)} ${specs.w * 0.5} 
+           ${specs.w / 2 - spread * i} ${specs.h}`
+      );
+      if (specs.shp[1] === "a") {
+        shapeElt.style.display = winterMos.includes(mos[dt.getMonth()]) ?  "none" : "inline";
+      }
+      plantGroup.appendChild(shapeElt);
+    }
+    
     
     //also for all plants that aren't evergreen trees, add two circles for leaves and flowers
     
@@ -1703,7 +1726,8 @@ function drawPlantShape(plantGroup, specs) {
     specs.r = specs.w/2;
     //adjust specs for leaf/flower circle
     specs.x += specs.w/2;
-    specs.cls = specs.cls + " shapeColor";
+    specs.y += specs.h/2;
+    specs.cls = specs.cls + " plantShapeColor";
 
     //add a circle for leafs
     leafyShape = mkCircle(specs);
@@ -1716,12 +1740,13 @@ function drawPlantShape(plantGroup, specs) {
 
     //add a circle for flowers
     plantGroup.appendChild(floweryShape);
+    
   }
   
   
   //if it's a non-winter month or if the plant is evergreen, fill leafs with green;
   flowerGradClr(leafyShape,
-                (specs.shp[1]==="e" || !(winterMos.includes(mos[dt.getMonth()]))) ? 
+                (["b","s","e"].includes(specs.shp[1]) || !(winterMos.includes(mos[dt.getMonth()]))) ? 
                 "green" : "transparent"); 
   //if the plant is currently in bloom, add its flowering color;
   flowerGradClr(floweryShape, 
@@ -1743,48 +1768,6 @@ function flowerGradClr(flowerShape, color, shp, mo) {
   flowerShape.setAttribute("fill",` url(#${camelCase(color)})`);
 }
 
-//////////////////////////////////////////////////////////////////////
-//this function draws branches within the supplied branch group
-//currently only used when (re)creating branches; 
-//todo: improve branches' look
-function drawBranches(plantGroup, specs, m) {
-  const numOfBranches = 4;
-  //warm months are from March to Sep; the warmer/later, the taller the perennials and annuals
-  const warmMoVal = (mos.indexOf(m) + 2) / 10;
-  
-  //adjust the height of perennials depending on the month
-//   if (specs.shp[1] === "p") {
-//     if ( winterMos.includes(m) ) {
-//       specs.y += specs.h * 0.9;
-//       specs.h = specs.h * 0.1;
-//     } else {
-//       specs.y += specs.h * warmMoVal;
-//       specs.h = specs.h * (1-warmMoVal); 
-//     }
-//   } else if (specs.shp[1] === "a") {
-//     if ( winterMos.includes(m) ) {
-//       return;
-//     } else {
-//       specs.y += specs.h * (mos.indexOf(m) + 2)/10 ;
-//       specs.h = specs.h * (10 - mos.indexOf(m) + 2)/10; 
-//     }
-//   } 
-  
-  const spread = Math.round(specs.w / numOfBranches);
-  for (let i = 0; i < numOfBranches; i++) {
-    const shapeElt = document.createElementNS(xmlns, "path");
-    shapeElt.setAttributeNS(null, "class", specs.cls + " shape");
-    shapeElt.setAttributeNS(
-      null, 
-      "d", 
-      `m ${specs.x + spread * i} ${specs.y} 
-       c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1}
-         ${specs.w * 0.2 * (2 - i)} ${specs.w * 0.5}
-         ${specs.w / 2 - spread * i} ${specs.h}`
-    );
-    plantGroup.appendChild(shapeElt);
-  }
-}
 
 //////////////////////////////////////////////////////////////////////
 //this function creates a circle, used for flower color toggle buttons 
@@ -1912,9 +1895,6 @@ function touchDown(evt) {
 //     offset.y -= transforms.getItem(0).matrix.f;
   }
   
-  else if (evt.target.classList.toString().includes("faux")) {
-    alert("FAUX")
-  }
   //hide all shown menus, unless a click is on classes specified above or the faux Ul
 //   else if(!evt.target.classList.toString().includes("faux"))
   else {
