@@ -68,7 +68,7 @@ function createTblWithData(json) {
   //start the text string to contain the body of the html table
   let txt = "<tbody>";
   //l = number of columns minus 1 (latin name, which is a key)
-  let l = myObj[Object.keys(myObj)[0]].length;
+  const l = myObj[Object.keys(myObj)[0]].length;
   //k = Latin Name, the name of the key column in headers (first) JSON object entry
   let k = Object.keys(myObj)[0];
 
@@ -77,11 +77,10 @@ function createTblWithData(json) {
   txt += "<tr title='Click to Sort'>";
 
   for (let i = 0; i < l; i++) {
-    //record column names in a var, replacing html nonbreaking space with js one
+    //record column names in a var, replacing html nonbreaking space with a js one
     arrHeaders.push(myObj[k][i].replaceAll("&nbsp","\xa0"));      
 
-    //latin name is added separately cause it's the key and only needs to be 
-    //added once per object entry, thus it's here, combined with the common name
+    //latin name is added separately cause it's the key and only needs to be added once per object entry, thus it's here, combined with the common name
     if (i === 0) {
       //replace nbsp for latin name value
       arrHeaders.push(k.replaceAll("&nbsp","\xa0"));

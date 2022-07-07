@@ -363,7 +363,7 @@
     "Sep, Oct, Nov",
     "",
     "full",
-    "spreading",
+    "spreading rhizomes",
     "",
     "open sunny meadows and along paths and forests",
     "Eastern North America",
@@ -449,7 +449,7 @@
   ],
   "Rhododendron 'Unknown'": [
     "Azalea",
-    "azaleas native to Northeastern US are deciduous, the evergreen varieties are from Asia;",
+    "azaleas native to Northeastern North America are deciduous, the evergreen varieties are from Asia;",
     "",
     "shrub",
     "4'-5'",
@@ -541,7 +541,7 @@
     "",
     "",
     "",
-    "5"
+    "3"
   ],
   "Rhododendron x 'RLH12P8'": [
     "Azalea (Bloom-A-Thon)",
@@ -797,7 +797,7 @@
     "annually",
     "seed - no treatment required",
     "low maintenance; few problems are minor leaf spot and black mold;",
-    "3"
+    "2"
   ],
   "Monarda didyma": [
     "Bee Balm",
@@ -861,7 +861,7 @@
     "",
     "",
     "",
-    "1"
+    "2"
   ],
   "Betula": [
     "Birch",
@@ -1103,7 +1103,7 @@
     "",
     "",
     "open woods and thickets",
-    "Central and Eastern US",
+    "Central and Eastern North America",
     "bees, butterflies, hummingbirds and hummingbird moths",
     "",
     "",
@@ -1118,7 +1118,7 @@
     "",
     "seed, division",
     "occasional rust",
-    "0"
+    "1"
   ],
   "Salvia azurea": [
     "Blue Sage",
@@ -1470,11 +1470,11 @@
     "before planting and again, when buds begin to form;",
     "collect seeds after flowering",
     "",
-    "0"
+    "1"
   ],
   "Buddleja": [
     "Butterfly Bush",
-    "have 'black knight'' variety; light green foliage; best to find a seedless variety, to avoid spreading; considered a noxious weed in parts of US;",
+    "have 'black knight'' variety; light green foliage; considered a noxious weed in parts of North America, thus best to find a seedless variety, to avoid its spreading; State of Oregon has a list of sterile varieties;",
     "",
     "shrub",
     "6'-8'",
@@ -1826,7 +1826,7 @@
   ],
   "Nepeta cataria": [
     "Catnip",
-    "aka catmint, cutwort; fragrant, can be used for cooking; draught tolerant;",
+    "aka catmint, cutwort; fragrant, can be used for cooking; drought tolerant;",
     "",
     "herb",
     "20''-40''",
@@ -2095,7 +2095,7 @@
     "fibrous, tubers",
     "",
     "along paths; open woods, prairies",
-    "Eastern US and Canada",
+    "Eastern North America and Canada",
     "bees, birds, good flies",
     "clover and other prairie flowers and grasses, clematis and other native vines, Golden Alexander, phlox",
     "",
@@ -2178,7 +2178,7 @@
   ],
   "Echinacea laevigata": [
     "Coneflower Smooth",
-    "avoid planting near other Echinacea as they hybridize easily; when started from seed, the plant typically won't flower until the second year; historically, fires and grazing helped sustain its population; supports immune system; leaves are not heart-shaped unlike the common Echinacea;",
+    "avoid planting near other Echinacea as they hybridise easily; when started from seed, the plant typically won't flower until the second year; historically, fires and grazing helped sustain its population; supports immune system; leaves are not heart-shaped unlike the common Echinacea;",
     "",
     "flower",
     "1'-4'",
@@ -2338,7 +2338,7 @@
   ],
   "Crinum americanum": [
     "Crinum Lily",
-    "aka Florida Swamp-Lily, Seven Sisters, Southern Swamp Lily, String Lily; slightly toxic; fragrant; salt tolerant",
+    "aka Florida Swamp-Lily, Seven Sisters, Southern Swamp Lily, String Lily; slightly toxic; fragrant; salt tolerant; slowly spreads to form colonies; takes a while to bloom;",
     "",
     "flower",
     "2'-4'",
@@ -2362,9 +2362,9 @@
     "new ones take couple of years to flower",
     "",
     "",
-    "prefer moist soil but are draught tolerant",
+    "prefer moist soil but are drought tolerant",
     "mulch heavily in winter",
-    "bulb division, though takes a couple of years to flower when started from a separated bulb",
+    "spreading; bulb division, but takes a couple of years to flower when started from a separated bulb",
     "grasshoppers chew the leafs, snails and slugs visit the plant; rarely fungus can cause leafs spots and streaks; spider mites;",
     "0"
   ],
@@ -2398,7 +2398,7 @@
     "",
     "cutlings in July; seeds from pods, when those are light brown and starting to dry, can be collected late summer through fall; seeds don't need treatment and remain viable for 1 year in sealed, cooled containers;",
     "",
-    "9"
+    "4"
   ],
   "Cucumis sativus": [
     "Cucumber",
@@ -2466,7 +2466,7 @@
   ],
   "Leucanthemum superbum": [
     "Daisy May",
-    "should bloom for a while",
+    "should bloom for a while; spreading, not native to North America so best kept in contained areas;",
     "",
     "flower",
     "12''-24''",
@@ -2486,7 +2486,7 @@
     "",
     "well-drained, moist, fertile; acidic to neutral;",
     "",
-    "",
+    "spring to early summer",
     "",
     "deadheading might prolong bloom; divide every 3-4 years;",
     "",
@@ -2526,7 +2526,7 @@
     "",
     "collect seeds after flowering, for self-reseeding don't disturb the soil",
     "",
-    "3"
+    "2"
   ],
   "Cornus": [
     "Dogwood",
@@ -2639,7 +2639,7 @@
     "sends runners",
     "",
     "open woods and thickets",
-    "Eastern US",
+    "Eastern North America",
     "attracts butterflies and birds",
     "aster",
     "",
@@ -2754,7 +2754,7 @@
   ],
   "Ilex x attenuata": [
     "East Palatka Holly",
-    "a hybrid of Ilex cassine x Ilex opaca; oval leaf ending with a single spike; dioecious; tolerates air pollution, salt, draught; fruit is toxic to people;",
+    "a hybrid of Ilex cassine x Ilex opaca; oval leaf ending with a single spike; dioecious; tolerates air pollution, salt, drought; fruit is toxic to people;",
     "",
     "tree",
     "30'-45'",
@@ -2782,7 +2782,7 @@
     "",
     "cuttings or grafting",
     "protect from cold winds; susceptible to leaf pests, powdery mildew, yellowing of leaves in alkaline soil;",
-    "5"
+    "3"
   ],
   "Aquilegia canadensis": [
     "Eastern Red Columbine",
@@ -2927,7 +2927,7 @@
     "",
     "",
     "prairies, open woods, hills;",
-    "Eastern and Central US",
+    "Eastern and Central North America",
     "bees, butterflies, hummingbirds",
     "",
     "",
@@ -2974,7 +2974,7 @@
     "",
     "being a woody shrub, lavender will most likely die from division; best way to propagate is to cut branches that have rooted or collect seeds;",
     "",
-    "1"
+    "2"
   ],
   "Rumex scutatus": [
     "French Sorrel",
@@ -3034,7 +3034,7 @@
     "takes a year and a half for seeds to germinate",
     "if needed, prune after flowering",
     "summer",
-    "low maintenance but doesn't tolerate long draughts or salt",
+    "low maintenance but doesn't tolerate long droughts or salt",
     "",
     "seed",
     "low maintenance with some susceptibility to scale and borers especially in dry locations;",
@@ -3354,7 +3354,7 @@
     "",
     "pinch off shoots",
     "annually in Mar or before new growth as flowers develop on new shoots",
-    "don't mulch; water regularly in the 1st year, slowing in fall and then only watering during draughts; avoid overhead watering; fertilize for a couple of years if needed;",
+    "don't mulch; water regularly in the 1st year, slowing in fall and then only watering during droughts; avoid overhead watering; fertilize for a couple of years if needed;",
     "spring",
     "soaked seed",
     "mildew, fruit rot, wasps, Japanese beetles (pick off)",
@@ -3390,7 +3390,7 @@
     "",
     "best propagated by division in fall or late winter. seeds can be collected and stored sealed in the fridge",
     "",
-    "3"
+    "2"
   ],
   "Phaseolus vulgaris": [
     "Green Bean",
@@ -3486,7 +3486,7 @@
     "before new growth begins in spring",
     "",
     "",
-    "1"
+    "2"
   ],
   "Corylus americana": [
     "Hazelnut",
@@ -3746,7 +3746,7 @@
   ],
   "Agastache spp": [
     "Hummingbird Mint",
-    "aka Giant-Hyssop, Anise-Hyssop; A. foeniculum x rugosa 'Blue Fortune'; clamp-forming; easy to grow, heat, draught, deer and small mammal tolerant; fragrant leafs can be steeped and seeds are edible if cooked; used by Natives for cough, fever, wounds, upset stomach; can be grown in pots; well-drained soil is essential; fewer flowers in part;",
+    "aka Giant-Hyssop, Anise-Hyssop; A. foeniculum x rugosa 'Blue Fortune'; clamp-forming; easy to grow, heat, drought, deer and small mammal tolerant; fragrant leafs can be steeped and seeds are edible if cooked; used by Natives for cough, fever, wounds, upset stomach; can be grown in pots; well-drained soil is essential; fewer flowers in part;",
     "",
     "flower",
     "2'-4'",
@@ -3770,7 +3770,7 @@
     "dtg: 7-28.",
     "deadhead for appearance; pinch to promote bushiness; can cut back by one third;",
     "spring to mid-summer, no later",
-    "draught tolerant; keep seeds and seedlings moist;",
+    "drought tolerant; keep seeds and seedlings moist;",
     "",
     "seed (self-sowing), rhizome, division: every 3-5 years divide into 1' plants",
     "no significant problems, root rot in poorly drained soil, powdery mildew in humid conditions",
@@ -3983,7 +3983,7 @@
     "",
     "",
     "coastal plains",
-    "North East US, salt, brackish marshes;",
+    "North East North America, salt, brackish marshes;",
     "",
     "",
     "",
@@ -4130,15 +4130,15 @@
   ],
   "Citrus limon": [
     "Lemon Tree",
-    "fragrant flowers; edible fruit can take up to 9 months;",
+    "fragrant flowers; edible fruit can take up to 9 months; 'Meyer' variety is 12-14';",
     "",
     "tree",
-    "6'-10'",
+    "6'-14'",
     "4'-8'",
     "lavender, purple, white",
     "perennial evergreen",
-    "year-round",
-    "fall, winter, indoor could be spring",
+    "spring",
+    "Nov, Dec, Jan, Feb, Mar",
     "full",
     "",
     "",
@@ -4152,13 +4152,13 @@
     "space 6'-12'; ",
     "",
     "",
-    "if growing in a pot, prune any suckers",
-    "",
-    "",
+    "prune to desired shape; if growing in a pot, prune any suckers",
+    "early spring",
+    "water consistently allowing to dry slightly between waterings; does not tolerate standing water; feed compost or nitrogen-rich fertilizer;",
     "",
     "",
     "mites, scale insects indicated by ants, whiteflies, aphids, caterpillars",
-    "0"
+    "1"
   ],
   "Lactuca sativa": [
     "Lettuce",
@@ -4319,6 +4319,38 @@
     "seed, save some beans",
     "bean beetles, aphids, root rot; don't handle when wet to avoid fungus spread;",
     "0"
+  ],
+  "Citrus × latifolia": [
+    "Lime Tree",
+    "fragrant flowers; edible fruit; can't tolerate cold, only a short period of 29&#8457; lime trees hybridize easily, thus are mostly citrus hybrids; this Persian limes are almost thornless;",
+    "",
+    "tree",
+    "6'-10'",
+    "",
+    "",
+    "perennial evergreen",
+    "spring",
+    "fall",
+    "full",
+    "",
+    "",
+    "",
+    "Asia, China",
+    "",
+    "",
+    "",
+    "",
+    "acidic to neutral, pH &leq;8.0, moist, well-drained",
+    "space 6'-12'; ",
+    "",
+    "",
+    "prune to desired shape; if growing in a pot, prune any suckers",
+    "early spring",
+    "water consistently allowing to dry slightly between waterings; does not tolerate standing water; feed compost or nitrogen-rich fertilizer;",
+    "",
+    "",
+    "mites, scale insects indicated by ants, whiteflies, aphids, caterpillars",
+    "1"
   ],
   "Hexastylis minor": [
     "Little Heartleaf",
@@ -4527,7 +4559,7 @@
     "combination of corm and fibrous",
     "",
     "rocky woods, prairies, sandy stream banks",
-    "central and eastern US, Canada",
+    "central and eastern North America, Canada",
     "attracts monarchs, birds, hummingbirds",
     "beardtongue, mint, milkweed, monarda, rudbeckia",
     "",
@@ -4960,6 +4992,38 @@
     "",
     "0"
   ],
+  "Physostegia virginiana": [
+    "Obedient Plant",
+    "aka False Dragonhead; like all mints, spreading, can be aggressive and is ignored by rabbits; clump-forming, may need staking; drought and standing water tolerant;",
+    "",
+    "flower",
+    "12''-18''",
+    "12''-15''",
+    "lavender, pink, white",
+    "perennial",
+    "Jun, Jul, Aug",
+    "",
+    "full, part",
+    "shallow rhizomatous",
+    "",
+    "along streams, wet thickets, swamps, prairies",
+    "North America",
+    "source of nectar for bees, butterflies, hummingbirds",
+    "Amsonia, coneflower, milkweed, Rudbeckia",
+    "",
+    "",
+    "moist, hummus-rich; sand, clay, limestone;",
+    "dig a hole twice the width of the pot, soak, plant 1'' above ground level; seed needs light so cover very lightly",
+    "plant in spring, summer; sow seed in fall",
+    "dtg: 10-42",
+    "",
+    "prune to prevent flopping; easily pull unwanted ones out;",
+    "keep moist during the first year",
+    "spring, summer",
+    "spreading, division, 3 mos cold moist stratified seed",
+    "",
+    "1"
+  ],
   "Camellia sasanqua": [
     "October Magic Dawn Camellia",
     "dense, conical form; slow to moderate growth;",
@@ -5215,7 +5279,7 @@
     "",
     "",
     "mold and many others, not as serious, including leaf spot, black rot, stem rot, blight, nematodes; see <a target='_blank' href='https://plantpathology.ces.ncsu.edu/wp-content/uploads/2019/10/peanut-disease-photos-slide-set-oct-2019.pdf?fwd=no'> NCSU Plant Pathology</a> for pictures of diseases;",
-    "0"
+    "1"
   ],
   "Petunia": [
     "Petunia",
@@ -5243,7 +5307,7 @@
     "dtg: 5-15;",
     "can deadhead some",
     "",
-    "add compost before planting; supply consistent watering, though can tolerate brief draught;",
+    "add compost before planting; supply consistent watering, though can tolerate brief drought;",
     "",
     "collect seeds after flowering",
     "hardy",
@@ -5307,7 +5371,7 @@
     "",
     "",
     "",
-    "avg water needs",
+    "average water needs",
     "",
     "division, seed",
     "heat and drought tolerant",
@@ -5552,7 +5616,7 @@
     "thick deep taproot",
     "",
     "praires, open woods",
-    "northern mid-west US",
+    "northern mid-west North America",
     "attracts butterflies, bees and other insects with its nectar and foliage",
     "other clovers and natives, milkweed, rudbeckia",
     "",
@@ -5563,7 +5627,7 @@
     "dtg: 7-14",
     "",
     "",
-    "draught tolerant; amend with phosphorous and potassium only if the soil is low on those; don't add nitrogen to avoid weeds;",
+    "drought tolerant; amend with phosphorous and potassium only if the soil is low on those; don't add nitrogen to avoid weeds;",
     "",
     "in good conditions self seeds, but not aggressively",
     "no serious problems",
@@ -5814,13 +5878,13 @@
     "chives, garlic, marigold",
     "",
     "loamy, moist, well-drained, slightly acidic to neutral",
-    "",
+    "rootball 1'' above the ground",
     "",
     "",
     "repeat bloomers are pruned mostly to shape the plant or to remove winter-damaged canes; if they become overgrown, cut back in early spring;",
     "after flowering",
-    "fertilize in the first week of high 40s, then early summer; spread coffee grounds slightly away from the plant;",
-    "",
+    "mulch; spread coffee grounds slightly away from the plant;",
+    "spring, in the first week of high 40s then in summer;",
     "seeds, sends suckers",
     "",
     "2"
@@ -6000,7 +6064,7 @@
     "tubers, rhizomes",
     "",
     "prairies, roadsides",
-    "Piedmont area of Southeastern US",
+    "Piedmont area of Southeastern North America",
     "endangered; provides nectar for pollinators, seeds for small songbirds; host to Silvery Checkerspot larvae",
     "",
     "",
@@ -6303,7 +6367,7 @@
     "",
     "divide when overcrowded;",
     "young shoots are susceptible to damage from snails and caterpillars",
-    "3"
+    "2"
   ],
   "Spinacia oleracea": [
     "Spinach",
@@ -6563,7 +6627,7 @@
   ],
   "Osmanthus fragrans": [
     "Tea Olive",
-    "aka Sweet Osmanthus; height range depends on variety; Devilwood (Osmanthus americanus) is the only one native to US; tolerates flood and salt; beautifully scented inconspicuous flowers;",
+    "aka Sweet Osmanthus; height range depends on variety; Devilwood (Osmanthus americanus) is the only one native to North America; tolerates flood and salt; beautifully scented inconspicuous flowers;",
     "",
     "brush",
     "10'-30'",
@@ -6576,7 +6640,7 @@
     "shallow root system, usually not a problem",
     "",
     "",
-    "Asia, Eastern US",
+    "Asia, Eastern North America",
     "bees and wasps are attracted to flowers; fruit of the native variety is enjoyed by birds and small mammals;",
     "",
     "",
@@ -6655,7 +6719,7 @@
     "",
     "",
     "",
-    "1"
+    "2"
   ],
   "Coreopsis tickseed": [
     "Tickseed",
@@ -6779,7 +6843,7 @@
     "",
     "",
     "",
-    "keep well watered until established, then draught tolerant",
+    "keep well watered until established, then drought tolerant",
     "",
     "reseeds in warmer climates",
     "",
@@ -7025,7 +7089,7 @@
     "",
     "savannas; low, wet woods; bogs",
     "Eastern North America",
-    "NC viburnum supports 97 Eastern USA moths and caterpillars; berries for wood thrush, northern mockingbird, gray catbird, cedar waxwing, small mammals;",
+    "NC viburnum supports 97 Eastern North AmericaA moths and caterpillars; berries for wood thrush, northern mockingbird, gray catbird, cedar waxwing, small mammals;",
     "",
     "",
     "",
@@ -7039,7 +7103,7 @@
     "fertilize in spring, drought tolerant once established",
     "",
     "",
-    "1"
+    "2"
   ],
 
   "Viburnum Nudum v. Brandywine": [
@@ -7058,7 +7122,7 @@
     "",
     "savannas; low, wet woods; bogs",
     "Eastern North America",
-    "NC viburnum supports 97 Eastern USA moths and caterpillars; berries for wood thrush, northern mockingbird, gray catbird, cedar waxwing, small mammals;",
+    "NC viburnum supports 97 Eastern North AmericaA moths and caterpillars; berries for wood thrush, northern mockingbird, gray catbird, cedar waxwing, small mammals;",
     "",
     "",
     "",
@@ -7089,7 +7153,7 @@
     "combination of bulb and fibrous, spreading",
     "",
     "open woodlands, prairies",
-    "Southeast and most US",
+    "Southeast and most North America",
     "nectar for native bees, attracts birds",
     "beard-tongue, prairie smoke, pussytoes",
     "",
@@ -7104,7 +7168,7 @@
     "",
     "seed (require 60 days of cold-moist stratification",
     "no significant problems in well-drained soil",
-    "0"
+    "1"
   ],
   "Mertensia virginica": [
     "Virginia Bluebells",
@@ -7136,7 +7200,7 @@
     "",
     "collect seeds in early summer; divide when wilting;",
     "problem free when grown in moist shade; ",
-    "0"
+    "1"
   ],
   "Itea virginica L.": [
     "Virginia Sweetspire",
@@ -7314,7 +7378,7 @@
     "",
     "low rich woods, open meadows, banks of streams;",
     "Eastern and Central North America, Eastern Canada",
-    "nectar attracts insects",
+    "nectar attracts insects; deer and rabbit will eat the leafs to the ground;",
     "fern, wild geranium",
     "",
     "",
@@ -7328,7 +7392,7 @@
     "",
     "self-seeding; division in fall; store bulbs in a cool dry place;",
     "no serious problems",
-    "1"
+    "2"
   ],
   "Lupinus perennis": [
     "Wild Lupine",
@@ -7452,7 +7516,7 @@
     "",
     "",
     "",
-    "draught tolerant",
+    "drought tolerant",
     "",
     "seed, division",
     "occasional problems presented by aphids, thrips, mildew and leaf spot;",
