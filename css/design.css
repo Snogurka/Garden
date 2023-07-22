@@ -124,7 +124,8 @@ li {
 /* plant bloom colors and additional info, below text name */
 .plantDetails {
   padding: 3px;
-  background: transparent;
+  border-radius: 5px;
+  z-index: 99;
   color: var(--tool-text-color);
   font-family: cursive;
   overflow-x: auto;

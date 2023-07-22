@@ -458,9 +458,7 @@ function getUL(menu) {
 
         //the returned plants are filtered, if requested
         if (menu.type === "companions") {
-          menu.filter = (
-              myObj[menu.forPlantLN][16].toLowerCase().split(",") + ", " +
-              myObj[menu.forPlantLN][17].toLowerCase().split(",")).replace(/and |or /g, "");
+          menu.filter = myObj[menu.forPlantLN][16].toLowerCase().split(",").replace(/and |or /g, "");
         }
         if (menu.type === "gName") {
           let objGardenLocation = null; 
@@ -500,12 +498,12 @@ function getUL(menu) {
                     myObj[x][16].includes(menu.forPlantCN) &&
                     !(menu.filter.includes(myObj[x][1])))
                 //if the month matches
-                || menu.type === "timeToPlant" && myObj[x][21].toLowerCase().indexOf(menu.filter) > -1
+                || menu.type === "timeToPlant" && myObj[x][19].toLowerCase().indexOf(menu.filter) > -1
                 //if the name of current garden is local storage
                 || menu.type === "gName" && menu.filter.includes(x)
                 || menu.type === "sunSoil" 
                   && myObj[x][10].toLowerCase().indexOf(menu.filter[0]) > -1
-                  && myObj[x][19].toLowerCase().indexOf(menu.filter[1]) > -1
+                  && myObj[x][18].toLowerCase().indexOf(menu.filter[1]) > -1
                )
             {
               const liText = document.createElement("li");
@@ -1532,7 +1530,7 @@ function plantFork(tgt) {
         //The "desc" field of the tgt (plant name) holds latin name, used as a key to pull all other information
         var plantInfoFields = {7:"Leaves: ", 8:"Bloom Time: ", 10:"Sun: ",
                                11:"Roots: ", 12:"Garden Quantities: ", 16:"Companions: ", 
-                               17:"Allies: ", 18:"Enemies: ", 19:"Soil: "};
+                               17:"Enemies: ", 18:"Soil: "};
 
         //identify the longest text and use it to center the Other Info details
         let infoFieldLen = 0;

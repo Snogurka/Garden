@@ -15,7 +15,7 @@
   var filters = {}; //filters{} is a global var to support filtering multiple columns; 
   var newRow = null;
   var arrHeaders = [];
-  const splitableCols = ["Bloom\xa0Time", "Fruit\xa0Time", "When\xa0To\xa0Plant", "When\xa0To\xa0Prune", "When\xa0To\xa0Feed", "Class", "Color", "Leaves", "Sun", "Garden\xa0Location", "Soil", "Ally", "Companions", "Enemy", "Natural\xa0Habitat", "Origin", "Height", "Width"]; //an array of columns, for which values are split into individual filter choices
+  const splitableCols = ["Bloom\xa0Time", "Fruit\xa0Time", "When\xa0To\xa0Plant", "When\xa0To\xa0Prune", "When\xa0To\xa0Feed", "Class", "Color", "Leaves", "Sun", "Garden\xa0Location", "Soil", "Companions", "Enemy", "Natural\xa0Habitat", "Origin", "Height", "Width"]; //an array of columns, for which values are split into individual filter choices
 
   window.onload = main();
 
@@ -29,6 +29,7 @@ function main() {
     .then((json) => {
       //create the main and only table - #plants
       createTblWithData(json);
+//       modifyJsonOutput(json);
     })
     .then(() => {
       //menus for import/export and views
@@ -46,21 +47,39 @@ function main() {
       }
     })
     .catch((err) => {
-      console.log("Issue in one of sub-mains");
+      console.log(`Error in one of sub-mains: ${err}`);
       throw err;
     })
   ;
+}
+
+function modifyJsonOutput(json){
+  let str = '';
+  for (k of Object.keys(json)) {
+    let len = json[k].length;
+    str += "  \"" + k + "\": [ \n"
+    for (let p = 0; p < len; p++) {
+      if (p === 16){
+        str += '    "' + json[k][p] + ", " + json[k][p+1] + "\", \n"
+      } else if (p === 17) {
+        continue
+      } else if (p === len -1) {
+        str += '    "' + json[k][p] + "\"\n  ],\n"
+      } else {
+        str += '    "' + json[k][p] + "\", \n"
+      }
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////
 // add data pulled from plants.json to the table;
 // call other functions to check local storage for user added plants; 
 // check session storage for filtered plants and hidden columns;
-function createTblWithData(json) {
+function createTblWithData(myObj) {
   var objNotes = null;
   let objStatus = null,
-      objLocation = null,
-      myObj = json;
+      objLocation = null;
   
   //determine if the user's device is a desktop or mobile, record it in colSpan to be used next
   const colSpan = window.matchMedia("only screen and (max-width: 600px)").matches?3:12;
@@ -76,7 +95,10 @@ function createTblWithData(json) {
   //latin name is the key, name - 1st value index 0, notes - 2nd index 1, etc.
   txt += "<tr title='Click to Sort'>";
 
+  let myNewStr = '';
   for (let i = 0; i < l; i++) {
+
+    //*************
     //record column names in a var, replacing html nonbreaking space with a js one
     arrHeaders.push(myObj[k][i].replaceAll("&nbsp","\xa0"));      
 
@@ -111,23 +133,23 @@ function createTblWithData(json) {
       txt += `<th class='colWidth3' title='This column is editable.'>${myObj[k][i]}`;
     }
     //Soil column header - add unique title, column width is narrow
-    else if (i === 19){
+    else if (i === 18){
       txt += `<th class='colWidth1' title='Soil pH: circumneutral - near neutral, ph 6.8-7.2, acidic - below 6.8, alkaline - above 7.2. Moisture: hydric - abundant, mesic - moderate, xeric - dry.'>${myObj[k][i]}`;
     }
     //'How To Plant' column header - add unique title, column width is medium
-    else if (i === 20){
+    else if (i === 19){
       txt += `<th class='colWidth3' title='In general, plant: rhizomatous, tap, fibrous root at 1" below soil surface; bulbs, ferns, grasses - shallow; trees, shrubs & vines keep at the same level;'>${myObj[k][i]}`;
     }
     //'When To Plant' column header - add unique title, column width is medium
-    else if (i === 21){
+    else if (i === 20){
       txt += `<th class='colWidth3' title='In NC, first frost is in early Nov, last frost is in early Mar. In general, it's best to plant trees in fall so that the energy is directed into root development, while the top is dormant.>${myObj[k][i]}`;
     }
     //'Days To' column header - add unique title, column width is medium
-    else if (i === 22){
+    else if (i === 21){
       txt += `<th class='colWidth2' title='Days To... g: germination, h: harvest, m: maturity.'>${myObj[k][i]}`;
     }
     //'Food And Water' column header - add unique title, column width is medium
-    else if (i === 25){
+    else if (i === 24){
       txt += `<th class='colWidth2' title='During the 1st year, while the trees are getting established, they should be watered deeply (3'-5' weekly), to ensure good deep roots.'>${myObj[k][i]}`;
     }
     //narrow column headers, colWidth1
@@ -135,15 +157,15 @@ function createTblWithData(json) {
       txt += `<th class='colWidth1'>${myObj[k][i]}`;
     }
     //medium size column headers, colWidth2
-    else if ([8, 9, 14, 15, 17, 18, 27, 28].includes(i)){
+    else if ([8, 9, 14, 15, 17, 26, 27].includes(i)){
       txt += `<th class='colWidth2'>${myObj[k][i]}`;
     }
     //wide column headers, colWidth3
-    else if ([13, 16, 23, 24, 25, 26].includes(i)){
+    else if ([13, 16, 22, 23, 24, 25].includes(i)){
       txt += `<th class='colWidth3'>${myObj[k][i]}`;
     }
     //photo
-    else if (i===29) {
+    else if (i===28) {
       txt += `<th class='colWidth2 pic'>${myObj[k][i]}`;
     }
     //headers for all other columns, which there shouldn't be any at this point
@@ -540,12 +562,11 @@ function impExp(tgt) {
   
   //cancel button closes the window
   let displayCancelBtn = document.createElement("button");
-  displayCancelBtn.innerHTML = "&times";
+  displayCancelBtn.innerHTML = "&times;";
   displayCancelBtn.className = "expImp btnRight btnHelper btnInner";
   displayCancelBtn.title = "Click to Close";
   displayDiv.appendChild(displayCancelBtn);
 
-//   let displayDoneBtn = document.createElement("button");
   let displayDoneBtn = document.createElement("i");
   displayDoneBtn.className = "btnLeft btnHelper btnInner fa fa-fw";
   displayDiv.appendChild(displayDoneBtn);
@@ -628,7 +649,7 @@ function checkStoredData() {
   //check the stored plants column order; the aas_myGardenDb_colOrder stores the column headers in the order that the data is locally stored; whenever the order is changed in plants.json, the headers arrays won't match and the program will rearrange locally stored data and update aas_myGardenDb_colOrder; if there is a plant entry and no aas_myGardenDb_colOrder, it means the entry is very old and is in the original order - thus needs to be rearranged; if there is a change in a column name, the oldName-newName entry needs to be permanently recorded in the colNameChanges object;
   const colOrder = localStorage.getItem("aas_myGardenDb_colOrder");
 
-  const storedColOrder = colOrder?Array.from(colOrder):['Latin\xa0Name','Name','Notes','Status','Class','Height','Width','Color','Leaves','Bloom\xa0Time','Fruit\xa0Time','Sun','Roots','Garden\xa0Location','Natural\xa0Habitat','Origin','Wildlife','Companions','Ally','Enemy','Soil','When\xa0To\xa0Plant','Days\xa0To...','How\xa0To\xa0Prune','When\xa0To\xa0Prune','Food\xa0And\xa0Water','How\xa0To\xa0Plant','When\xa0To\xa0Feed','Propagating','Problems','Picture'];
+  const storedColOrder = colOrder?Array.from(colOrder):['Latin\xa0Name','Name','Notes','Status','Class','Height','Width','Color','Leaves','Bloom\xa0Time','Fruit\xa0Time','Sun','Roots','Garden\xa0Location','Natural\xa0Habitat','Origin','Wildlife','Companions','Enemy','Soil','When\xa0To\xa0Plant','Days\xa0To...','How\xa0To\xa0Prune','When\xa0To\xa0Prune','Food\xa0And\xa0Water','How\xa0To\xa0Plant','When\xa0To\xa0Feed','Propagating','Problems','Picture'];
 
   let currColOrder = compareArrays(arrHeaders, storedColOrder);
   //loop through user-added stored plants using stored plant counter
@@ -1500,7 +1521,7 @@ function displayColumns(tgt) {
   //determine which columns to show, based on the view chosen
   switch (tgt.innerText) {
     case "Plan":
-      showColName = ['Name','Notes','Status','Class','Height','Width','Color','Leaves','Bloom\xa0Time','Sun','Roots','Garden\xa0Location','Natural\xa0Habitat','Origin','Wildlife','Companions','Ally','Enemy','Soil','When\xa0To\xa0Plant','Picture'];
+      showColName = ['Name','Notes','Status','Class','Height','Width','Color','Leaves','Bloom\xa0Time','Sun','Roots','Garden\xa0Location','Natural\xa0Habitat','Origin','Wildlife','Companions','Enemy','Soil','When\xa0To\xa0Plant','Picture'];
       break;
     case "Care":
       showColName = ['Name','Notes','Status','Soil','How\xa0To\xa0Plant','When\xa0To\xa0Plant','Days\xa0To...','How\xa0To\xa0Prune','When\xa0To\xa0Prune','Food\xa0And\xa0Water','When\xa0To\xa0Feed','Propagating','Problems','Picture'];
@@ -1640,46 +1661,54 @@ function allClicks(e) {
         tgt.contentEditable = true;
         tgt.focus();
       }
-  }
-
-  let impTextFormatCheck = function(txt) {
-    //validate the format of the data to import "Latin Name":"notes, status or location text"
-    if (txt.search(/(\".+\":\".+\")/g) > -1) {
-      return true;
     }
-    else {
-      return false;
+
+    let impTextFormatCheck = function(txt) {
+      //validate the format of the data to import "Latin Name":"notes, status or location text"
+      if (txt.search(/(\".+\":\".+\")/g) > -1) {
+        return true;
+      }
+      else {
+        return false;
+      }
     }
-  }
 
- function pictureScroll(direction) {
-    let increment = direction==="forward" ? 1 : -1;
-    let arrowChildNum = direction==="forward" ? 1 : 2;
+    function pictureScroll(direction) {
+      let increment = direction==="forward" ? 1 : -1;
+      let arrowChildNum = direction==="forward" ? 1 : 2;
 
-    try {
-      let str = tgt.parentElement.children[0].src;
+      try {
+        let str = tgt.parentElement.children[0].src;
+        //increase the picture file name number by one 
       //increase the picture file name number by one 
+        //increase the picture file name number by one 
+      //increase the picture file name number by one 
+        //increase the picture file name number by one 
+        tgt.parentElement.children[0].src = 
       tgt.parentElement.children[0].src = 
-      str.replace(
-        str.match(/\d+.jpg/),
-        parseInt(str.match(/\d+.jpg/))+ increment +'.jpg');
+        tgt.parentElement.children[0].src = 
+      tgt.parentElement.children[0].src = 
+        tgt.parentElement.children[0].src = 
+        str.replace(
+          str.match(/\d+.jpg/),
+          parseInt(str.match(/\d+.jpg/))+ increment +'.jpg');
 
-      //show the previous picture (left) button
-      tgt.parentElement.children[arrowChildNum].style.display = "block";
+        //show the previous picture (left) button
+        tgt.parentElement.children[arrowChildNum].style.display = "block";
 
-      //if it's the first or last(max) file name number, hide the previous/next picutre button
-      if (parseInt(tgt.parentElement.children[0].src.match(/\d+.jpg/)) === 1){
-        tgt.style.display = "none";
+        //if it's the first or last(max) file name number, hide the previous/next picutre button
+        if (parseInt(tgt.parentElement.children[0].src.match(/\d+.jpg/)) === 1){
+          tgt.style.display = "none";
+        }
+        if (parseInt(tgt.parentElement.children[0].src.match(/\d+.jpg/))
+            === Number(tgt.parentElement.children[0].attributes.value.value)){
+          tgt.style.display = "none";
+        }
       }
-      if (parseInt(tgt.parentElement.children[0].src.match(/\d+.jpg/))
-          === Number(tgt.parentElement.children[0].attributes.value.value)){
-        tgt.style.display = "none";
+      catch (error) {
+        console.log("Error:"+error+". Unable to load next picture or other issues in response to the image gallery button click.")
       }
     }
-    catch (error) {
-      console.log("Error:"+error+". Unable to load next picture or other issues in response to the image gallery button click.")
-    }
-  }
 
   //-- key entries -------------------------------------------------
   if (e.type === "keyup") {
@@ -1890,8 +1919,7 @@ function allClicks(e) {
     }
 
     //taps in the export/import text area
-    else if ((tgt.classList.contains("exp")||tgt.classList.contains("imp")) 
-             && tgt.tagName === "TEXTAREA") {
+    else if ((tgt.classList.contains("exp")||tgt.classList.contains("imp")) && tgt.tagName === "TEXTAREA") {
       return;
     }
     
@@ -1970,8 +1998,8 @@ function allClicks(e) {
     
     //click on a drop down choice
     else if (tgt.parentElement.parentElement
-             && ["filterRow", "filterCell"].includes(tgt.parentElement.parentElement.className)
-             && tgt.classList.contains("customChoice")) {
+      && ["filterRow", "filterCell"].includes(tgt.parentElement.parentElement.className)
+      && tgt.classList.contains("customChoice")) {
 
       //forCell is a table data cell <td> of the Frozen Filter Row
       let forCell = tgt.parentElement.parentElement;

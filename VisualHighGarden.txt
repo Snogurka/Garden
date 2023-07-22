@@ -1,0 +1,75 @@
+aas_myGardenVs_grdn1	43.00,109.00,1660.00,292.00,High Garden,Part,Soil
+aas_myGardenVs_grdns	1
+aas_myGardenVs_plnt1	490.00,139.00,42.0,180.0,Arborvitae,g_1,Thuja,te,emeraldGreen, 
+aas_myGardenVs_plnt4	176.00,238.00,18.0,42.0,Blazing Star,g_1,Liatris scariosa var. nieuwlandii,fp,pink,7;8;9
+aas_myGardenVs_plnt7	1103.00,224.00,36.0,60.0,Blue Sage,g_1,Salvia azurea,fp,lightBlue,7;8;9
+aas_myGardenVs_plnt8	239.00,396.00,90.0,510.0,Crossvine,g_1,Bignonia capreolata,ve,orange,3;4
+aas_myGardenVs_plnt10	1009.00,370.00,30.0,18.0,French Lavender,g_1,Lavandula stoechas,fe,purple,2;3;4
+aas_myGardenVs_plnt11	1095.00,264.00,18.0,36.0,Golden Alexander,g_1,Zizia aurea,fp,yellow,3;4;5
+aas_myGardenVs_plnt12	791.00,247.00,24.0,36.0,Hummingbird Mint,g_1,Agastache spp,fp,lavender,6;7;8;9
+aas_myGardenVs_plnt13	1600.00,251.00,60.0,72.0,Ligustrum,g_1,Ligustrum vulgare,be,i_white,2;3;4
+aas_myGardenVs_plnt14	925.00,346.00,30.0,36.0,Marigold,g_1,Tagetes,fa,orange,3;4;5;6;7;8;9
+aas_myGardenVs_plnt16	604.00,372.00,21.0,21.0,Milkweed,g_1,Asclepias tuberosa,fp,orange,5;6;7
+aas_myGardenVs_plnt17	1141.00,179.00,13.5,15.0,Obedient Plant,g_1,Physostegia virginiana,fp,white,5;6;7
+aas_myGardenVs_plnt18	46.00,259.00,11.0,30.0,Royal Candles Speedwell,g_1,Veronica spicata,fp,blue,5;6;7;8
+aas_myGardenVs_plnt19	1118.00,344.00,30.0,42.0,Salvia Black & Bloom,g_1,Salvia guaranitica,fp,darkBlue,4;5;6;7;8
+aas_myGardenVs_plnt20	1020.00,188.00,30.0,84.0,Swamp Sunflower,g_1,Helianthus angustifolius,fp,yellow,7;8;9;10
+aas_myGardenVs_plnt21	1205.00,389.00,18.0,12.0,Thyme,g_1,Thymus x citriodus,be,pink,3;4;5;6;7;8
+aas_myGardenVs_plnt23	353.00,382.00,4.0,10.0,Violet Wood Sorrel,g_1,Oxalis violacea,fp,lavender,3;4;5;8;10
+aas_myGardenVs_plnt51	361.00,139.00,42.0,180.0,Arborvitae,g_1,Thuja,te,emeraldGreen, 
+aas_myGardenVs_plnt52	50.00,360.00,12.0,15.0,Aster (Stokes),g_1,Stokesia laevis,fp,blue,4;5;6;7;8
+aas_myGardenVs_plnt53	606.00,330.00,9.0,11.0,Balmy Lilac Bee Balm,g_1,Monarda balmy lilac,fa,lilac,5;6;7
+aas_myGardenVs_plnt57	527.00,224.00,36.0,60.0,Blue Sage,g_1,Salvia azurea,fp,lightBlue,7;8;9
+aas_myGardenVs_plnt58	1334.00,387.00,90.0,510.0,Crossvine,g_1,Bignonia capreolata,ve,orange,3;4
+aas_myGardenVs_plnt60	483.00,371.00,30.0,18.0,French Lavender,g_1,Lavandula stoechas,fe,purple,2;3;4
+aas_myGardenVs_plnt62	277.00,227.00,24.0,36.0,Hummingbird Mint,g_1,Agastache spp,fp,lavender,6;7;8;9
+aas_myGardenVs_plnt66	750.00,371.00,21.0,21.0,Milkweed,g_1,Asclepias tuberosa,fp,orange,5;6;7
+aas_myGardenVs_plnt67	475.00,175.00,13.5,15.0,Obedient Plant,g_1,Physostegia virginiana,fp,white,5;6;7
+aas_myGardenVs_plnt68	721.00,342.00,11.0,30.0,Royal Candles Speedwell,g_1,Veronica spicata,fp,blue,5;6;7;8
+aas_myGardenVs_plnt69	442.00,339.00,30.0,42.0,Salvia Black & Bloom,g_1,Salvia guaranitica,fp,darkBlue,4;5;6;7;8
+aas_myGardenVs_plnt70	588.00,191.00,30.0,84.0,Swamp Sunflower,g_1,Helianthus angustifolius,fp,yellow,7;8;9;10
+aas_myGardenVs_plnt71	328.00,392.00,18.0,12.0,Thyme,g_1,Thymus x citriodus,be,pink,3;4;5;6;7;8
+aas_myGardenVs_plnt72	842.00,345.00,12.0,60.0,Tickseed,g_1,Coreopsis tickseed,fa,orange,5;6;7;8;9;10
+aas_myGardenVs_plnt73	1230.00,375.00,4.0,10.0,Violet Wood Sorrel,g_1,Oxalis violacea,fp,lavender,3;4;5;8;10
+aas_myGardenVs_plnt75	132.00,380.00,18.0,21.0,Wild Hyacinth,g_1,Camassia scilloides,fp,blue,2;3;4;5
+aas_myGardenVs_plnt76	204.00,143.00,42.0,180.0,Arborvitae,g_1,Thuja,te,emeraldGreen, 
+aas_myGardenVs_plnt78	1380.00,301.00,9.0,11.0,Balmy Lilac Bee Balm,g_1,Monarda balmy lilac,fa,lilac,5;6;7
+aas_myGardenVs_plnt83	1548.00,395.00,90.0,510.0,Crossvine,g_1,Bignonia capreolata,ve,orange,3;4
+aas_myGardenVs_plnt87	1342.00,224.00,24.0,36.0,Hummingbird Mint,g_1,Agastache spp,fp,lavender,6;7;8;9
+aas_myGardenVs_plnt90	755.00,299.00,15.0,60.0,Meadow Blazing Star,g_1,Liatris ligulistylis,fp,purple,6;7;8;9
+aas_myGardenVs_plnt91	1598.00,316.00,21.0,21.0,Milkweed,g_1,Asclepias tuberosa,fp,orange,5;6;7
+aas_myGardenVs_plnt93	1534.00,332.00,11.0,30.0,Royal Candles Speedwell,g_1,Veronica spicata,fp,blue,5;6;7;8
+aas_myGardenVs_plnt97	280.00,352.00,12.0,60.0,Tickseed,g_1,Coreopsis tickseed,fa,orange,5;6;7;8;9;10
+aas_myGardenVs_plnt100	841.00,189.00,36.0,60.0,Blue Sage,g_1,Salvia azurea,fp,lightBlue,7;8;9
+aas_myGardenVs_plnt101	1172.00,323.00,21.0,21.0,Milkweed,g_1,Asclepias tuberosa,fp,yellow,5;6;7
+aas_myGardenVs_plnt102	1243.00,265.00,25.0,30.0,Blue Dogbane,g_1,Amsonia tabernaemontana,fp,lightBlue,3;4;5
+aas_myGardenVs_plnt103	896.00,276.00,25.0,30.0,Blue Dogbane,g_1,Amsonia tabernaemontana,fp,lightBlue,3;4;5
+aas_myGardenVs_plnt104	456.00,256.00,25.0,30.0,Blue Dogbane,g_1,Amsonia tabernaemontana,fp,lightBlue,3;4;5
+aas_myGardenVs_plnt105	1240.00,198.00,30.0,84.0,Swamp Sunflower,g_1,Helianthus angustifolius,fp,yellow,7;8;9;10
+aas_myGardenVs_plnt106	875.00,372.00,12.0,15.0,Aster (Stokes),g_1,Stokesia laevis,fp,blue,4;5;6;7;8
+aas_myGardenVs_plnt107	1466.00,236.00,18.0,42.0,Blazing Star,g_1,Liatris scariosa var. nieuwlandii,fp,pink,7;8;9
+aas_myGardenVs_plnt108	800.00,287.00,18.0,36.0,Golden Alexander,g_1,Zizia aurea,fp,yellow,3;4;5
+aas_myGardenVs_plnt109	609.00,140.00,42.0,180.0,Arborvitae,g_1,Thuja,te,emeraldGreen, 
+aas_myGardenVs_plnt110	743.00,139.00,42.0,180.0,Arborvitae,g_1,Thuja,te,emeraldGreen, 
+aas_myGardenVs_plnt111	912.00,142.00,42.0,180.0,Arborvitae,g_1,Thuja,te,emeraldGreen, 
+aas_myGardenVs_plnt112	1033.00,144.00,42.0,180.0,Arborvitae,g_1,Thuja,te,emeraldGreen, 
+aas_myGardenVs_plnt113	1166.00,143.00,42.0,180.0,Arborvitae,g_1,Thuja,te,emeraldGreen, 
+aas_myGardenVs_plnt114	1296.00,146.00,42.0,180.0,Arborvitae,g_1,Thuja,te,emeraldGreen, 
+aas_myGardenVs_plnt115	1437.00,146.00,42.0,180.0,Arborvitae,g_1,Thuja,te,emeraldGreen, 
+aas_myGardenVs_plnt116	1578.00,146.00,42.0,180.0,Arborvitae,g_1,Thuja,te,emeraldGreen, 
+aas_myGardenVs_plnt117	501.00,323.00,21.0,21.0,Milkweed,g_1,Asclepias tuberosa,fp,yellow,5;6;7
+aas_myGardenVs_plnt118	317.00,331.00,12.0,15.0,Aster (Stokes),g_1,Stokesia laevis,fp,blue,4;5;6;7;8
+aas_myGardenVs_plnt119	99.00,339.00,12.0,60.0,Tickseed,g_1,Coreopsis tickseed,fa,orange,5;6;7;8;9;10
+aas_myGardenVs_plnt120	372.00,276.00,18.0,36.0,Golden Alexander,g_1,Zizia aurea,fp,yellow,3;4;5
+aas_myGardenVs_plnt121	348.00,192.00,30.0,84.0,Swamp Sunflower,g_1,Helianthus angustifolius,fp,yellow,7;8;9;10
+aas_myGardenVs_plnt122	670.00,255.00,20.0,42.0,Foxglove Beardtongue,g_1,Penstemon digitalis,fe,white,4;5;6
+aas_myGardenVs_plnt123	1024.00,293.00,18.0,30.0,Blue Star,g_1,Amsonia illustris,fp,lightBlue,4
+aas_myGardenVs_plnt124	637.00,296.00,18.0,30.0,Blue Star,g_1,Amsonia illustris,fp,lightBlue,4
+aas_myGardenVs_plnt125	1425.00,275.00,18.0,36.0,Golden Alexander,g_1,Zizia aurea,fp,yellow,3;4;5
+aas_myGardenVs_plnt126	232.00,275.00,24.0,36.0,Black Eyed Susan,g_1,Rudbeckia,fp,yellow,5;6;7;8;9;10
+aas_myGardenVs_plnt127	920.00,186.00,24.0,36.0,Black Eyed Susan,g_1,Rudbeckia,fp,yellow,5;6;7;8;9;10
+aas_myGardenVs_plnt128	722.00,182.00,24.0,36.0,Black Eyed Susan,g_1,Rudbeckia,fp,yellow,5;6;7;8;9;10
+aas_myGardenVs_plnt129	147.00,289.00,18.0,30.0,Blue Star,g_1,Amsonia illustris,fp,lightBlue,4
+aas_myGardenVs_plnt130	210.00,324.00,36.0,36.0,Bee Balm,g_1,Monarda didyma,fp,pink,6;7;8
+aas_myGardenVs_plnt131	1532.00,265.00,24.0,36.0,Black Eyed Susan,g_1,Rudbeckia,fp,yellow,5;6;7;8;9;10
+aas_myGardenVs_plnts	1,4,7,8,10,11,12,13,14,16,17,18,19,20,21,23,51,52,53,57,58,60,62,66,67,68,69,70,71,72,73,75,76,78,83,87,90,91,93,97,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131
