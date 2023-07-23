@@ -142,7 +142,7 @@ function createTblWithData(myObj) {
     }
     //'When To Plant' column header - add unique title, column width is medium
     else if (i === 20){
-      txt += `<th class='colWidth3' title='In NC, first frost is in early Nov, last frost is in early Mar. In general, it's best to plant trees in fall so that the energy is directed into root development, while the top is dormant.>${myObj[k][i]}`;
+      txt += `<th class='colWidth3' title="In NC, first frost is in early Nov, last frost is in early Mar. In general, it's best to plant trees in fall so that the energy is directed into root development, while the top is dormant.">${myObj[k][i]}`;
     }
     //'Days To' column header - add unique title, column width is medium
     else if (i === 21){
@@ -308,17 +308,17 @@ function createTblWithData(myObj) {
         //Photo: if value in source file is not 0 then a photo is present: perform a lazy load, record the value indicating how many photos are available for the plant, set the source based on the name with .jpg extension, set the alternative text using the name
         case (l-1):
           if (myObj[x][i] === "0") {
-            txt += `<td><img style="width:3em; height: 3em;" src='pictures/btnCog.png' alt='${myObj[x][0]}'></td>`;
+            txt += `<td><img style="width:3em; height: 3em;" src='pictures/btnCog.png' alt='${myObj[x][0]}' /></td>`;
           } else {
             txt += "<td loading='lazy'>"
               + "<img class='pic' " 
               + "value = '" + myObj[x][i] + "' "
             //remove spaces, dashes, quotes, v., (), & from the plants' names
               + "src='pictures/" + myObj[x][0].replace((/( |-|\(|\)|v\.|&|\"|\')/g),"") + "1.jpg' " 
-              + "alt='" + myObj[x][0] + "' "
+              + "alt='" + myObj[x][0] + "'"
             //saving good code for handling errors in images
 //                   + "onerror='this.onerror=null; this.src=\"pictures/btnCog.png\"' "
-              +"></td>";
+              +"/></td>";
           }
           break;
         //All other columns
@@ -1294,8 +1294,23 @@ function filterData() {
 
       //when there is cick on filter one or more drop down choices
       if (Array.isArray(filters[key])) {
+        // if one of the "when..." columns is filtered, add months to the selected season
+        if (filters[key]) {
+          if (filters[key].includes('WINTER') && !filters[key].includes("DEC")) {
+            filters[key].push('DEC', 'JAN', 'FEB');
+          }
+          if (filters[key].includes('SPRING') && !filters[key].includes("MAR")) {
+            filters[key].push('MAR', 'APR', 'MAY');
+          }
+          if (filters[key].includes('SUMMER') && !filters[key].includes("JUN")) {
+            filters[key].push('JUN', 'JUL', 'AUG');
+          }
+          if (filters[key].includes('FALL') && !filters[key].includes("SEP")) {
+            filters[key].push('SEP', 'OCT', 'NOV');
+          }
+        }
         let inFlag = false;
-        for (let i = 0, len = filters[key].length; i < len; i++ ){
+        for (let i = 0, len = filters[key].length; i < len; i++ ) {
           //if cell contents match filtered-in choice
           if (cellContents.includes(filters[key][i])) {
             inFlag = true;
@@ -1370,56 +1385,59 @@ function getUnqVals(forCell) {
     //the array rUnqVals holds unique values from the given column
     let rUnqVals = [];
 
-    //----------//
-    loopTableRows:
-    //----------//
-    //loop through the table, starting at i = 2, skipping headers and filters
-    for (let i = 2; i < tdRowCnt; i++) {
-      //add value to the drop down if it hasn't been hidden (display isn't none) 
-      //OR the clicked column is already used for filtering (its index is in filters)
-      //OR if pulling names to add a new plant
-      if (table.rows[i].style.display != "none" 
-          || filters[forCell.cellIndex] 
-          || forCell.children[1].id === "btnNewPlantCopy") {
-        
-        //if not pulling names for a user to copy a plant, don't show filtered out values in the drop down (jump out of for loop)
-        if (forCell.children[1].id != "btnNewPlantCopy") {
+    if (colName.substring(0,4) === "When") {
+      rUnqVals = ["Winter", "Spring", "Summer", "Fall"];
+    } else {
+      //----------//
+      loopTableRows:
+      //----------//
+      //loop through the table, starting at i = 2, skipping headers and filters
+      for (let i = 2; i < tdRowCnt; i++) {
+        //add value to the drop down if it hasn't been hidden (display isn't none) 
+        //OR the clicked column is already used for filtering (its index is in filters)
+        //OR if pulling names to add a new plant
+        if (table.rows[i].style.display != "none" 
+            || filters[forCell.cellIndex] 
+            || forCell.children[1].id === "btnNewPlantCopy") {
           
-          //loop through filters object and exclude rows that are not included in filters
-          for (key in filters) {
+          //if not pulling names for a user to copy a plant, don't show filtered out values in the drop down (jump out of for loop)
+          if (forCell.children[1].id != "btnNewPlantCopy") {
             
-            //display(keep) all unique values for the clicked column
-            if (Number(key) === forCell.cellIndex) {
-              continue; //proceed to the next filter
-            }
-            
-            //for columns other than clicked, loop through cells values; keep values that have been used for filtering and are recorded in filters, jump to loopTableRows if column's cell value is in not in filters
-            if (!table.rows[i].children[key].innerText.toUpperCase().split(/, | \bor\b/).filter(x=>filters[key].slice(",").includes(x))) {
-              continue loopTableRows;
+            //loop through filters object and exclude rows that are not included in filters
+            for (key in filters) {
+              
+              //display(keep) all unique values for the clicked column
+              if (Number(key) === forCell.cellIndex) {
+                continue; //proceed to the next filter
+              }
+              
+              //for columns other than clicked, loop through cells values; keep values that have been used for filtering and are recorded in filters, jump to loopTableRows if column's cell value is in not in filters
+              if (!table.rows[i].children[key].innerText.toUpperCase().split(/, | \bor\b/).filter(x=>filters[key].slice(",").includes(x))) {
+                continue loopTableRows;
+              }
             }
           }
-        }
-        
-        //for splitable columns, the cell value is split so that each choice is listed individually; for example, if the colors are blue, red, purple, they're separated and each is only listed once
-        
-        let arrCellVals = 
-            splitableCols.includes(colName)?
-            table.rows[i].children[forCell.cellIndex].innerText.split(/, | \bor\b |;/):
-            [table.rows[i].children[forCell.cellIndex].innerText];
+          
+          //for splitable columns, the cell value is split so that each choice is listed individually; for example, if the colors are blue, red, purple, they're separated and each is only listed once
+          
+          let arrCellVals = 
+              splitableCols.includes(colName)?
+              table.rows[i].children[forCell.cellIndex].innerText.split(/, | \bor\b |;/):
+              [table.rows[i].children[forCell.cellIndex].innerText];
 
-        arrCellVals.forEach(x=> {
-        //only add the value if it's not already in the array, is not empty and not filtered out using columns other than clicked (the last one is taken care of earlier)
-          if (rUnqVals.indexOf(x.trim()) === -1 && x.length > 0) {
-            rUnqVals.push(x.trim());
-          } 
-        })
-        
-      }
+          arrCellVals.forEach(x=> {
+          //only add the value if it's not already in the array, is not empty and not filtered out using columns other than clicked (the last one is taken care of earlier)
+            if (rUnqVals.indexOf(x.trim()) === -1 && x.length > 0) {
+              rUnqVals.push(x.trim());
+            } 
+          })
+          
+        }
+      } 
+      //sort the drop down values alphabetically
+      rUnqVals.sort();
     }
-    
-    //sort the drop down values alphabetically
-    rUnqVals.sort();
-    
+
     let alphaFlag = null;
     
     //add the drop down values to the UL dropList
@@ -1437,8 +1455,6 @@ function getUnqVals(forCell) {
           && forCell.children[1].id.toString().substr(0,11) != "btnNewPlantCopy") {
         if (filters[forCell.cellIndex].includes(rUnqVals[i].toUpperCase())) {
           liText.classList.add("selectedCustomChoice");
-//           liText.style.color = "rgba(204, 255, 153, 0.90)";
-//           liText.style.backgroundColor = "navy";
         }
       }
       liText.appendChild(document.createTextNode(rUnqVals[i]));
@@ -1679,15 +1695,6 @@ function allClicks(e) {
 
       try {
         let str = tgt.parentElement.children[0].src;
-        //increase the picture file name number by one 
-      //increase the picture file name number by one 
-        //increase the picture file name number by one 
-      //increase the picture file name number by one 
-        //increase the picture file name number by one 
-        tgt.parentElement.children[0].src = 
-      tgt.parentElement.children[0].src = 
-        tgt.parentElement.children[0].src = 
-      tgt.parentElement.children[0].src = 
         tgt.parentElement.children[0].src = 
         str.replace(
           str.match(/\d+.jpg/),
@@ -1996,6 +2003,7 @@ function allClicks(e) {
       }
     }
     
+    //todo: need to rework filtering
     //click on a drop down choice
     else if (tgt.parentElement.parentElement
       && ["filterRow", "filterCell"].includes(tgt.parentElement.parentElement.className)
@@ -2021,7 +2029,7 @@ function allClicks(e) {
         if (filters[forCell.cellIndex].length === 0) {
           removeClearingBtn(forCell);
         } 
-        //if there is only one selection remaining, updae the filter field to show it instead of ***
+        //if there is only one selection remaining, update the filter field to show it instead of ***
         else if (filters[forCell.cellIndex].length === 1) {
           forCell.children[0].value = filters[forCell.cellIndex][0].toLowerCase();
         }
@@ -2045,14 +2053,13 @@ function allClicks(e) {
           forCell.children[0].value = "...";
           sessionStorage.filters=JSON.stringify(filters);
         }
-        //if values are deleted, diplayed that (emptyness)
+        //if values are deleted, diplay that (emptyness)
         else if (filters[forCell.cellIndex].length === 0) {
           forCell.children[0].value = event.target.innerText;
           removeClearingBtn(forCell);
         }
       }
-      filterData();
-      
+      filterData(); //todo: when reworking filters, here is the call to the needed function
     }
     
     //click on filter-clearing scissors
@@ -2135,7 +2142,6 @@ function allClicks(e) {
       else {
         pictureScroll("previous");
       }
-      
     }
 
     //-- all other clicks -------------------------------------------------

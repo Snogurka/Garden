@@ -50,7 +50,7 @@ body {
   padding-right: 0.3em;
 }
 
-/* image within inner buttons - todo: shouldn't be needed once shovel is removed from e/i*/
+/* image within inner buttons - todo: shouldn't neede it once shovel is removed */
 .btnImg { 
   width: 2em;
   height: 2em;z-index: 9;
@@ -112,7 +112,7 @@ td, th {
 /* table headers */
 th {
   position: sticky;
-/*   position: -webkit-sticky; */
+  position: -webkit-sticky;
   top: 3em;
   padding: 0.5em;
   text-align: left;
@@ -230,8 +230,11 @@ img {
 }
 
 /* image gallery */
-th.pic{
+th.pic {
   text-align: center;
+}
+td.pic {
+  padding: 0;
 }
 .pic:hover {
   cursor: pointer;
