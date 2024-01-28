@@ -150,7 +150,11 @@ function createTblWithData(myObj) {
     }
     //'Food And Water' column header - add unique title, column width is medium
     else if (i === 24){
-      txt += `<th class='colWidth2' title='During the 1st year, while the trees are getting established, they should be watered deeply (3'-5' weekly), to ensure good deep roots.'>${myObj[k][i]}`;
+      txt += `<th class='colWidth2' title='During the 1st year, while the trees are getting established, they should be watered deeply (3'-5' weekly), to ensure good deep roots.'>${myObj[k][i]}`; 
+    }
+    //'Propagating' column header - add unique title, column width is medium
+    else if (i === 26){
+      txt += `<th class='colWidth2' title='Cold Moist Stratification: CM30 - 30 days, CM60 - 60days.'>${myObj[k][i]}`; 
     }
     //narrow column headers, colWidth1
     else if ([3, 4, 5, 6, 7, 11].includes(i)){
@@ -1339,6 +1343,7 @@ function filterData() {
     }
   }
   goUp();
+  document.getElementsByTagName("h1")[0].innerText = `Plants Data (${keptRows})`;
 }
 
 

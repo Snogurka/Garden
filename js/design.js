@@ -31,12 +31,12 @@ var mobile = false;   //on the mobile devices, both touch and mouse up and down 
 function myMain(){
   
   svgPlace = document.getElementById("svgArea");
-  svgPlace.setAttribute("width", window.screen.width);
-  svgPlace.setAttribute("height", window.screen.height);
+  svgPlace.setAttribute("width", window.screen.width * 1.5); // zoom in
+  svgPlace.setAttribute("height", window.screen.height * 1.5);
   svgPlace.viewBox.baseVal.x = 0;
   svgPlace.viewBox.baseVal.y = 0;  
-  svgPlace.viewBox.baseVal.width = window.screen.width;
-  svgPlace.viewBox.baseVal.height = window.screen.height;
+  svgPlace.viewBox.baseVal.width = window.screen.width * 1.5; // use 1.5 of the screen width
+  svgPlace.viewBox.baseVal.height = window.screen.height * 1.5;
   
   // munit = my unit, the font size, if set to 14, munit is ~7.11
   munit = Math.round((Number(window.getComputedStyle(svgPlace, null).getPropertyValue("font-size").replace("px",""))/1.9 + Number.EPSILON) * 100) / 100;
@@ -256,7 +256,7 @@ function settingsMenu(clkdElt) {
           //if the lsPlant blooms in the selected month, color its circle
           flowerGradClr(
             colorShapes[1], 
-            lsPlant[9].includes(mos.indexOf(clkdElt.innerText)) ? lsPlant[8] : "transparent"
+            lsPlant[9].split(';').includes(mos.indexOf(clkdElt.innerText).toString()) ? lsPlant[8] : "transparent"
           );
           
           //if it's an annual, set branches' display=none in cold months
@@ -1117,7 +1117,7 @@ function addGarden(elt){
   grp.appendChild(gardenElt);
   if (oldGarden) {gardenElt.setAttribute("display", "none");}
 
-  //create the "resizing" triangle displayed in the bottom right corner of the garden rectangle; triangle's color is set in visual.css file
+//create the "resizing" triangle displayed in the bottom right corner of the garden rectangle; triangle's color is set in visual.css file
   gardenElt = document.createElementNS(xmlns, "polygon");
   gardenElt.setAttribute("points", createTriPts(
     elt.x+Number(grp.children[0].getAttribute("width")), 
@@ -1126,9 +1126,9 @@ function addGarden(elt){
   grp.appendChild(gardenElt);
   if (oldGarden) {gardenElt.setAttribute("display", "none");} 
 
-  //the returned grp.id is used for duplicating gardens
+//the returned grp.id is used for duplicating gardens
   return grp.id;
- 
+
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1687,9 +1687,8 @@ function drawPlantShape(plantGroup, specs) {
       `${specs.x + specs.w/2}, ${specs.y + specs.h*0.1} ${specs.x + specs.w*0.9}, ${specs.y + specs.h*0.6} ${specs.x + specs.w*0.1}, ${specs.y + specs.h*0.6}`
     );
     plantGroup.appendChild(floweryShape);
-    
   }
-  
+  //not evergreen trees
   else {
       
     const numOfBranches = specs.shp[0] === "v" ? 6 : 4;
@@ -1716,7 +1715,6 @@ function drawPlantShape(plantGroup, specs) {
       }
       plantGroup.appendChild(shapeElt);
     }
-    
     
     //also for all plants that aren't evergreen trees, add two circles for leaves and flowers
     
@@ -1928,7 +1926,7 @@ function dragging(evt) {
       let adjustedW = evt.clientX - clickPos.x;
       let adjustedH = evt.clientY - clickPos.y;
 
-        
+      
       //remove any dropdown menus within the garden
       hideDropDown();
 

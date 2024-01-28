@@ -50,7 +50,7 @@ body {
   padding-right: 0.3em;
 }
 
-/* image within inner buttons - todo: shouldn't neede it once shovel is removed */
+/* image within inner buttons - todo: shouldn't need it once shovel is removed */
 .btnImg { 
   width: 2em;
   height: 2em;z-index: 9;
@@ -63,6 +63,9 @@ body {
 /* icons within table headers - eye */
 i:hover, th:hover {
   cursor: pointer;
+}
+.fa-eye {
+  padding-top: 4px;
 }
 
 /* small inner buttons for adding and modifying user added plants */
@@ -305,7 +308,7 @@ i.exp, i.imp {
 }
 .disabledCustomChoice {
   color: #d2ffa7;
-  background-image: repeating-radial-gradient(rgba(150,105,150,0.5),var(--bright-green) 99%);
+  /* background-image: repeating-radial-gradient(rgba(150,105,150,0.5),var(--bright-green) 99%); */
 }
 .selectedCustomChoice {
 /*   color: var(--dark-gray); */
