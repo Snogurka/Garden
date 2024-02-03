@@ -4,7 +4,7 @@
 /* variables - currently just colors used in the page */
 :root {
   --tool-text-color: rgba(54, 54, 54, 0.75);
-  --plant-text-color: rgba(35, 55, 40, 0.5);
+  --plant-text-color: rgba(14, 40, 20, 0.5);
 }
 
 body {
@@ -109,21 +109,6 @@ li {
   fill: transparent;  
 }
 
-.orientir {
-  position: absolute;
-  color: var(--tool-text-color);
-  
-}
-
-/* .y0 {top: 3em;}
-.y1 {top: 93.5em;}
-.y2 {top: 190em;}
-.x0 {left: 0.5em;} */
-/* .x1 {left: 50em;} */
-/* .x1 {left: 107em;} */
-/* .x2 {left: 100em;} */
-/* .x2 {left: 215em;} */
-
 /* plant bloom colors and additional info, below text name */
 .plantDetails {
   padding: 3px;
@@ -166,9 +151,6 @@ li {
 
 svg {
   font-family: FontAwesome;
-/* 	z-index: -1; */
-/* 	float: right; */
-/* 	margin-top: -1%; */
 }
 
 /* the following list format is used in NavBar settings button dd, Add plant/garden dd */
@@ -221,7 +203,4 @@ svg {
   .gdnBtn { 
     font-size: small;
   }
-/*   .fauxLi { 
-    font-size: small;
-  } */
 }

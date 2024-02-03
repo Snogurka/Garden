@@ -31,12 +31,14 @@ var mobile = false;   //on the mobile devices, both touch and mouse up and down 
 function myMain(){
   
   svgPlace = document.getElementById("svgArea");
-  svgPlace.setAttribute("width", window.screen.width * 1.5); // zoom in
-  svgPlace.setAttribute("height", window.screen.height * 1.5);
+  let zoomIn = 2;
+  let zoomer = parseInt(localStorage.getItem("zoomer"),10) || 2;
+  svgPlace.setAttribute("width", window.screen.width * zoomIn); // zoom in
+  svgPlace.setAttribute("height", window.screen.height * zoomIn);
   svgPlace.viewBox.baseVal.x = 0;
   svgPlace.viewBox.baseVal.y = 0;  
-  svgPlace.viewBox.baseVal.width = window.screen.width * 1.5; // use 1.5 of the screen width
-  svgPlace.viewBox.baseVal.height = window.screen.height * 1.5;
+  svgPlace.viewBox.baseVal.width = window.screen.width * zoomer; // use twice or 2.5 the screen width
+  svgPlace.viewBox.baseVal.height = window.screen.height * zoomer;
   
   // munit = my unit, the font size, if set to 14, munit is ~7.11
   munit = Math.round((Number(window.getComputedStyle(svgPlace, null).getPropertyValue("font-size").replace("px",""))/1.9 + Number.EPSILON) * 100) / 100;
@@ -224,19 +226,19 @@ function loadExistingDesign() {
   
 //////////////////////////////////////////////////////////////////////
 //settings menu drop down, called by clicking on settings button
-function settingsMenu(clkdElt) {
+function settingsMenu(clickedElt) {
 
-  //if a cog icon is clicked, set the clicked element clkdElt to its parent
-  if (clkdElt.className === "fa fa-fw fa-cog") {
-    clkdElt = clkdElt.parentElement;
+  //if a cog icon is clicked, set the clicked element clickedElt to its parent
+  if (clickedElt.className === "fa fa-fw fa-cog") {
+    clickedElt = clickedElt.parentElement;
   }
   //if a "month to view" is clicked
-  else if (mos.includes(clkdElt.innerText)) {
+  else if (mos.includes(clickedElt.innerText)) {
     let lsPlants = localStorage.aas_myGardenVs_plnts;
     if (lsPlants){
       lsPlants = lsPlants.split(",");
-      clkdElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText =
-        clkdElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText.split(" - ")[0] + " - " + clkdElt.innerText;
+      clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText =
+        clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText.split(" - ")[0] + " - " + clickedElt.innerText;
       
       for (var i = 0, l = lsPlants.length; i < l; i++){
         let lsPlant = localStorage.getItem("aas_myGardenVs_plnt"+lsPlants[i]);
@@ -251,19 +253,19 @@ function settingsMenu(clkdElt) {
           //if the chosen month is in winter, remove green from non-evergreens
           flowerGradClr(
             colorShapes[0], 
-            lsPlant[7][1] != "e" && winterMos.includes(clkdElt.innerText) ? "transparent" : "green");
+            lsPlant[7][1] != "e" && winterMos.includes(clickedElt.innerText) ? "transparent" : "green");
                         
           //if the lsPlant blooms in the selected month, color its circle
           flowerGradClr(
             colorShapes[1], 
-            lsPlant[9].split(';').includes(mos.indexOf(clkdElt.innerText).toString()) ? lsPlant[8] : "transparent"
+            lsPlant[9].split(';').includes(mos.indexOf(clickedElt.innerText).toString()) ? lsPlant[8] : "transparent"
           );
           
           //if it's an annual, set branches' display=none in cold months
           if (lsPlant[7][1] === "a") {
             const paths = colorShapes[0].parentElement.getElementsByTagName("path");
             for (let i = 0, len = paths.length; i < len; i++ ) {
-              paths[i].style.display = winterMos.indexOf(clkdElt.innerText) > -1 ?  "none" : "inline";
+              paths[i].style.display = winterMos.indexOf(clickedElt.innerText) > -1 ?  "none" : "inline";
             }
           }
           
@@ -271,25 +273,25 @@ function settingsMenu(clkdElt) {
       }
     }
     return;
-  }
-  else if (clkdElt.className === "customChoice") {
-    switch (clkdElt.innerText) {
+  } 
+  else if (clickedElt.className === "customChoice") {
+    switch (clickedElt.innerText) {
       case "Warnings\xa0On":    
         localStorage.setItem("aas_myGardenVs_warnings", 1);
-        clkdElt.innerText = "Warnings\xa0Off";
+        clickedElt.innerText = "Warnings\xa0Off";
         return;
 			case "Warnings\xa0Off":
         localStorage.setItem("aas_myGardenVs_warnings", 0);
-        clkdElt.innerText = "Warnings\xa0On";
+        clickedElt.innerText = "Warnings\xa0On";
         return;
       case "Units: in":
         localStorage.setItem("aas_myGardenVs_units", 1);
-        clkdElt.innerText = "Units: cm";
+        clickedElt.innerText = "Units: cm";
         toggleCmIn("cm");
         return;
       case "Units: cm":
         localStorage.setItem("aas_myGardenVs_units", 0);
-        clkdElt.innerText = "Units: in";
+        clickedElt.innerText = "Units: in";
         toggleCmIn("in");
         return;
       case "Month View":
@@ -300,17 +302,31 @@ function settingsMenu(clkdElt) {
           yPos: (settingsBtn.clientHeight-25)
         }));
         return;
+      case "Zoom: Out":
+        zoomer = 2.5;
+        localStorage.setItem("aas_myGardenVs_zoomer", zoomer);
+        clickedElt.innerText = "Zoom: In";
+        svgPlace.viewBox.baseVal.width = window.screen.width * zoomer;
+        svgPlace.viewBox.baseVal.height = window.screen.height * zoomer;
+        return;
+      case "Zoom: In":
+        zoomer = 2;
+        localStorage.setItem("aas_myGardenVs_zoomer", zoomer);
+        clickedElt.innerText = "Zoom: Out";
+        svgPlace.viewBox.baseVal.width = window.screen.width * zoomer;
+        svgPlace.viewBox.baseVal.height = window.screen.height * zoomer;
+        return;
       default:
         alert("this is yet to come");
         console.log("new change requested");
         return;   
-                             }	
+      }	
   }
-  
+
   //if the button already has a dropdown menu it has 
   //more than one child (icon), remove the menu
-  if (clkdElt.childElementCount > 1) {
-    clkdElt.removeChild(clkdElt.children[1]);
+  if (clickedElt.childElementCount > 1) {
+    clickedElt.removeChild(clickedElt.children[1]);
   }
   //else, create the settings menu
   else {
@@ -319,12 +335,12 @@ function settingsMenu(clkdElt) {
     //Units: 0 - inches/feet; 1 - cm/m;
     let unitSetting = localStorage.getItem("aas_myGardenVs_units");
     Number(unitSetting)?unitSetting="cm":unitSetting="in"
-    clkdElt.appendChild(
+    clickedElt.appendChild(
       getUL (
-        {values:["Month View", warningsSetting, "Units: "+unitSetting],
+        {values:["Month View", warningsSetting, `Units: ${unitSetting}`, "Zoom: Out"],
          //the below are x and y positions of the clicked settings buttom
-         xPos: (clkdElt.clientWidth+5), 
-         yPos: (clkdElt.clientHeight-25)})
+         xPos: (clickedElt.clientWidth+5), 
+         yPos: (clickedElt.clientHeight-25)})
     );
   }
 }
@@ -364,21 +380,23 @@ function getUL(menu) {
   dropMenu.style.left = menu.xPos + "px";
   dropMenu.style.top = menu.yPos + "px";
 
-  const alphaMenu = document.createElement('ul');
-  const zetaMenu = document.createElement('ul');
+  const alphaMenu = document.createElement("ul");
+  const zetaMenu = document.createElement("ul");
   
   //this inner function adds supplied values to supplied UL
   function populateList(vals, toMenu) {
     for (let i = 0, l = vals.length; i < l; i++){
-      let liText = document.createElement("li");
+      const liText = document.createElement("li");
       liText.className = "customChoice";
-      if (!letters.includes(vals[i]) && toMenu.classList.contains("alphabet"))  liText.classList.add("disabledCustomChoice");
+      if (!letters.includes(vals[i]) && toMenu.classList.contains("alphabet")) 
+        { liText.classList.add("disabledCustomChoice"); }
       liText.innerHTML = vals[i];
       toMenu.appendChild(liText);
     }
   }
   
   //this inner function allows fast scroll to the plant that starts with a clicked letter
+  // todo: change fast scroll to plant to on letter key, like in data
   function goToLetter(e) {
     const uList = document.getElementsByTagName("ul")[0];
     const lItem = uList.getElementsByClassName(e.target.innerText)[0];
@@ -414,7 +432,7 @@ function getUL(menu) {
         case 'vine':
           compVal = 'flowery';
           break;    
-                     }
+        }
       //hide or display the menu
       if (tgt.textContent === compVal || tgt.textContent === "all") {
         dropMenu.children[i].style.display = "block";
@@ -746,10 +764,10 @@ function addPlantMenu(menu) {
 //plant from the 'add a garden or a plant' drop down menu;
 function addGardenPlantUL() {
   
-  const clkdElt = event.target;
+  const clickedElt = event.target;
 
   //if clicked on a garden option of dropdown menu
-  if (clkdElt.innerText === "New\xa0Garden") {
+  if (clickedElt.innerText === "New\xa0Garden") {
     hideDropDown();
     addGarden( 
       {
@@ -766,55 +784,51 @@ function addGardenPlantUL() {
   } 
   
   //if clicked on a 'New Plant' choice in the dropdown menu
-  else if (clkdElt.innerText === "New\xa0Plant") {
-    addPlantMenu(
-      {
-        xPos: parseFloat(clkdElt.parentElement.style.left),
-        yPos: parseFloat(clkdElt.parentElement.style.top),
-        type: "all"
-      }
-    );
+  else if (clickedElt.innerText === "New\xa0Plant") {
+    addPlantMenu({
+      xPos: parseFloat(clickedElt.parentElement.style.left),
+      yPos: parseFloat(clickedElt.parentElement.style.top),
+      type: "all"
+    });
   } 
   
   //if clicked on a "Plant in MMM" choice of dropdown menu
-  else if (clkdElt.innerText.slice(0,8) === "Plant\xa0in") {
-    addPlantMenu(
-      {
-        xPos: parseFloat(clkdElt.parentElement.style.left),
-        yPos: parseFloat(clkdElt.parentElement.style.top),
-        type: "timeToPlant",
-        filter: clkdElt.innerText.split("\xa0")[3].toLowerCase()
-      }
-    );
+  else if (clickedElt.innerText.slice(0,8) === "Plant\xa0in") {
+    addPlantMenu({
+      xPos: parseFloat(clickedElt.parentElement.style.left),
+      yPos: parseFloat(clickedElt.parentElement.style.top),
+      type: "timeToPlant",
+      filter: clickedElt.innerText.split("\xa0")[3].toLowerCase()
+    });
   }
   
   //if clicked on the left arrow of the "Plant in MMM" choice of dropdown menu
-  else if (clkdElt.innerText.trim()=== "<-") {
-    clkdElt.parentElement.innerHTML = clkdElt.parentElement.innerText.split("-")[1].trim()==="Jan"?
-    clkdElt.parentElement.innerHTML.replace(/<\/span>\w\w\w<span>/, "</span>Dec<span>"):
-    clkdElt.parentElement.innerHTML.replace(/<\/span>\w\w\w<span>/, "</span>" + mos[mos.indexOf(clkdElt.parentElement.innerText.split("-")[1].trim())-1] + "<span>");
+  else if (clickedElt.innerText.trim()=== "<-") {
+    clickedElt.parentElement.innerHTML = clickedElt.parentElement.innerText.split("-")[1].trim()==="Jan"?
+    clickedElt.parentElement.innerHTML.replace(/<\/span>\w\w\w<span>/, "</span>Dec<span>"):
+    clickedElt.parentElement.innerHTML.replace(/<\/span>\w\w\w<span>/, "</span>" + mos[mos.indexOf(clickedElt.parentElement.innerText.split("-")[1].trim())-1] + "<span>");
   }
   //if clicked on the right arrow of the "Plant in MMM" choice of dropdown menu
-  else if (clkdElt.innerText.trim() === "->") {
-    clkdElt.parentElement.innerHTML = clkdElt.parentElement.innerText.split("-")[1].trim()==="Dec"?
-    clkdElt.parentElement.innerHTML.replace(/<\/span>\w\w\w<span>/, "</span>Jan<span>"):
-    clkdElt.parentElement.innerHTML.replace(/<\/span>\w\w\w<span>/, "</span>" + mos[mos.indexOf(clkdElt.parentElement.innerText.split("-")[1].trim())+1] + "<span>");
+  else if (clickedElt.innerText.trim() === "->") {
+    clickedElt.parentElement.innerHTML = clickedElt.parentElement.innerText.split("-")[1].trim()==="Dec"?
+    clickedElt.parentElement.innerHTML.replace(/<\/span>\w\w\w<span>/, "</span>Jan<span>"):
+    clickedElt.parentElement.innerHTML.replace(/<\/span>\w\w\w<span>/, "</span>" + mos[mos.indexOf(clickedElt.parentElement.innerText.split("-")[1].trim())+1] + "<span>");
   }
   
   //if a Delete All Plants or Delete All Gardens options are clicked
-  else if (clkdElt.innerText.slice(0,6) === "Delete") {
+  else if (clickedElt.innerText.slice(0,6) === "Delete") {
     
     //confirm the removal of all plants or gardens
     if (localStorage.aas_myGardenVs_warnings && !(Number(localStorage.aas_myGardenVs_warnings)))
     {
-      if (!confirm("Would you like to " + clkdElt.innerText + "?")){
+      if (!confirm("Would you like to " + clickedElt.innerText + "?")){
         return;
       }
     }
     
     //capture plnts or grnds in a variable, based on a choice clicked
     let eltsToDelete = null;
-    clkdElt.innerText[11]==="P"?eltsToDelete="plnts":eltsToDelete="grdns";
+    clickedElt.innerText[11]==="P"?eltsToDelete="plnts":eltsToDelete="grdns";
       
     //if gardens or plants exist and are stored, loop through their ls
     //counters and delete their entries from localStorage and from html
@@ -1126,29 +1140,36 @@ function addGarden(elt){
   grp.appendChild(gardenElt);
   if (oldGarden) {gardenElt.setAttribute("display", "none");} 
 
+  // top left resizor
+  gardenElt = document.createElementNS(xmlns, "polygon");
+  gardenElt.setAttribute("points", 
+    `${elt.x},${elt.y} ${elt.x+munit*4},${elt.y} ${elt.x},${elt.y+munit*4}`);
+  gardenElt.setAttribute("class", "resize");
+  grp.appendChild(gardenElt);
+  if (oldGarden) {gardenElt.setAttribute("display", "none");} 
+
 //the returned grp.id is used for duplicating gardens
   return grp.id;
-
 }
 
 //////////////////////////////////////////////////////////////////////
 //create and return points for a trianlge as "a,b a,c b,c" string, based on the supplied corner and its x & y coordinates
 function createTriPts(x, y) {
-  return x + "," + (y-munit*4) //X & Y positions of the right side of the rectangle
-  + " " + x + "," + y //X & Y positions of the right bottom corner of the rectangle
-  + " " + (x-munit*4) + "," + y; //X & Y positions of the bottom of the rectangle
+  return x + "," + (y-munit*4) //x & y positions of the right side of the rectangle
+  + " " + x + "," + y //x & y positions of the right bottom corner of the rectangle
+  + " " + (x-munit*4) + "," + y; //x & y positions of the bottom of the rectangle
 }
 
 //////////////////////////////////////////////////////////////////////
 //this function provides decision making for when a garden is clicked
-function gardenFork(clkdElt) {
+function gardenFork(clickedElt) {
   
   //capture the x&y along with tX&tY of the garden
-  const gnX = Number(clkdElt.parentElement.children[0].getAttribute("x")) + clkdElt.parentElement.transform.baseVal.getItem("translate").matrix.e;
-  const gnY = Number(clkdElt.parentElement.children[0].getAttribute("y")) + clkdElt.parentElement.transform.baseVal.getItem("translate").matrix.f;
-  const gnW = Number(clkdElt.parentElement.children[0].getAttribute("width"));
-  const gnH = Number(clkdElt.parentElement.children[0].getAttribute("height"));
-  const gnNM = clkdElt.parentElement.getElementsByClassName("editable")[0].children[0].value;
+  const gnX = Number(clickedElt.parentElement.children[0].getAttribute("x")) + clickedElt.parentElement.transform.baseVal.getItem("translate").matrix.e;
+  const gnY = Number(clickedElt.parentElement.children[0].getAttribute("y")) + clickedElt.parentElement.transform.baseVal.getItem("translate").matrix.f;
+  const gnW = Number(clickedElt.parentElement.children[0].getAttribute("width"));
+  const gnH = Number(clickedElt.parentElement.children[0].getAttribute("height"));
+  const gnNM = clickedElt.parentElement.getElementsByClassName("editable")[0].children[0].value;
 
   const menu = {
     values:[],
@@ -1160,20 +1181,20 @@ function gardenFork(clkdElt) {
   const xOffset = (Number(svgPlace.getAttribute("width")))>(gnX+gnW+96) ? munit*2 : -96;
   
   //click on one of the garden settings "buttons"
-  if (clkdElt.classList.contains("gdnBtn")){
+  if (clickedElt.classList.contains("gdnBtn")){
     
     //sun
-    if (clkdElt.classList.contains("ulSun")) {
+    if (clickedElt.classList.contains("ulSun")) {
       menu.values = ["Full", "Part", "Shade"];
       menu.yPos -= munit * 10;
     }
     //soil
-    else if (clkdElt.classList.contains("ulSoil")) {
+    else if (clickedElt.classList.contains("ulSoil")) {
       menu.values = ["Acidic", "Neutral", "Alkaline"]
       menu.yPos += gnH;
     }
     //tools
-    else if (clkdElt.classList.contains("ulTools")) {
+    else if (clickedElt.classList.contains("ulTools")) {
       
       let otherTools = true;
       
@@ -1186,14 +1207,14 @@ function gardenFork(clkdElt) {
         otherTools = false;
       }
       //if there is one, and only one, plant in the garden
-      if (clkdElt.parentElement.getElementsByTagName("g").length === 1) {
+      if (clickedElt.parentElement.getElementsByTagName("g").length === 1) {
         //get the name of the one plant in the garden
-        menu.values.push("Pull companions for " + clkdElt.parentElement.getElementsByClassName("plant")[0].textContent);
+        menu.values.push("Pull companions for " + clickedElt.parentElement.getElementsByClassName("plant")[0].textContent);
         otherTools = false;
       }
       //if sun and soil have been set
-      if (clkdElt.parentElement.getElementsByClassName("ulSun")[0].textContent.split(" ")[0]!="\uf185" &&
-          clkdElt.parentElement.getElementsByClassName("ulSoil")[0].textContent.split(" ")[0]!="Soil") {
+      if (clickedElt.parentElement.getElementsByClassName("ulSun")[0].textContent.split(" ")[0]!="\uf185" &&
+          clickedElt.parentElement.getElementsByClassName("ulSoil")[0].textContent.split(" ")[0]!="Soil") {
         menu.values.push("Pull plants based on sun & soil");
         otherTools = false;
       }
@@ -1205,7 +1226,7 @@ function gardenFork(clkdElt) {
 
     const dropDownMenu = getUL(menu);
     dropDownMenu.addEventListener("click", function() {
-      chgGarden(event.target, clkdElt);
+      chgGarden(event.target, clickedElt);
     });
     document.body.appendChild(dropDownMenu);
     
@@ -1304,36 +1325,36 @@ function gardenFork(clkdElt) {
   }
 
   //display editing buttons (sun choices, garden name, toolbox) when a garden is clicked
-  else if (clkdElt.classList.contains("garden")){
+  else if (clickedElt.classList.contains("garden")){
     
     hideDropDown();
     
     //if the cicked garden is a simple container, it doesn't have sizers, thus exit - WOULD THIS EVER HAPPEN
-    if (!clkdElt.parentElement.getElementsByClassName("gdnBtn").length) 
+    if (!clickedElt.parentElement.getElementsByClassName("gdnBtn").length) 
       { 
         console.log("a garden with nothing in it, a simple container, with no sizers!");
         return;
       }
     
     //number of garden objects to hide - set to 7, instead of 
-    //let l = clkdElt.parentElement.childElementCount;
+    //let l = clickedElt.parentElement.childElementCount;
     //to only toggle sun, soil, tools, and sizers
     let l = 8;
     
     //toggle the display of the size, sun and toolbox drop down buttons, not their choices
     //not the sun or toolbox drop down choices
-    if (clkdElt.parentElement.getElementsByClassName("resize")[0].getAttribute("display") != "none") {
+    if (clickedElt.parentElement.getElementsByClassName("resize")[0].getAttribute("display") != "none") {
       
       //start at 1, because 0 is the rect
       for (var i = 1; i < l;  i++){
         //2 is the name
         if (i===3){continue;}
-        clkdElt.parentElement.children[i].setAttribute("display", "none");
+        clickedElt.parentElement.children[i].setAttribute("display", "none");
       }
     } else {
       for (var i = 1; i < l; i++){
         if (i===3){continue;}
-        clkdElt.parentElement.children[i].setAttribute("display", "block");
+        clickedElt.parentElement.children[i].setAttribute("display", "block");
       }
     }
 
@@ -1485,7 +1506,7 @@ function plantFork(tgt) {
           return(res.json());
         })
         .then((myObj) => {
-        //remove the first entry in myObj, as those are unneeded column headers
+        //remove the first entry in myObj, as those are the column headers, not needed
         delete myObj["Latin&nbspName"];
         
         //Add COLOR CHOICES
@@ -1690,31 +1711,30 @@ function drawPlantShape(plantGroup, specs) {
   }
   //not evergreen trees
   else {
-      
-    const numOfBranches = specs.shp[0] === "v" ? 6 : 4;
-    const spread = Math.round(specs.w / numOfBranches);
+    // const numOfBranches = specs.shp[0] === "v" ? 6 : 4;
+    // const spread = Math.round(specs.w / numOfBranches);
     
-    for (let i = 0; i < numOfBranches; i++) {
-      const shapeElt = document.createElementNS(xmlns, "path");
-      shapeElt.setAttributeNS(null, "class", specs.cls + " shape");
-      shapeElt.setAttributeNS(
-        null, 
-        "d", 
-        specs.shp[0] != "v" ? 
-        `m ${specs.x + spread * i} ${specs.y} 
-         c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1} 
-           ${specs.w * 0.2 * (1 - i)} ${specs.w * 0.5} 
-           ${specs.w / 2 - spread * i} ${specs.h}` :
-        `m ${specs.x + specs.w / 2} ${specs.y} 
-         c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1} 
-           ${specs.w * 0.2 * (3 - i)} ${specs.w * 0.5} 
-           ${specs.w / 2 - spread * i} ${specs.h}`
-      );
-      if (specs.shp[1] === "a") {
-        shapeElt.style.display = winterMos.includes(mos[dt.getMonth()]) ?  "none" : "inline";
-      }
-      plantGroup.appendChild(shapeElt);
-    }
+    // for (let i = 0; i < numOfBranches; i++) {
+    //   const shapeElt = document.createElementNS(xmlns, "path");
+    //   shapeElt.setAttributeNS(null, "class", specs.cls + " shape");
+    //   shapeElt.setAttributeNS(
+    //     null, 
+    //     "d", 
+    //     specs.shp[0] != "v" ? 
+    //     `m ${specs.x + spread * i} ${specs.y} 
+    //      c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1} 
+    //        ${specs.w * 0.2 * (1 - i)} ${specs.w * 0.5} 
+    //        ${specs.w / 2 - spread * i} ${specs.h}` :
+    //     `m ${specs.x + specs.w / 2} ${specs.y} 
+    //      c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1} 
+    //        ${specs.w * 0.2 * (3 - i)} ${specs.w * 0.5} 
+    //        ${specs.w / 2 - spread * i} ${specs.h}`
+    //   );
+    //   if (specs.shp[1] === "a") {
+    //     shapeElt.style.display = winterMos.includes(mos[dt.getMonth()]) ?  "none" : "inline";
+    //   }
+    //   plantGroup.appendChild(shapeElt);
+    // }
     
     //also for all plants that aren't evergreen trees, add two circles for leaves and flowers
     
