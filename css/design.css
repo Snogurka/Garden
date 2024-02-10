@@ -110,13 +110,23 @@ li {
 }
 
 /* plant bloom colors and additional info, below text name */
-.plantDetails {
+.plantInfo {
+  position: absolute;
+  width: 200px;
   padding: 3px;
   border-radius: 5px;
-  z-index: 99;
+  background-color: aliceblue;
   color: var(--tool-text-color);
   font-family: cursive;
   overflow-x: auto;
+}
+
+.plantInfo div{
+  margin-top: 12px;
+}
+
+.hidden {
+  display: none;
 }
 
 /* garden resizing triangle in the corner */

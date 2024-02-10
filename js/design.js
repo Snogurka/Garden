@@ -1481,112 +1481,99 @@ function plantFork(tgt) {
 //       clr:sd[8] //saved color chosen for the plant, if ever needed
     }
     
-    //toggle the display of plant's info: size, flower colors, info; if plant's size is displayed hide all info
+  // toggle the display of plant's details: size, flower colors, info; if plant's size is displayed hide all info
     if (clickedGroup.getElementsByClassName("plantSize")[0]) {
       hideDropDown();
+      return;
     }
-    //if size is not displayed, the rest of the info wouldn't be displayed either
-    else {
-      const plantNameWidth = 
-            Math.round((clickedGroup.children[0].getComputedTextLength() +
-                        Number.EPSILON)*100)/100;
-      
-      //add the plant's size
-      clickedGroup.appendChild(mkText({
-      x:specs.x + plantNameWidth / 2,
-      y:specs.y + munit*2,
-      cls:"plantSize plantDetails", 
-      txt:"avg: " + formatSizeDisplay(specs.w) + " x " + formatSizeDisplay(specs.h), 
-      lnm:specs.lnm
-      }));
-      
-      //add plant's other info, using Latin Name stored in desc of a plant
-      fetch('plants.json')
-        .then((res) => {
-          return(res.json());
-        })
-        .then((myObj) => {
-        //remove the first entry in myObj, as those are the column headers, not needed
-        delete myObj["Latin&nbspName"];
-        
-        //Add COLOR CHOICES
-        const inconspicuousFlag = 
-              myObj[tgt.parentElement.children[0].getAttribute("desc")][1].includes("inconspicuous") || myObj[tgt.parentElement.children[0].getAttribute("desc")][6].includes("inconspicuous");
-      //any flower color choices are stored in the descrition field "desc"; capture them into an array, removing 'inconspicuous', trailing commas or semicolons at the end of the sting;
-        let plantColors = myObj[tgt.parentElement.children[0].getAttribute("desc")][6].replace(/inconspicuous(;|,)? ?|,$|;$/g,"").split(/, ?|; ?/);
-
-        //if no colors are available, place one default value green in the array
-        if (plantColors === "" || !(plantColors.length)) {
-          plantColors = ["green"]; 
-        } 
-        //otherwise, if plant colors array doesn't have "green", add one
-        else {
-          if (!plantColors.includes("green"))plantColors.unshift("green");
-        }
-        
-        //padding the color group rectangle 2px on all side by adjusting to w/h and x/y
-        const colorRect = document.createElementNS(xmlns, "rect");
-        colorRect.setAttribute("class", "colorGroupRect plantDetails");
-        colorRect.setAttribute("x", specs.x + plantNameWidth / 2 - (plantColors.length) * 16 - 2);
-        colorRect.setAttribute("y", specs.y + munit * 4 - 10 - 2);
-        colorRect.setAttribute("width", plantColors.length * 32 + 4);
-        colorRect.setAttribute("height", 20 + 4);
-        tgt.parentElement.appendChild(colorRect);
-
-        for (let i = 0, l = plantColors.length; i < l; i++) {
-          colorRect.parentElement.appendChild(
-            mkCircle({
-              x:specs.x + plantNameWidth / 2 - (plantColors.length - 1) * 16 + 32 * i,
-              y:specs.y + munit * 4,
-              r:10,
-              clr:colorConverter(camelCase(plantColors[i])),
-              cls:"plantColor plantDetails",
-              ttl:inconspicuousFlag&&plantColors[i]!="green"?"inconspicuous "+plantColors[i]:plantColors[i]
-              })
-          );
-        }
-
-        let offset = 30;
-        //Add OTHER INFO fields
-        //The "desc" field of the tgt (plant name) holds latin name, used as a key to pull all other information
-        var plantInfoFields = {7:"Leaves: ", 8:"Bloom Time: ", 10:"Sun: ",
-                               11:"Roots: ", 12:"Garden Quantities: ", 16:"Companions: ", 
-                               17:"Enemies: ", 18:"Soil: "};
-
-        //identify the longest text and use it to center the Other Info details
-        let infoFieldLen = 0;
-        for (let f in plantInfoFields) {
-          if (myObj[tgt.parentElement.children[0].getAttribute("desc")][f] === "") {
-            continue;
-          }
-          if (myObj[tgt.parentElement.children[0].getAttribute("desc")][f].length > infoFieldLen) {
-            infoFieldLen = myObj[tgt.parentElement.children[0].getAttribute("desc")][f].length;
-          }
-        }
-        //the length of the info field should be no bigger than 200px and no less than plant's name width
-        infoFieldLen = Math.min(200, Math.max(plantNameWidth, infoFieldLen * munit * 1.3));
-
-        for (let f in plantInfoFields) {
-          if (myObj[tgt.parentElement.children[0].getAttribute("desc")][f] === "") {
-            continue;
-          }
-          const infoLine = mkForeignObj({
-            x:specs.x + plantNameWidth / 2 - infoFieldLen / 2,
-            y:specs.y + offset + munit * 2,
-            w:infoFieldLen,
-            h:150,
-            cls:"plantDetails ", 
-            tg:"div",
-            txt:plantInfoFields[f] + myObj[tgt.parentElement.children[0].getAttribute("desc")][f]});
-          tgt.parentElement.appendChild(infoLine);
-          offset += infoLine.children[0].getBoundingClientRect().height;
-        }
+    const plantNameWidth = 
+      Math.round((clickedGroup.children[0].getComputedTextLength()
+      + Number.EPSILON)*100)/100;
+    
+    // add the plant's size
+    clickedGroup.appendChild(mkText({
+    x:specs.x + plantNameWidth / 2,
+    y:specs.y + munit*2,
+    cls:"plantSize plantDetails", 
+    txt:"avg: " + formatSizeDisplay(specs.w) + " x " + formatSizeDisplay(specs.h), 
+    lnm:specs.lnm
+    }));
+    
+    // add plant's other info, using Latin Name stored in desc of a plant
+    fetch('plants.json')
+      .then((res) => {
+        return(res.json());
       })
-      .catch((err) => {
-        console.log("Unable to access or error reading plants file.");
-        throw err;
-      });
-    } 
+      .then((myObj) => {
+      // remove the first entry in myObj - those are column headers, not needed
+      delete myObj["Latin&nbspName"];
+      
+      //Add COLOR CHOICES
+      const inconspicuousFlag = 
+        myObj[tgt.parentElement.children[0].getAttribute("desc")][1].includes("inconspicuous") || myObj[tgt.parentElement.children[0].getAttribute("desc")][6].includes("inconspicuous");
+    // any flower color choices are stored in the descrition field "desc"; capture them into an array, removing 'inconspicuous', trailing commas or semicolons at the end of the sting;
+      let plantColors = myObj[tgt.parentElement.children[0].getAttribute("desc")][6].replace(/inconspicuous(;|,)? ?|,$|;$/g,"").split(/, ?|; ?/);
+
+      // if no colors are available, place one default value green in the array
+      if (plantColors === "" || !(plantColors.length)) {
+        plantColors = ["green"]; 
+      } 
+      // otherwise, if plant colors array doesn't have "green", add one
+      else {
+        if (!plantColors.includes("green"))plantColors.unshift("green");
+      }
+      
+      // padding the color group rectangle 2px on all side by adjusting to w/h and x/y
+      const colorRect = document.createElementNS(xmlns, "rect");
+      colorRect.setAttribute("class", "colorGroupRect plantDetails");
+      colorRect.setAttribute("x", specs.x + plantNameWidth / 2 - (plantColors.length) * 16 - 2);
+      colorRect.setAttribute("y", specs.y + munit * 4 - 10 - 2);
+      colorRect.setAttribute("width", plantColors.length * 32 + 4);
+      colorRect.setAttribute("height", 20 + 4);
+      tgt.parentElement.appendChild(colorRect);
+
+      for (let i = 0, l = plantColors.length; i < l; i++) {
+        colorRect.parentElement.appendChild(
+          mkCircle({
+            x:specs.x + plantNameWidth / 2 - (plantColors.length - 1) * 16 + 32 * i,
+            y:specs.y + munit * 4,
+            r:10,
+            clr:colorConverter(camelCase(plantColors[i])),
+            cls:"plantColor plantDetails",
+            ttl:inconspicuousFlag&&plantColors[i]!="green"?"inconspicuous "+plantColors[i]:plantColors[i]
+            })
+        );
+      }
+
+      // Add OTHER INFO fields
+      let offset = 30;
+      // add plant info div
+      const plantInfo = document.createElement("div");
+      plantInfo.className = "plantInfo";
+      plantInfo.style.left = specs.x + plantNameWidth / 2 - 100 + "px";
+      plantInfo.style.top = specs.y + offset + munit * 2 + "px";
+      document.body.appendChild(plantInfo);
+
+      // The "desc" field of the tgt (plant name) holds latin name, used as a key to pull all other information
+      // set the desired Other Info fields, using their column/order numbers as keys
+      const plantInfoFields = {7:"Leaves: ", 8:"Bloom Time: ", 10:"Sun: ",
+                              11:"Roots: ", 12:"Garden Quantities: ", 16:"Companions: ", 
+                              17:"Enemies: ", 18:"Soil: "};
+
+      const plantLatinName = tgt.parentElement.children[0].getAttribute("desc");
+      for (let f in plantInfoFields) {
+        if (myObj[plantLatinName][f] === "") {
+          continue;
+        }
+        let infoLine = document.createElement("div");
+        infoLine.innerHTML = plantInfoFields[f] + myObj[plantLatinName][f];
+        plantInfo.appendChild(infoLine);
+      }
+    })
+    .catch((err) => {
+      console.log("Unable to access or error reading plants file.");
+      throw err;
+    });
   }
 
   //if one of the color choices is clicked, color the plant shape
@@ -2510,14 +2497,22 @@ function hideDropDown() {
     dropMenus[0].remove();
   }
   
-  //check and hide plant info boxes:
-    let plantInfoBoxes = document.getElementsByClassName("plantDetails");
-    const l = plantInfoBoxes.length;
-    if (l) {
-      for (var j = 0; j < l; j++) {
-        plantInfoBoxes[0].remove();
-      }
+  const plantInfo = document.getElementsByClassName("plantInfo");
+  let len = plantInfo.length;
+  if (len) {
+    for (let j = 0; j < len; j++) {
+      plantInfo[0].remove();
     }
+  }
+
+  //check and hide plant info boxes:
+  const plantInfoBoxes = document.getElementsByClassName("plantDetails");
+  len = plantInfoBoxes.length;
+  if (len) {
+    for (let j = 0; j < len; j++) {
+      plantInfoBoxes[0].remove();
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////
