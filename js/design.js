@@ -155,7 +155,7 @@ function loadExistingDesign() {
   let gardens =  localStorage.aas_myGardenVs_grdns;
   if (gardens) {
     gardens = gardens.split(",");
-    for (var i = 0, l = gardens.length; i < l; i++){
+    for (let i = 0, l = gardens.length; i < l; i++){
       //pull gardens counter from local storage
       let garden = localStorage.getItem("aas_myGardenVs_grdn"+gardens[i].toString());
       //recreate gardens based on the counter and stored garden id, x, y, w, h, nm (name), sn (sun), sl (soil)
@@ -178,7 +178,7 @@ function loadExistingDesign() {
   let plants = localStorage.aas_myGardenVs_plnts;
   if (plants){
     plants = plants.split(",");
-    for (var i = 0, l = plants.length; i < l; i++){
+    for (let i = 0, l = plants.length; i < l; i++){
       let plant = localStorage.getItem("aas_myGardenVs_plnt"+plants[i]);
       if (plant) {
         plant = plant.split(",");
@@ -240,7 +240,7 @@ function settingsMenu(clickedElt) {
       clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText =
         clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText.split(" - ")[0] + " - " + clickedElt.innerText;
       
-      for (var i = 0, l = lsPlants.length; i < l; i++){
+      for (let i = 0, l = lsPlants.length; i < l; i++){
         let lsPlant = localStorage.getItem("aas_myGardenVs_plnt"+lsPlants[i]);
         if (lsPlant) {
           lsPlant = lsPlant.split(",");
@@ -276,22 +276,22 @@ function settingsMenu(clickedElt) {
   } 
   else if (clickedElt.className === "customChoice") {
     switch (clickedElt.innerText) {
-      case "Warnings\xa0On":    
+      case "Warnings - on":    
         localStorage.setItem("aas_myGardenVs_warnings", 1);
-        clickedElt.innerText = "Warnings\xa0Off";
+        clickedElt.innerText = "Warnings - off";
         return;
-			case "Warnings\xa0Off":
+			case "Warnings - off":
         localStorage.setItem("aas_myGardenVs_warnings", 0);
-        clickedElt.innerText = "Warnings\xa0On";
+        clickedElt.innerText = "Warnings - on";
         return;
-      case "Units: in":
+      case "Units - in":
         localStorage.setItem("aas_myGardenVs_units", 1);
-        clickedElt.innerText = "Units: cm";
+        clickedElt.innerText = "Units - cm";
         toggleCmIn("cm");
         return;
-      case "Units: cm":
+      case "Units - cm":
         localStorage.setItem("aas_myGardenVs_units", 0);
-        clickedElt.innerText = "Units: in";
+        clickedElt.innerText = "Unit - in";
         toggleCmIn("in");
         return;
       case "Month View":
@@ -302,17 +302,17 @@ function settingsMenu(clickedElt) {
           yPos: (settingsBtn.clientHeight-25)
         }));
         return;
-      case "Zoom: Out":
-        zoomer = 2.5;
+      case "Zoom - out":
+        zoomer = 4;
         localStorage.setItem("aas_myGardenVs_zoomer", zoomer);
-        clickedElt.innerText = "Zoom: In";
+        clickedElt.innerText = "Zoom - in";
         svgPlace.viewBox.baseVal.width = window.screen.width * zoomer;
         svgPlace.viewBox.baseVal.height = window.screen.height * zoomer;
         return;
-      case "Zoom: In":
+      case "Zoom - in":
         zoomer = 2;
         localStorage.setItem("aas_myGardenVs_zoomer", zoomer);
-        clickedElt.innerText = "Zoom: Out";
+        clickedElt.innerText = "Zoom- out";
         svgPlace.viewBox.baseVal.width = window.screen.width * zoomer;
         svgPlace.viewBox.baseVal.height = window.screen.height * zoomer;
         return;
@@ -323,28 +323,27 @@ function settingsMenu(clickedElt) {
       }	
   }
 
-  //if the button already has a dropdown menu it has 
-  //more than one child (icon), remove the menu
+  // if the button already has a dropdown menu it has 
+  // more than one child (icon), remove the menu
   if (clickedElt.childElementCount > 1) {
     clickedElt.removeChild(clickedElt.children[1]);
   }
-  //else, create the settings menu
+  // else, create the settings menu
   else {
-    let warningsSetting = localStorage.getItem("aas_myGardenVs_warnings");
-    Number(warningsSetting)?warningsSetting="Warnings\xa0Off":warningsSetting="Warnings\xa0On";
-    //Units: 0 - inches/feet; 1 - cm/m;
-    let unitSetting = localStorage.getItem("aas_myGardenVs_units");
-    Number(unitSetting)?unitSetting="cm":unitSetting="in"
+    let warningsSetting = Number(localStorage.getItem("aas_myGardenVs_warnings")) ? "off" : "on";
+    // Units: 0 - inches/feet; 1 - cm/m;
+    let unitSetting = Number(localStorage.getItem("aas_myGardenVs_units")) ? "cm" : "in";
+    // Zoomed in setting is 2, default; zoomed out is currently at 4, unless I change my mind
+    let zoomValue = localStorage.getItem("aas_myGardenVs_zoomer") === "4" ? "in" : "out";
     clickedElt.appendChild(
       getUL (
-        {values:["Month View", warningsSetting, `Units: ${unitSetting}`, "Zoom: Out"],
-         //the below are x and y positions of the clicked settings buttom
+        {values:["Month View", `Warnings - ${warningsSetting}`, `Units - ${unitSetting}`, `Zoom - ${zoomValue}`],
+         // the below are x and y positions of the clicked settings buttom
          xPos: (clickedElt.clientWidth+5), 
          yPos: (clickedElt.clientHeight-25)})
     );
   }
 }
-
 
 //////////////////////////////////////////////////////////////////////
 //extract avg height and width, inches to pixels ratio 1:1
@@ -558,7 +557,7 @@ function getUL(menu) {
               
               liText.setAttribute( "data-shp", shp);
                                   
-              //capture the bloom months, separated by semicolon instead of a comma to keep them together when reading from local storage;
+              // capture the bloom months, separated by semicolon instead of a comma to keep them together when reading from local storage;
               liText.setAttribute(
                 "data-bloomM",
                 myObj[x][8].split(',').map(
@@ -566,7 +565,7 @@ function getUL(menu) {
                 .join(";")
               );
               
-              //capture the first bloom color;
+              // capture the first bloom color;
               liText.setAttribute(
                 "data-bloomC", 
                 myObj[x][1].includes("inconspicuous")||myObj[x][6].includes("inconspicuous") ? 
@@ -574,11 +573,11 @@ function getUL(menu) {
                 camelCase(myObj[x][6].split(",")[0]));
               
               if (menu.type === "all") {
-                //add a class to the first occurence of every letter for scrolling shortcuts
+                // add a class to the first occurence of every letter for scrolling shortcuts
                 if ( !newLetter || myObj[x][0].charAt(0) > newLetter ) {
                   newLetter = myObj[x][0].charAt(0);
                   liText.classList.add(myObj[x][0].charAt(0));
-                  //record existing letters so that nonexisting first letters can be colored gray
+                  // record existing letters so that nonexisting first letters can be colored gray
                   letters.push(myObj[x][0].charAt(0));
                 }
               }
@@ -590,7 +589,7 @@ function getUL(menu) {
             dropMenu.children[0].innerText = "There are no recorded plants that match this criteria.";
           }
           
-          //add alphabet shortcuts and class filtering menus when all plants are shown in the menu
+          // add alphabet shortcuts and class filtering menus when all plants are shown in the menu
           if (menu.type === "all") {
             //A-M shortcuts on the left
             alphaMenu.style.left = parseInt(menu.xPos)-36+"px";
@@ -602,7 +601,7 @@ function getUL(menu) {
             });
             document.body.appendChild(alphaMenu);
 
-            //N-Z shortcuts on the right
+            // N-Z shortcuts on the right
             zetaMenu.style.left = parseInt(menu.xPos)+168+"px";
             zetaMenu.style.top = menu.yPos+"px";
             zetaMenu.className = 'zeta alphabet dropDown';
@@ -612,7 +611,7 @@ function getUL(menu) {
             });
             document.body.appendChild(zetaMenu);
             
-            //plant class filtering buttons right above the menu
+            // plant class filtering buttons right above the menu
             const classMenu = document.createElement('ul');
             classMenu.style.left = parseInt(menu.xPos)-36+"px";
             classMenu.style.top = parseInt(menu.yPos)+329+"px";
@@ -644,7 +643,7 @@ function rangeCheck(x, min, max) {
 }
 
 //////////////////////////////////////////////////////////////////////
-//call function to make a UL and add onclick functionality to each LI
+// call function to make a UL and add onclick functionality to each LI
 function addPlantMenu(menu) {
    
   //call a function to create UL with plants at the position of a click
@@ -653,42 +652,44 @@ function addPlantMenu(menu) {
   //assign an onclick response that adds a plant(s)
   dropDownMenu.addEventListener("click", function(evt) {
     
-    //make sure the click is on a custom choice (inside a menu)
+    // make sure the click is on a custom choice (inside a menu)
     if (!evt.target.classList.contains("customChoice")) {
       return;
     }
     
-    //capture plant li elements from the menu into an array so that their properties can be accessed
+    // capture plant li elements from the menu into an array so that their properties can be accessed
     const ar = Array.from(evt.target.parentElement.getElementsByTagName("li"));
          
-    //when adding plants to a garden, x-offset is calculated for each height group; the following determines how many plants fall into each height group, then the width is divided by the number of plants to calculate the available horizontal space between plants
+    // when adding plants to a garden, x-offset is calculated for each height group; 
+    // the following determines how many plants fall into each height group, then the width is divided by the number of plants to calculate the available horizontal space between plants
     const xSp1 = menu.gW / (ar.filter(x => rangeCheck(x.getAttribute("data-avgh"),0,24)).length);
     const xSp2 = menu.gW / (ar.filter(x => rangeCheck(x.getAttribute("data-avgh"),24,48)).length);
     const xSp3 = menu.gW / (ar.filter(x => rangeCheck(x.getAttribute("data-avgh"),48,72)).length);
     const xSp4 = menu.gW / (ar.filter(x => Number(x.getAttribute("data-avgh")) >= 72).length);
 
-    //when adding plants to a garden, x-offset variable is calculated for each height group and 1x..4 is for current plant's offset
+    // the x1 through x4 is for current plant's offset
     let x1 = x2 = x3 = x4 = 0;
-    //for vertical offset, the yOffset is for each plant height group then the y1..4 is the small offset for each plant, so that they're not clustered together
-    let y1 = y2 = y3 = y4 = 0;
-    
-    //loop through filtered plants and add them; when adding to a garden, the plant is centered within the garden;  otherwise, it's placed to the left of menu; 
-    //if the menu was brought up too close to the left edge of the screen, the plant is placed to the right; vertically, the plant is at the position of its listing in the menu
-    //unless 'Add All Plants' option is clicked, add 1 plant (because liCnt includes the 'Add All Plants' option, the itiration starts at 1, thus set liCnt to 2 for a sinlge addition)
-    for (let i = 1, liCnt = evt.target.innerText === "Add All Plants"? ar.length : 2; i < liCnt; i++) {
-      
-      //the x and y offsets for plants added to a garden or freestanding
+
+    // loop through filtered plants and add them; 
+    // when adding to garden, the plant is centered within the garden;  
+    // otherwise, it's placed to the left of menu; 
+    // if the menu was brought up too close to the left edge of the screen, the plant is placed to the right; 
+    // vertically, the plant is at the position of its listing in the menu
+    // unless 'Add All Plants' option is clicked, add 1 plant 
+    // because liCnt includes the 'Add All Plants' option, the itiration starts at 1, thus set liCnt to 2 for a sinlge addition
+    const liCnt = evt.target.innerText === "Add All Plants" ? ar.length : 2;
+    for (let i = 1; i < liCnt; i++) {
+      // the x and y offsets for plants added to a garden or freestanding
       let xOffset = yOffset = 0;
 
-      //for plants added to a garden
+      // for plants added to a garden
       if (menu.gId) {
-        //if adding all plants to a garden, space them at the intervals calculated below
+        // if adding all plants to a garden, space them at the intervals calculated below
         if (evt.target.innerText === "Add All Plants") {
-
-          //using garden height, gH, calculate the desired vertical spacing of plant groups; horizontally, plants are placed at xOffset intervals
+          // using garden height, gH, calculate the desired vertical spacing of plant groups; horizontally, plants are placed at xOffset intervals
           yOffset = menu.gH / 3; //3 spaces between 4 groups
           if (Number(evt.target.parentElement.children[i].getAttribute("data-avgh")) < 24) {
-            //the shortest plants go to the front (bottom), thus the biggest offset
+            // the shortest plants go to the front (bottom), thus the biggest offset
             yOffset *= 2; 
             xOffset = menu.gX + x1 * xSp1;
             x1++;
@@ -704,10 +705,9 @@ function addPlantMenu(menu) {
             xOffset = menu.gX + x4 * xSp4;
             x4++;
           }
-          
           yOffset = menu.gY + yOffset;
           
-          //alternate vertical position slightly
+          // alternate vertical position slightly
           if (i%2) yOffset += munit*2;
 
         }
@@ -717,13 +717,13 @@ function addPlantMenu(menu) {
         }
       }
       
-      //for freestanding plants
+      // for freestanding plants
       else {
-        //Y-OFFSET: when adding all plants, space them vertically 16px apart; otherwise, the vertical placing is at the location of the name in the list; 
+        // Y-OFFSET: when adding all plants, space them vertically 16px apart; otherwise, the vertical placing is at the location of the name in the list; 
         yOffset = evt.target.innerText === "Add All Plants" ?  
           parseInt(window.getComputedStyle(evt.target.parentElement).top) + 16 * i : 
           event.pageY;
-        //X-OFFSET: if the menu is too close (within 150px) to the left edge of the screen, add the plant on the right, otherwise - left
+        // X-OFFSET: if the menu is too close (within 150px) to the left edge of the screen, add the plant on the right, otherwise - left
 //         todo: check if the x-calculation creates a result that's too long
         if (parseInt(evt.target.parentElement.style.left) < 150) {
           //xOffset needs to include the alphabet shortcuts that all plants have on the sides
@@ -763,27 +763,24 @@ function addPlantMenu(menu) {
 //this function is activated when a user selects a garden or
 //plant from the 'add a garden or a plant' drop down menu;
 function addGardenPlantUL() {
-  
   const clickedElt = event.target;
 
-  //if clicked on a garden option of dropdown menu
+  // if clicked on a garden option of dropdown menu
   if (clickedElt.innerText === "New\xa0Garden") {
     hideDropDown();
-    addGarden( 
-      {
-        gId:null,
-        x:Math.min(svgPlace.getAttribute("width"), Math.max(0, parseFloat(event.target.parentElement.style.left))),
-        y:Math.min(svgPlace.getAttribute("height"), Math.max(0, parseFloat(event.target.parentElement.style.top))), 
-        w:240,
-        h:120,
-        nm:"New Garden", 
-        sn:"\uf185", //setting SUN value for a new garden to a sun icon
-        sl:"Soil"
-      }
-    );
+    addGarden({
+      gId:null,
+      x:Math.min(svgPlace.getAttribute("width"), Math.max(0, parseFloat(event.target.parentElement.style.left))),
+      y:Math.min(svgPlace.getAttribute("height"), Math.max(0, parseFloat(event.target.parentElement.style.top))), 
+      w:240,
+      h:120,
+      nm:"New Garden", 
+      sn:"\uf185", // setting SUN value for a new garden to a sun icon
+      sl:"Soil"
+    });
   } 
   
-  //if clicked on a 'New Plant' choice in the dropdown menu
+  // if clicked on a 'New Plant' choice in the dropdown menu
   else if (clickedElt.innerText === "New\xa0Plant") {
     addPlantMenu({
       xPos: parseFloat(clickedElt.parentElement.style.left),
@@ -792,7 +789,7 @@ function addGardenPlantUL() {
     });
   } 
   
-  //if clicked on a "Plant in MMM" choice of dropdown menu
+  // if clicked on a "Plant in MMM" choice of dropdown menu
   else if (clickedElt.innerText.slice(0,8) === "Plant\xa0in") {
     addPlantMenu({
       xPos: parseFloat(clickedElt.parentElement.style.left),
@@ -802,23 +799,23 @@ function addGardenPlantUL() {
     });
   }
   
-  //if clicked on the left arrow of the "Plant in MMM" choice of dropdown menu
+  // if clicked on the left arrow of the "Plant in MMM" choice of dropdown menu
   else if (clickedElt.innerText.trim()=== "<-") {
     clickedElt.parentElement.innerHTML = clickedElt.parentElement.innerText.split("-")[1].trim()==="Jan"?
     clickedElt.parentElement.innerHTML.replace(/<\/span>\w\w\w<span>/, "</span>Dec<span>"):
     clickedElt.parentElement.innerHTML.replace(/<\/span>\w\w\w<span>/, "</span>" + mos[mos.indexOf(clickedElt.parentElement.innerText.split("-")[1].trim())-1] + "<span>");
   }
-  //if clicked on the right arrow of the "Plant in MMM" choice of dropdown menu
+  // if clicked on the right arrow of the "Plant in MMM" choice of dropdown menu
   else if (clickedElt.innerText.trim() === "->") {
     clickedElt.parentElement.innerHTML = clickedElt.parentElement.innerText.split("-")[1].trim()==="Dec"?
     clickedElt.parentElement.innerHTML.replace(/<\/span>\w\w\w<span>/, "</span>Jan<span>"):
     clickedElt.parentElement.innerHTML.replace(/<\/span>\w\w\w<span>/, "</span>" + mos[mos.indexOf(clickedElt.parentElement.innerText.split("-")[1].trim())+1] + "<span>");
   }
   
-  //if a Delete All Plants or Delete All Gardens options are clicked
+  // if a Delete All Plants or Delete All Gardens options are clicked
   else if (clickedElt.innerText.slice(0,6) === "Delete") {
     
-    //confirm the removal of all plants or gardens
+    // confirm the removal of all plants or gardens
     if (localStorage.aas_myGardenVs_warnings && !(Number(localStorage.aas_myGardenVs_warnings)))
     {
       if (!confirm("Would you like to " + clickedElt.innerText + "?")){
@@ -826,18 +823,18 @@ function addGardenPlantUL() {
       }
     }
     
-    //capture plnts or grnds in a variable, based on a choice clicked
+    // capture plnts or grnds in a variable, based on a choice clicked
     let eltsToDelete = null;
     clickedElt.innerText[11]==="P"?eltsToDelete="plnts":eltsToDelete="grdns";
       
-    //if gardens or plants exist and are stored, loop through their ls
-    //counters and delete their entries from localStorage and from html
+    // if gardens or plants exist and are stored, loop through their ls
+    // counters and delete their entries from localStorage and from html
     if (localStorage.getItem("aas_myGardenVs_"+eltsToDelete)) {
       let counter = localStorage.getItem("aas_myGardenVs_"+eltsToDelete).split(",");
       for (i in counter) {
         del(svgPlace.getElementById(eltsToDelete[0] + "_" + counter[i]));
       }
-      //remove the plant/garden counter from local storage
+      // remove the plant/garden counter from local storage
       localStorage.removeItem("aas_myGardenVs_"+eltsToDelete);
       hideDropDown();
     }
@@ -1346,13 +1343,13 @@ function gardenFork(clickedElt) {
     if (clickedElt.parentElement.getElementsByClassName("resize")[0].getAttribute("display") != "none") {
       
       //start at 1, because 0 is the rect
-      for (var i = 1; i < l;  i++){
+      for (let i = 1; i < l;  i++){
         //2 is the name
         if (i===3){continue;}
         clickedElt.parentElement.children[i].setAttribute("display", "none");
       }
     } else {
-      for (var i = 1; i < l; i++){
+      for (let i = 1; i < l; i++){
         if (i===3){continue;}
         clickedElt.parentElement.children[i].setAttribute("display", "block");
       }
@@ -1442,20 +1439,21 @@ function addPlant(elt) {
     return szGrp;
   }
   
+  // ToDo: REMOVE plant shapes
   //draw the plant's shape: bush, tree, etc.; color the plant if it's blooming this month
-  if (elt.shp) {
-    drawPlantShape(grp, {
-//       x:elt.x - sizeRanger(elt.w),
-      x:elt.x + parseInt(window.getComputedStyle(grp.children[0]).width) / 3 - sizeRanger(elt.w) / 2,
-      y:elt.y - sizeRanger(elt.h) - munit,
-      w:sizeRanger(elt.w),
-      h:sizeRanger(elt.h),
-      cls:"plant",
-      shp:elt.shp,
-      clr:elt.clr ? elt.clr : "green", //color (clr) includes i_ for inconspicuous flowers; if no color is specified, go with green
-      blm:elt.blm
-    });
-  }
+//   if (elt.shp) {
+//     drawPlantShape(grp, {
+// //       x:elt.x - sizeRanger(elt.w),
+//       x:elt.x + parseInt(window.getComputedStyle(grp.children[0]).width) / 3 - sizeRanger(elt.w) / 2,
+//       y:elt.y - sizeRanger(elt.h) - munit,
+//       w:sizeRanger(elt.w),
+//       h:sizeRanger(elt.h),
+//       cls:"plant",
+//       shp:elt.shp,
+//       clr:elt.clr ? elt.clr : "green", //color (clr) includes i_ for inconspicuous flowers; if no color is specified, go with green
+//       blm:elt.blm
+//     });
+//   }
   
   //return the group with the plant
   return grp;
@@ -1473,11 +1471,13 @@ function plantFork(tgt) {
     const sd = localStorage.getItem("aas_myGardenVs_plnt" + clickedGroup.id.substring(2,clickedGroup.id.length)).split(",");
 
     const specs = {
-      x:Number(clickedGroup.children[0].getAttribute("x")),
-      y:Number(clickedGroup.children[0].getAttribute("y")),
-      w:Number(sd[2]),
-      h:Number(sd[3]),
-      lnm:sd[6], //latin name
+      x: Number(clickedGroup.children[0].getAttribute("x")),
+      y: Number(clickedGroup.children[0].getAttribute("y")),
+      xOff: clickedGroup.transform.baseVal.getItem("translate").matrix.e,
+      yOff: clickedGroup.transform.baseVal.getItem("translate").matrix.f,
+      w: Number(sd[2]),
+      h: Number(sd[3]),
+      lnm: sd[6], //latin name
 //       clr:sd[8] //saved color chosen for the plant, if ever needed
     }
     
@@ -1492,11 +1492,11 @@ function plantFork(tgt) {
     
     // add the plant's size
     clickedGroup.appendChild(mkText({
-    x:specs.x + plantNameWidth / 2,
-    y:specs.y + munit*2,
-    cls:"plantSize plantDetails", 
-    txt:"avg: " + formatSizeDisplay(specs.w) + " x " + formatSizeDisplay(specs.h), 
-    lnm:specs.lnm
+      x: specs.x + plantNameWidth / 2,
+      y: specs.y + munit*2,
+      cls: "plantSize plantDetails", 
+      txt: "avg: " + formatSizeDisplay(specs.w) + " x " + formatSizeDisplay(specs.h), 
+      lnm: specs.lnm
     }));
     
     // add plant's other info, using Latin Name stored in desc of a plant
@@ -1550,8 +1550,8 @@ function plantFork(tgt) {
       // add plant info div
       const plantInfo = document.createElement("div");
       plantInfo.className = "plantInfo";
-      plantInfo.style.left = specs.x + plantNameWidth / 2 - 100 + "px";
-      plantInfo.style.top = specs.y + offset + munit * 2 + "px";
+      plantInfo.style.left = specs.x + specs.xOff + plantNameWidth / 2 - 100 + "px";
+      plantInfo.style.top = specs.y + specs.yOff + offset + munit * 2 + "px";
       document.body.appendChild(plantInfo);
 
       // The "desc" field of the tgt (plant name) holds latin name, used as a key to pull all other information
@@ -1651,19 +1651,13 @@ function mkForeignObj(elt) {
     txt.textContent = elt.txt.replaceAll("&gt;",">").replaceAll("&lt;","<").replaceAll("&leq;","<=").replaceAll("&geq;",">=");
   }
   foreigner.appendChild(txt);
-  
-  //the xml div is for IE
-//   let inDiv = document.createElement("div");
-//   inDiv.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-//   inDiv.appendChild(txt);
-
   return foreigner;
 }
 
-
+// ToDo: remove or rework, cuz removing shapes
 //draw plant's shape adding them to the supplied plant group
 function drawPlantShape(plantGroup, specs) {
-  // evergreen tree: always green triangle
+  // evergreen tree: always a green triangle
   // evergreen vine: green drooping vine-lines
   // all other evergreen & biennial: branches & green circle
   // deciduous vines: greenish-brown vines, green in non-winter months
