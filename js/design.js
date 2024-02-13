@@ -234,44 +234,45 @@ function settingsMenu(clickedElt) {
   }
   //if a "month to view" is clicked
   else if (mos.includes(clickedElt.innerText)) {
-    let lsPlants = localStorage.aas_myGardenVs_plnts;
-    if (lsPlants){
-      lsPlants = lsPlants.split(",");
-      clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText =
-        clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText.split(" - ")[0] + " - " + clickedElt.innerText;
+    // ToDo: COLOR THE PLANT NAMES
+    console.log("COLOR THE PLANT NAMES");
+    // let lsPlants = localStorage.aas_myGardenVs_plnts;
+    // if (lsPlants){
+    //   lsPlants = lsPlants.split(",");
+    //   clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText =
+    //     clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText.split(" - ")[0] + " - " + clickedElt.innerText;
       
-      for (let i = 0, l = lsPlants.length; i < l; i++){
-        let lsPlant = localStorage.getItem("aas_myGardenVs_plnt"+lsPlants[i]);
-        if (lsPlant) {
-          lsPlant = lsPlant.split(",");
+    //   for (let i = 0, l = lsPlants.length; i < l; i++){
+    //     let lsPlant = localStorage.getItem("aas_myGardenVs_plnt"+lsPlants[i]);
+    //     if (lsPlant) {
+    //       lsPlant = lsPlant.split(",");
           
-          //get the lsPlant element
-          const plantElt = document.getElementById("p_" + lsPlants[i]);
-          //get the color shapes of the created lsPlant elements
-          const colorShapes = plantElt.getElementsByClassName("plantShapeColor");
-
-          //if the chosen month is in winter, remove green from non-evergreens
-          flowerGradClr(
-            colorShapes[0], 
-            lsPlant[7][1] != "e" && winterMos.includes(clickedElt.innerText) ? "transparent" : "green");
+    //       //get the lsPlant element
+    //       const plantElt = document.getElementById("p_" + lsPlants[i]);
+    //       //get the color shapes of the created lsPlant elements
+    //       const colorShapes = plantElt.getElementsByClassName("plantShapeColor");
+    //       //if the chosen month is in winter, remove green from non-evergreens
+    //       flowerGradClr(
+    //         colorShapes[0], 
+    //         lsPlant[7][1] != "e" && winterMos.includes(clickedElt.innerText) ? "transparent" : "green");
                         
-          //if the lsPlant blooms in the selected month, color its circle
-          flowerGradClr(
-            colorShapes[1], 
-            lsPlant[9].split(';').includes(mos.indexOf(clickedElt.innerText).toString()) ? lsPlant[8] : "transparent"
-          );
+    //       //if the lsPlant blooms in the selected month, color its circle
+    //       flowerGradClr(
+    //         colorShapes[1], 
+    //         lsPlant[9].split(';').includes(mos.indexOf(clickedElt.innerText).toString()) ? lsPlant[8] : "transparent"
+    //       );
           
-          //if it's an annual, set branches' display=none in cold months
-          if (lsPlant[7][1] === "a") {
-            const paths = colorShapes[0].parentElement.getElementsByTagName("path");
-            for (let i = 0, len = paths.length; i < len; i++ ) {
-              paths[i].style.display = winterMos.indexOf(clickedElt.innerText) > -1 ?  "none" : "inline";
-            }
-          }
+    //       //if it's an annual, set branches' display=none in cold months
+    //       if (lsPlant[7][1] === "a") {
+    //         const paths = colorShapes[0].parentElement.getElementsByTagName("path");
+    //         for (let i = 0, len = paths.length; i < len; i++ ) {
+    //           paths[i].style.display = winterMos.indexOf(clickedElt.innerText) > -1 ?  "none" : "inline";
+    //         }
+    //       }
           
-        }  
-      }
-    }
+    //     }  
+    //   }
+    // }
     return;
   } 
   else if (clickedElt.className === "customChoice") {
@@ -1439,22 +1440,6 @@ function addPlant(elt) {
     return szGrp;
   }
   
-  // ToDo: REMOVE plant shapes
-  //draw the plant's shape: bush, tree, etc.; color the plant if it's blooming this month
-//   if (elt.shp) {
-//     drawPlantShape(grp, {
-// //       x:elt.x - sizeRanger(elt.w),
-//       x:elt.x + parseInt(window.getComputedStyle(grp.children[0]).width) / 3 - sizeRanger(elt.w) / 2,
-//       y:elt.y - sizeRanger(elt.h) - munit,
-//       w:sizeRanger(elt.w),
-//       h:sizeRanger(elt.h),
-//       cls:"plant",
-//       shp:elt.shp,
-//       clr:elt.clr ? elt.clr : "green", //color (clr) includes i_ for inconspicuous flowers; if no color is specified, go with green
-//       blm:elt.blm
-//     });
-//   }
-  
   //return the group with the plant
   return grp;
   
@@ -1468,29 +1453,29 @@ function plantFork(tgt) {
   //click on plant name (plant class)
   if (tgt.classList.contains("plant")) {
 
-    const sd = localStorage.getItem("aas_myGardenVs_plnt" + clickedGroup.id.substring(2,clickedGroup.id.length)).split(",");
+    // toggle the display of plant's details: size, flower colors, info; if plant's size is displayed hide all info
+    if (clickedGroup.getElementsByClassName("plantSize")[0]) {
+      hideDropDown();
+      return;
+    }
 
+    // specifications
+    const sd = localStorage.getItem("aas_myGardenVs_plnt" + clickedGroup.id.substring(2,clickedGroup.id.length)).split(",");
     const specs = {
       x: Number(clickedGroup.children[0].getAttribute("x")),
       y: Number(clickedGroup.children[0].getAttribute("y")),
-      xOff: clickedGroup.transform.baseVal.getItem("translate").matrix.e,
-      yOff: clickedGroup.transform.baseVal.getItem("translate").matrix.f,
+      xOffset: clickedGroup.transform.baseVal.getItem("translate").matrix.e,
+      yOffset: clickedGroup.transform.baseVal.getItem("translate").matrix.f,
       w: Number(sd[2]),
       h: Number(sd[3]),
       lnm: sd[6], //latin name
 //       clr:sd[8] //saved color chosen for the plant, if ever needed
     }
-    
-  // toggle the display of plant's details: size, flower colors, info; if plant's size is displayed hide all info
-    if (clickedGroup.getElementsByClassName("plantSize")[0]) {
-      hideDropDown();
-      return;
-    }
-    const plantNameWidth = 
-      Math.round((clickedGroup.children[0].getComputedTextLength()
-      + Number.EPSILON)*100)/100;
-    
-    // add the plant's size
+    // offset, currently used for non-SVG elements
+    let offset = 30;
+    const plantNameWidth = Math.round((clickedGroup.children[0].getComputedTextLength() + Number.EPSILON)*100)/100;
+
+    // add plant size
     clickedGroup.appendChild(mkText({
       x: specs.x + plantNameWidth / 2,
       y: specs.y + munit*2,
@@ -1499,7 +1484,7 @@ function plantFork(tgt) {
       lnm: specs.lnm
     }));
     
-    // add plant's other info, using Latin Name stored in desc of a plant
+    // add plant other info, using Latin Name stored in desc of a plant
     fetch('plants.json')
       .then((res) => {
         return(res.json());
@@ -1508,11 +1493,26 @@ function plantFork(tgt) {
       // remove the first entry in myObj - those are column headers, not needed
       delete myObj["Latin&nbspName"];
       
-      //Add COLOR CHOICES
+      const plantLatinName = tgt.parentElement.children[0].getAttribute("desc");
+
+      // add plant picture, if there is one
+      if (parseInt(myObj[plantLatinName][28])) {
+        const plantCommonName = tgt.children.length ? tgt.children[0].innerHTML : tgt.innerHTML;
+        const pic = document.createElement("img");
+        pic.className = "plantPic plantDetails";
+        // pic.className = "plantPic";
+        pic.style.left = specs.x + specs.xOffset + plantNameWidth / 2 - offset * 2 + "px";
+        pic.style.top = specs.y + specs.yOffset - offset * 4.5 + munit * 2 + "px";
+        pic.src = `pictures/${plantCommonName.replace((/( |-|\(|\)|v\.|&|\"|\')/g),"")}1.jpg`;
+        pic.alt = plantCommonName;
+        document.body.appendChild(pic);
+      }
+
+      // COLOR CHOICES
       const inconspicuousFlag = 
-        myObj[tgt.parentElement.children[0].getAttribute("desc")][1].includes("inconspicuous") || myObj[tgt.parentElement.children[0].getAttribute("desc")][6].includes("inconspicuous");
+        myObj[plantLatinName][1].includes("inconspicuous") || myObj[plantLatinName][6].includes("inconspicuous");
     // any flower color choices are stored in the descrition field "desc"; capture them into an array, removing 'inconspicuous', trailing commas or semicolons at the end of the sting;
-      let plantColors = myObj[tgt.parentElement.children[0].getAttribute("desc")][6].replace(/inconspicuous(;|,)? ?|,$|;$/g,"").split(/, ?|; ?/);
+      let plantColors = myObj[plantLatinName][6].replace(/inconspicuous(;|,)? ?|,$|;$/g,"").split(/, ?|; ?/);
 
       // if no colors are available, place one default value green in the array
       if (plantColors === "" || !(plantColors.length)) {
@@ -1545,13 +1545,11 @@ function plantFork(tgt) {
         );
       }
 
-      // Add OTHER INFO fields
-      let offset = 30;
-      // add plant info div
+      // Add OTHER INFO fields - plant info div
       const plantInfo = document.createElement("div");
       plantInfo.className = "plantInfo";
-      plantInfo.style.left = specs.x + specs.xOff + plantNameWidth / 2 - 100 + "px";
-      plantInfo.style.top = specs.y + specs.yOff + offset + munit * 2 + "px";
+      plantInfo.style.left = specs.x + specs.xOffset + plantNameWidth / 2 - 100 + "px";
+      plantInfo.style.top = specs.y + specs.yOffset + offset + munit * 2 + "px";
       document.body.appendChild(plantInfo);
 
       // The "desc" field of the tgt (plant name) holds latin name, used as a key to pull all other information
@@ -1559,8 +1557,6 @@ function plantFork(tgt) {
       const plantInfoFields = {7:"Leaves: ", 8:"Bloom Time: ", 10:"Sun: ",
                               11:"Roots: ", 12:"Garden Quantities: ", 16:"Companions: ", 
                               17:"Enemies: ", 18:"Soil: "};
-
-      const plantLatinName = tgt.parentElement.children[0].getAttribute("desc");
       for (let f in plantInfoFields) {
         if (myObj[plantLatinName][f] === "") {
           continue;
@@ -1654,8 +1650,7 @@ function mkForeignObj(elt) {
   return foreigner;
 }
 
-// ToDo: remove or rework, cuz removing shapes
-//draw plant's shape adding them to the supplied plant group
+// ToDo: reuse plant shape logic to color plant name
 function drawPlantShape(plantGroup, specs) {
   // evergreen tree: always a green triangle
   // evergreen vine: green drooping vine-lines
@@ -1665,81 +1660,10 @@ function drawPlantShape(plantGroup, specs) {
   // all other (perennial, deciduous): branches, and in warm months - green circle;
   
   const dt = new Date;
-  //leafy and flowery shapes are used to hold shapes with leafs (branches, trianlge) and shapes with flowers
-  let leafyShape = null;
-  let floweryShape = null;
-  
-  //tree(t) evergreen(e)
-  if (specs.shp === "te") {
-    
-    //make an evergreen tree triangle
-    leafyShape = document.createElementNS(xmlns, "polygon");
-    leafyShape.setAttribute("class", specs.cls + " plantShapeColor");
-    leafyShape.setAttribute(
-      "points", 
-      `${specs.x+specs.w/2}, ${specs.y} ${specs.x+specs.w}, ${specs.y+specs.h} ${specs.x}, ${specs.y+specs.h}`
-    );
-    plantGroup.appendChild(leafyShape);
-    
-    //create a smaller triangle to hold the flowering effect for a conical evergreen tree
-    floweryShape = document.createElementNS(xmlns, "polygon");
-    floweryShape.setAttribute("class", specs.cls + " plantShapeColor plantFlowerShapeColor");
-    floweryShape.setAttribute(
-      "points", 
-      `${specs.x + specs.w/2}, ${specs.y + specs.h*0.1} ${specs.x + specs.w*0.9}, ${specs.y + specs.h*0.6} ${specs.x + specs.w*0.1}, ${specs.y + specs.h*0.6}`
-    );
-    plantGroup.appendChild(floweryShape);
-  }
-  //not evergreen trees
-  else {
-    // const numOfBranches = specs.shp[0] === "v" ? 6 : 4;
-    // const spread = Math.round(specs.w / numOfBranches);
-    
-    // for (let i = 0; i < numOfBranches; i++) {
-    //   const shapeElt = document.createElementNS(xmlns, "path");
-    //   shapeElt.setAttributeNS(null, "class", specs.cls + " shape");
-    //   shapeElt.setAttributeNS(
-    //     null, 
-    //     "d", 
-    //     specs.shp[0] != "v" ? 
-    //     `m ${specs.x + spread * i} ${specs.y} 
-    //      c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1} 
-    //        ${specs.w * 0.2 * (1 - i)} ${specs.w * 0.5} 
-    //        ${specs.w / 2 - spread * i} ${specs.h}` :
-    //     `m ${specs.x + specs.w / 2} ${specs.y} 
-    //      c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1} 
-    //        ${specs.w * 0.2 * (3 - i)} ${specs.w * 0.5} 
-    //        ${specs.w / 2 - spread * i} ${specs.h}`
-    //   );
-    //   if (specs.shp[1] === "a") {
-    //     shapeElt.style.display = winterMos.includes(mos[dt.getMonth()]) ?  "none" : "inline";
-    //   }
-    //   plantGroup.appendChild(shapeElt);
-    // }
-    
-    //also for all plants that aren't evergreen trees, add two circles for leaves and flowers
-    
-    //set a radius to be used for leafs/flowers
-    specs.r = specs.w/2;
-    //adjust specs for leaf/flower circle
-    specs.x += specs.w/2;
-    specs.y += specs.h/2;
-    specs.cls = specs.cls + " plantShapeColor";
 
-    //add a circle for leafs
-    leafyShape = mkCircle(specs);
-    plantGroup.appendChild(leafyShape);
-    
-    //adjust the radius for flowers
-    specs.r = specs.w/1.7;
-    //add a circle to use for flowering 
-    floweryShape = mkCircle(specs);
-
-    //add a circle for flowers
-    plantGroup.appendChild(floweryShape);
-    
-  }
-  
+  //tree(t) evergreen(e) - specs.shp === "te", 
+  // specs.shp[0] === "v" ? vine... 
+  // specs.shp[1] === "a" annual...
   
   //if it's a non-winter month or if the plant is evergreen, fill leafs with green;
   flowerGradClr(leafyShape,
@@ -1751,7 +1675,6 @@ function drawPlantShape(plantGroup, specs) {
                 specs.clr : "transparent");
   
 }
-
 //////////////////////////////////////////////////////////////////////
 //draw 'flowering' triangle or circle
 function flowerGradClr(flowerShape, color, shp, mo) {

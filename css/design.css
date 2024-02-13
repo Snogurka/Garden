@@ -105,6 +105,12 @@ li {
   text-anchor: middle;
 }
 
+.plantPic {
+  position: absolute;
+  height: 100px;
+  width: 100px;
+}
+
 .colorGroupRect {
   fill: transparent;  
 }
