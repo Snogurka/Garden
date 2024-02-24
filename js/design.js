@@ -23,7 +23,7 @@ var resize = null; //1: horizontal, 2: vertical, 3: both;
 var moving = false;
 var clickPos = {}; //stores cursor location upon first click
 var mobile = false;   //on the mobile devices, both touch and mouse up and down come through, thus ignore mouse on mobile
-////////////////////////////
+delFlag = false;
 ////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
@@ -73,6 +73,7 @@ function myMain(){
   
   //if mobile, add a little flower in the top left corner - check what's needed first
   if (window.matchMedia("only screen and (max-width: 600px)").matches) {
+    console.log('mobile detected by matchMedia');
     const orientir = document.createElement("div");
     orientir.className = "orientir";
     document.body.insertBefore(orientir, document.querySelector("#svgPlace"));
@@ -234,45 +235,43 @@ function settingsMenu(clickedElt) {
   }
   //if a "month to view" is clicked
   else if (mos.includes(clickedElt.innerText)) {
-    // ToDo: COLOR THE PLANT NAMES
-    console.log("COLOR THE PLANT NAMES");
-    // let lsPlants = localStorage.aas_myGardenVs_plnts;
-    // if (lsPlants){
-    //   lsPlants = lsPlants.split(",");
-    //   clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText =
-    //     clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText.split(" - ")[0] + " - " + clickedElt.innerText;
+    let lsPlants = localStorage.aas_myGardenVs_plnts;
+    if (lsPlants){
+      lsPlants = lsPlants.split(",");
+      clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText =
+        clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText.split(" - ")[0] + " - " + clickedElt.innerText;
       
-    //   for (let i = 0, l = lsPlants.length; i < l; i++){
-    //     let lsPlant = localStorage.getItem("aas_myGardenVs_plnt"+lsPlants[i]);
-    //     if (lsPlant) {
-    //       lsPlant = lsPlant.split(",");
+      for (let i = 0, l = lsPlants.length; i < l; i++){
+        let lsPlant = localStorage.getItem("aas_myGardenVs_plnt"+lsPlants[i]);
+        if (lsPlant) {
+          lsPlant = lsPlant.split(",");
           
-    //       //get the lsPlant element
-    //       const plantElt = document.getElementById("p_" + lsPlants[i]);
-    //       //get the color shapes of the created lsPlant elements
-    //       const colorShapes = plantElt.getElementsByClassName("plantShapeColor");
-    //       //if the chosen month is in winter, remove green from non-evergreens
-    //       flowerGradClr(
-    //         colorShapes[0], 
-    //         lsPlant[7][1] != "e" && winterMos.includes(clickedElt.innerText) ? "transparent" : "green");
+          //get the lsPlant element
+          const plantElt = document.getElementById("p_" + lsPlants[i]);
+          //get the color shapes of the created lsPlant elements
+          const colorShapes = plantElt.getElementsByClassName("plantShapeColor");
+          //if the chosen month is in winter, remove green from non-evergreens
+          flowerGradClr(
+            colorShapes[0], 
+            lsPlant[7][1] != "e" && winterMos.includes(clickedElt.innerText) ? "transparent" : "green");
                         
-    //       //if the lsPlant blooms in the selected month, color its circle
-    //       flowerGradClr(
-    //         colorShapes[1], 
-    //         lsPlant[9].split(';').includes(mos.indexOf(clickedElt.innerText).toString()) ? lsPlant[8] : "transparent"
-    //       );
+          //if the lsPlant blooms in the selected month, color its circle
+          flowerGradClr(
+            colorShapes[1], 
+            lsPlant[9].split(';').includes(mos.indexOf(clickedElt.innerText).toString()) ? lsPlant[8] : "transparent"
+          );
           
-    //       //if it's an annual, set branches' display=none in cold months
-    //       if (lsPlant[7][1] === "a") {
-    //         const paths = colorShapes[0].parentElement.getElementsByTagName("path");
-    //         for (let i = 0, len = paths.length; i < len; i++ ) {
-    //           paths[i].style.display = winterMos.indexOf(clickedElt.innerText) > -1 ?  "none" : "inline";
-    //         }
-    //       }
+          //if it's an annual, set branches' display=none in cold months
+          if (lsPlant[7][1] === "a") {
+            const paths = colorShapes[0].parentElement.getElementsByTagName("path");
+            for (let i = 0, len = paths.length; i < len; i++ ) {
+              paths[i].style.display = winterMos.indexOf(clickedElt.innerText) > -1 ?  "none" : "inline";
+            }
+          }
           
-    //     }  
-    //   }
-    // }
+        }  
+      }
+    }
     return;
   } 
   else if (clickedElt.className === "customChoice") {
@@ -347,6 +346,15 @@ function settingsMenu(clickedElt) {
 }
 
 //////////////////////////////////////////////////////////////////////
+// fast scroll to the plant that starts with a clicked letter
+function scrollToLetter(e) {
+  const uList = document.getElementsByTagName("ul")[0];
+  const letter = isNaN(e) ? e.innerText : String.fromCharCode(e);
+  const lItem = uList.getElementsByClassName(letter)[0];
+  if( lItem ) uList.scrollTop = lItem.offsetTop - 1;
+}
+
+//////////////////////////////////////////////////////////////////////
 //extract avg height and width, inches to pixels ratio 1:1
 function getAvgNum(origVal) {
   //map performs an action on each element of an array, 
@@ -395,14 +403,6 @@ function getUL(menu) {
     }
   }
   
-  //this inner function allows fast scroll to the plant that starts with a clicked letter
-  // todo: change fast scroll to plant to on letter key, like in data
-  function goToLetter(e) {
-    const uList = document.getElementsByTagName("ul")[0];
-    const lItem = uList.getElementsByClassName(e.target.innerText)[0];
-    if( lItem ) uList.scrollTop = lItem.offsetTop - 1;
-  }
-  
   //this inner function filters all plants down to just the selected group
   function filterByGroup(tgt) {
     
@@ -420,7 +420,7 @@ function getUL(menu) {
         case 'brush':
         case 'grass':
         case 'shrub':
-          compVal = 'bushy';
+          compVal = 'bush';
           break;
         case 'berry':
         case 'veg':
@@ -430,7 +430,7 @@ function getUL(menu) {
         case 'flower':
         case 'groundcover':
         case 'vine':
-          compVal = 'flowery';
+          compVal = 'flower';
           break;    
         }
       //hide or display the menu
@@ -590,34 +590,37 @@ function getUL(menu) {
             dropMenu.children[0].innerText = "There are no recorded plants that match this criteria.";
           }
           
-          // add alphabet shortcuts and class filtering menus when all plants are shown in the menu
+          // ToDo: for later, display letter buttons only on mobile devices
+          let isMobile = false;
+          // add class filtering menus when all plants are shown in the menu
           if (menu.type === "all") {
-            //A-M shortcuts on the left
-            alphaMenu.style.left = parseInt(menu.xPos)-36+"px";
-            alphaMenu.style.top = menu.yPos+"px";
-            alphaMenu.className = 'alpha alphabet dropDown';
-            populateList('ABCDEFGHIJKLM'.split(''), alphaMenu);
-            alphaMenu.addEventListener("click", (evt) => {
-              goToLetter(evt);
-            });
-            document.body.appendChild(alphaMenu);
+            if (isMobile) {
+              //A-M shortcuts on the left
+              alphaMenu.style.left = parseInt(menu.xPos)-36+"px";
+              alphaMenu.style.top = menu.yPos+"px";
+              alphaMenu.className = 'alpha alphabet dropDown';
+              populateList('ABCDEFGHIJKLM'.split(''), alphaMenu);
+              alphaMenu.addEventListener("click", (evt) => {
+                scrollToLetter(evt.target);
+              });
+              document.body.appendChild(alphaMenu);
 
-            // N-Z shortcuts on the right
-            zetaMenu.style.left = parseInt(menu.xPos)+168+"px";
-            zetaMenu.style.top = menu.yPos+"px";
-            zetaMenu.className = 'zeta alphabet dropDown';
-            populateList('NOPQRSTUVWXYZ'.split(''), zetaMenu);
-            zetaMenu.addEventListener("click", (evt) => {
-              goToLetter(evt);
-            });
-            document.body.appendChild(zetaMenu);
-            
+              // N-Z shortcuts on the right
+              zetaMenu.style.left = parseInt(menu.xPos)+168+"px";
+              zetaMenu.style.top = menu.yPos+"px";
+              zetaMenu.className = 'zeta alphabet dropDown';
+              populateList('NOPQRSTUVWXYZ'.split(''), zetaMenu);
+              zetaMenu.addEventListener("click", (evt) => {
+                scrollToLetter(evt.target);
+              });
+              document.body.appendChild(zetaMenu);
+            }
             // plant class filtering buttons right above the menu
             const classMenu = document.createElement('ul');
-            classMenu.style.left = parseInt(menu.xPos)-36+"px";
-            classMenu.style.top = parseInt(menu.yPos)+329+"px";
+            classMenu.style.left = isMobile ? parseInt(menu.xPos)-36+"px" : parseInt(menu.xPos)-3+"px";
+            classMenu.style.top = parseInt(menu.yPos)+326+"px";
             classMenu.className = 'plantCls dropDown';
-            populateList(['all','bushy','edible','flowery','tree'], classMenu);
+            populateList(['all','bush','edible','flower','tree'], classMenu);
             classMenu.addEventListener("click", (evt) => {
               filterByGroup(evt.target);
             });
@@ -819,7 +822,7 @@ function addGardenPlantUL() {
     // confirm the removal of all plants or gardens
     if (localStorage.aas_myGardenVs_warnings && !(Number(localStorage.aas_myGardenVs_warnings)))
     {
-      if (!confirm("Would you like to " + clickedElt.innerText + "?")){
+      if (!confirm(`Would you like to ${clickedElt.innerText}?`)){
         return;
       }
     }
@@ -1327,10 +1330,12 @@ function gardenFork(clickedElt) {
     
     hideDropDown();
     
-    //if the cicked garden is a simple container, it doesn't have sizers, thus exit - WOULD THIS EVER HAPPEN
+    //if the cicked garden is a simple container, it doesn't have sizers, thus exit - ToDo: WOULD THIS EVER HAPPEN?
     if (!clickedElt.parentElement.getElementsByClassName("gdnBtn").length) 
       { 
         console.log("a garden with nothing in it, a simple container, with no sizers!");
+        // %%%% delete debugger before release
+        // debugger;
         return;
       }
     
@@ -1490,81 +1495,85 @@ function plantFork(tgt) {
         return(res.json());
       })
       .then((myObj) => {
-      // remove the first entry in myObj - those are column headers, not needed
-      delete myObj["Latin&nbspName"];
-      
-      const plantLatinName = tgt.parentElement.children[0].getAttribute("desc");
+        if (delFlag) { 
+          delFlag = false;
+          return; 
+          }
+        // remove the first entry in myObj - those are column headers, not needed
+        delete myObj["Latin&nbspName"];
+        
+        const plantLatinName = tgt.parentElement.children[0].getAttribute("desc");
 
-      // add plant picture, if there is one
-      if (parseInt(myObj[plantLatinName][28])) {
-        const plantCommonName = tgt.children.length ? tgt.children[0].innerHTML : tgt.innerHTML;
+        // add plant picture, if there is one
         const pic = document.createElement("img");
-        pic.className = "plantPic plantDetails";
-        // pic.className = "plantPic";
-        pic.style.left = specs.x + specs.xOffset + plantNameWidth / 2 - offset * 2 + "px";
-        pic.style.top = specs.y + specs.yOffset - offset * 4.5 + munit * 2 + "px";
-        pic.src = `pictures/${plantCommonName.replace((/( |-|\(|\)|v\.|&|\"|\')/g),"")}1.jpg`;
-        pic.alt = plantCommonName;
-        document.body.appendChild(pic);
-      }
-
-      // COLOR CHOICES
-      const inconspicuousFlag = 
-        myObj[plantLatinName][1].includes("inconspicuous") || myObj[plantLatinName][6].includes("inconspicuous");
-    // any flower color choices are stored in the descrition field "desc"; capture them into an array, removing 'inconspicuous', trailing commas or semicolons at the end of the sting;
-      let plantColors = myObj[plantLatinName][6].replace(/inconspicuous(;|,)? ?|,$|;$/g,"").split(/, ?|; ?/);
-
-      // if no colors are available, place one default value green in the array
-      if (plantColors === "" || !(plantColors.length)) {
-        plantColors = ["green"]; 
-      } 
-      // otherwise, if plant colors array doesn't have "green", add one
-      else {
-        if (!plantColors.includes("green"))plantColors.unshift("green");
-      }
-      
-      // padding the color group rectangle 2px on all side by adjusting to w/h and x/y
-      const colorRect = document.createElementNS(xmlns, "rect");
-      colorRect.setAttribute("class", "colorGroupRect plantDetails");
-      colorRect.setAttribute("x", specs.x + plantNameWidth / 2 - (plantColors.length) * 16 - 2);
-      colorRect.setAttribute("y", specs.y + munit * 4 - 10 - 2);
-      colorRect.setAttribute("width", plantColors.length * 32 + 4);
-      colorRect.setAttribute("height", 20 + 4);
-      tgt.parentElement.appendChild(colorRect);
-
-      for (let i = 0, l = plantColors.length; i < l; i++) {
-        colorRect.parentElement.appendChild(
-          mkCircle({
-            x:specs.x + plantNameWidth / 2 - (plantColors.length - 1) * 16 + 32 * i,
-            y:specs.y + munit * 4,
-            r:10,
-            clr:colorConverter(camelCase(plantColors[i])),
-            cls:"plantColor plantDetails",
-            ttl:inconspicuousFlag&&plantColors[i]!="green"?"inconspicuous "+plantColors[i]:plantColors[i]
-            })
-        );
-      }
-
-      // Add OTHER INFO fields - plant info div
-      const plantInfo = document.createElement("div");
-      plantInfo.className = "plantInfo";
-      plantInfo.style.left = specs.x + specs.xOffset + plantNameWidth / 2 - 100 + "px";
-      plantInfo.style.top = specs.y + specs.yOffset + offset + munit * 2 + "px";
-      document.body.appendChild(plantInfo);
-
-      // The "desc" field of the tgt (plant name) holds latin name, used as a key to pull all other information
-      // set the desired Other Info fields, using their column/order numbers as keys
-      const plantInfoFields = {7:"Leaves: ", 8:"Bloom Time: ", 10:"Sun: ",
-                              11:"Roots: ", 12:"Garden Quantities: ", 16:"Companions: ", 
-                              17:"Enemies: ", 18:"Soil: "};
-      for (let f in plantInfoFields) {
-        if (myObj[plantLatinName][f] === "") {
-          continue;
+        if (parseInt(myObj[plantLatinName][28])) {
+          const plantCommonName = tgt.children.length ? tgt.children[0].innerHTML : tgt.innerHTML;
+          pic.className = "plantPic plantDetails";
+          pic.style.left = specs.x + specs.xOffset + plantNameWidth / 2 - offset * 2 + "px";
+          pic.style.top = specs.y + specs.yOffset - offset * 4.5 + munit * 2 + "px";
+          pic.src = `pictures/${plantCommonName.replace((/( |-|\(|\)|v\.|&|\"|\')/g),"")}1.jpg`;
+          pic.alt = plantCommonName;
+          document.body.appendChild(pic);
         }
-        let infoLine = document.createElement("div");
-        infoLine.innerHTML = plantInfoFields[f] + myObj[plantLatinName][f];
-        plantInfo.appendChild(infoLine);
-      }
+
+        // COLOR CHOICES
+        const inconspicuousFlag = 
+          myObj[plantLatinName][1].includes("inconspicuous") || myObj[plantLatinName][6].includes("inconspicuous");
+      // any flower color choices are stored in the descrition field "desc"; capture them into an array, removing 'inconspicuous', trailing commas or semicolons at the end of the sting;
+        let plantColors = myObj[plantLatinName][6].replace(/inconspicuous(;|,)? ?|,$|;$/g,"").split(/, ?|; ?/);
+
+        // if no colors are available, place one default value green in the array
+        if (plantColors === "" || !(plantColors.length)) {
+          plantColors = ["green"]; 
+        } 
+        // otherwise, if plant colors array doesn't have "green", add one
+        else {
+          if (!plantColors.includes("green"))plantColors.unshift("green");
+        }
+        
+        // padding the color group rectangle 2px on all side by adjusting to w/h and x/y
+        const colorRect = document.createElementNS(xmlns, "rect");
+        colorRect.setAttribute("class", "colorGroupRect plantDetails");
+        colorRect.setAttribute("x", specs.x + plantNameWidth / 2 - (plantColors.length) * 16 - 2);
+        colorRect.setAttribute("y", specs.y + munit * 4 - 10 - 2);
+        colorRect.setAttribute("width", plantColors.length * 32 + 4);
+        colorRect.setAttribute("height", 20 + 4);
+        tgt.parentElement.appendChild(colorRect);
+
+        for (let i = 0, l = plantColors.length; i < l; i++) {
+          colorRect.parentElement.appendChild(
+            mkCircle({
+              x:specs.x + plantNameWidth / 2 - (plantColors.length - 1) * 16 + 32 * i,
+              y:specs.y + munit * 4,
+              r:10,
+              clr:colorConverter(camelCase(plantColors[i])),
+              cls:"plantColor plantDetails",
+              ttl:inconspicuousFlag&&plantColors[i]!="green"?"inconspicuous "+plantColors[i]:plantColors[i]
+              })
+          );
+        }
+
+        // Add OTHER INFO fields - plant info div
+        const plantInfo = document.createElement("div");
+        plantInfo.className = "plantInfo plantDetails";
+        plantInfo.style.left = specs.x + specs.xOffset + plantNameWidth / 2 - 100 + "px";
+        plantInfo.style.top = specs.y + specs.yOffset + offset + munit * 2 + "px";
+        document.body.appendChild(plantInfo);
+
+        // The "desc" field of the tgt (plant name) holds latin name, used as a key to pull all other information
+        // set the desired Other Info fields, using their column/order numbers as keys
+        const plantInfoFields = {7:"Leaves: ", 8:"Bloom Time: ", 10:"Sun: ",
+                                11:"Roots: ", 12:"Garden Quantities: ", 16:"Companions: ", 
+                                17:"Enemies: ", 18:"Soil: "};
+        for (let f in plantInfoFields) {
+          if (myObj[plantLatinName][f] === "") {
+            continue;
+          }
+          let infoLine = document.createElement("div");
+          infoLine.innerHTML = plantInfoFields[f] + myObj[plantLatinName][f];
+          plantInfo.appendChild(infoLine);
+        }
+        delFlag = false;
     })
     .catch((err) => {
       console.log("Unable to access or error reading plants file.");
@@ -1660,10 +1669,80 @@ function drawPlantShape(plantGroup, specs) {
   // all other (perennial, deciduous): branches, and in warm months - green circle;
   
   const dt = new Date;
+  //leafy and flowery shapes are used to hold shapes with leafs (branches, trianlge) and shapes with flowers
+  let leafyShape = null;
+  let floweryShape = null;
 
-  //tree(t) evergreen(e) - specs.shp === "te", 
-  // specs.shp[0] === "v" ? vine... 
-  // specs.shp[1] === "a" annual...
+  //tree(t) evergreen(e)
+  if (specs.shp === "te") {
+    
+    //make an evergreen tree triangle
+    leafyShape = document.createElementNS(xmlns, "polygon");
+    leafyShape.setAttribute("class", specs.cls + " plantShapeColor");
+    leafyShape.setAttribute(
+      "points", 
+      `${specs.x+specs.w/2}, ${specs.y} ${specs.x+specs.w}, ${specs.y+specs.h} ${specs.x}, ${specs.y+specs.h}`
+    );
+    plantGroup.appendChild(leafyShape);
+    
+    //create a smaller triangle to hold the flowering effect for a conical evergreen tree
+    floweryShape = document.createElementNS(xmlns, "polygon");
+    floweryShape.setAttribute("class", specs.cls + " plantShapeColor plantFlowerShapeColor");
+    floweryShape.setAttribute(
+      "points", 
+      `${specs.x + specs.w/2}, ${specs.y + specs.h*0.1} ${specs.x + specs.w*0.9}, ${specs.y + specs.h*0.6} ${specs.x + specs.w*0.1}, ${specs.y + specs.h*0.6}`
+    );
+    plantGroup.appendChild(floweryShape);
+  }
+  //not evergreen trees
+  else {
+    const numOfBranches = specs.shp[0] === "v" ? 6 : 4;
+    const spread = Math.round(specs.w / numOfBranches);
+    
+    for (let i = 0; i < numOfBranches; i++) {
+      const shapeElt = document.createElementNS(xmlns, "path");
+      shapeElt.setAttributeNS(null, "class", specs.cls + " shape");
+      shapeElt.setAttributeNS(
+        null, 
+        "d", 
+        specs.shp[0] != "v" ? 
+        `m ${specs.x + spread * i} ${specs.y} 
+         c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1} 
+           ${specs.w * 0.2 * (1 - i)} ${specs.w * 0.5} 
+           ${specs.w / 2 - spread * i} ${specs.h}` :
+        `m ${specs.x + specs.w / 2} ${specs.y} 
+         c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1} 
+           ${specs.w * 0.2 * (3 - i)} ${specs.w * 0.5} 
+           ${specs.w / 2 - spread * i} ${specs.h}`
+      );
+      if (specs.shp[1] === "a") {
+        shapeElt.style.display = winterMos.includes(mos[dt.getMonth()]) ?  "none" : "inline";
+      }
+      plantGroup.appendChild(shapeElt);
+    }
+    
+    //also for all plants that aren't evergreen trees, add two circles for leaves and flowers
+    
+    //set a radius to be used for leafs/flowers
+    specs.r = specs.w/2;
+    //adjust specs for leaf/flower circle
+    specs.x += specs.w/2;
+    specs.y += specs.h/2;
+    specs.cls = specs.cls + " plantShapeColor";
+
+    //add a circle for leafs
+    leafyShape = mkCircle(specs);
+    plantGroup.appendChild(leafyShape);
+    
+    //adjust the radius for flowers
+    specs.r = specs.w/1.7;
+    //add a circle to use for flowering 
+    floweryShape = mkCircle(specs);
+
+    //add a circle for flowers
+    plantGroup.appendChild(floweryShape);
+    
+  }
   
   //if it's a non-winter month or if the plant is evergreen, fill leafs with green;
   flowerGradClr(leafyShape,
@@ -1723,11 +1802,8 @@ function sunSoilChoice(parentElt) {
      + ")");
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 //return the coordinates in SVG space, defined by the viewBox attribute, using the 
 //Current Transformation Matrix to convert clickPos x & y
 function getMousePosition(evt) {
@@ -1743,8 +1819,7 @@ function getMousePosition(evt) {
 //////////////////////////////////////////////////////////////////////////////////////
 //triggered by mouse or finger down on svg; 
 function touchDown(evt) {
-
-  if (evt.type.substring(0,5)==="touch"){
+  if (evt.type.substring(0,5)==="touch") {
     mobile = true;
   }
   //the following block handles 'mouseup' event triggered on mobile, right after 'touchend'; on 'doubleclick' both touch and mouse events are called thus need to exit the function the second time around;
@@ -1961,7 +2036,6 @@ function dragging(evt) {
 //////////////////////////////////////////////////////////////////////////////////////
 //triggered by mouse or finger up, linked in html
 function touchUp(evt) {
-  
   //exit if the click is on the color group rectangle, because the click just missed the color circle
   if (evt.target.className === "colorGroupRect") return;
   
@@ -2237,8 +2311,8 @@ function removePlantFromGarden(plant, garden) {
 //////////////////////////////////////////////////////////////////////
 //response to key up (escape and alike), this hides drop down menus
 function tapClickKey(evt) {
-  //garden name change is flagged on mouse/tap up; on key
-  //up, name change is recorded in local storage, item 6
+  // garden name change is flagged on mouse/tap up; on key
+  // up, name change is recorded in local storage, item 6
   if (evt.target.parentElement.classList.contains("editable")) {
     let gardenName = evt.target.value;
     if (gardenName.indexOf(", ") > -1) {
@@ -2249,20 +2323,23 @@ function tapClickKey(evt) {
   }
   
   if (evt.keyCode){
-    //if return or escape are clicked
+    // if return or escape are clicked
     if (evt.keyCode === 13 || evt.keyCode === 27){
       hideDropDown();
       evt.target.blur();
     }
-    //if delete/backspace or clear are clicked
+    // if delete/backspace or clear are clicked
     if (evt.keyCode === 8 || evt.keyCode === 12){
       hideDropDown(evt);
+    } 
+    else if (evt.keyCode >= 65 && evt.keyCode <= 90) {
+      scrollToLetter(evt.keyCode)
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////
-//return the styling of garden name back to normal, when the user is done changing it
+// return the styling of garden name back to normal, when the user is done changing it
 function focusOut(tgt) {
   if (tgt.parentElement.classList.contains("editable")) {
     tgt.style.fontSize = "14px";
@@ -2271,19 +2348,18 @@ function focusOut(tgt) {
 
 //////////////////////////////////////////////////////////////////////
 //this function is triggered by double click, set in html SVG element
-function dblTouch(evt, container) {
-  
-  //clear any selected items as none are needed if not in an input field
+function dblTouch(evt) {
+  // clear any selected items as none are needed if not in an input field
   if (evt.target.tagName != "INPUT") window.getSelection().removeAllRanges();
   
-  //if an editable name field is double-clicked on the garden, leave this module, cause it's a name change and not an intent to delete a garden
+  // if an editable name field is double-clicked on the garden, leave this module, cause it's a name change and not an intent to delete a garden
   if (evt.target.id != "svgArea"  
       && !evt.target.classList.contains("plant") 
       && !evt.target.classList.contains("garden")) {
     return;
   }
   
-  //create menu values
+  // create menu values
   const mos = new Date;
   const vals = ["New\xa0Garden", "New\xa0Plant", 
               "Plant\xa0in<span>\xa0<-\xa0</span>" + 
@@ -2292,7 +2368,7 @@ function dblTouch(evt, container) {
   if (localStorage.aas_myGardenVs_grdns){vals.push("Delete\xa0All\xa0Gardens")};
   if (localStorage.aas_myGardenVs_plnts){vals.push("Delete\xa0All\xa0Plants")};
   
-  //if double clicked in SVG area display the add garden/plant menu
+  // if double clicked in SVG area display the add garden/plant menu
   if (evt.target.id === "svgArea") {
     const dropDownMenu = getUL(menu = {
       values:vals,
@@ -2306,46 +2382,46 @@ function dblTouch(evt, container) {
     return;
   }
 
-  //if warnings are on, confirm that plant or garden needs to be deleted
+  // if warnings are on, confirm the deleting of the plant or garden
   if (evt.target.parentElement.id[0] === "p") {
     if (!Number(localStorage.getItem("aas_myGardenVs_warnings"))) {
-      if (!confirm(`Would you like to remove ${evt.target.innerHTML}?`)){
+      const plantNameToRemove = evt.target.childElementCount 
+        ? evt.target.children[0].textContent
+        : evt.target.textContent;
+      if (!confirm(`Would you like to remove ${plantNameToRemove}?`)) {
         return; 
       }    
     }
   }
   else if (evt.target.parentElement.id[0] === "g") {
     if (evt.target.parentElement.id[0]==="g" &&
-        !Number(localStorage.getItem("aas_myGardenVs_warnings"))) {
-      if (!confirm("Would you like to remove " + 
-                   evt.target.parentElement.getElementsByClassName("editable")[0].children[0].value + 
-                   " and all its plants?")){
+      !Number(localStorage.getItem("aas_myGardenVs_warnings"))) {
+      if (!confirm(`Would you like to remove ${evt.target.parentElement.getElementsByClassName("editable")[0].children[0].value} and all its plants?`)) {
         return; 
       }
     }
   }
-  //delete the plant/garden and clear clickedGroup
+  // delete the plant/garden and clear clickedGroup
   del(evt.target.parentElement);
   clickedGroup = null;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 //////////////////////////////////////////////////////////////////////
-//delete the supplied element from html and local storage
+// delete the supplied element from html and local storage
 function del(elt) {
-  //if the element is a garden with plants, remove the plants from local storage first
+  // if the element is a garden with plants, remove the plants from local storage first
   if (elt.id[0] === "g") {
-    let plants = elt.getElementsByTagName("g");
+    const plants = elt.getElementsByTagName("g");
     for (let i = 0, len = plants.length; i < len; i++) {
       removeFromLocalStorage(plants[i].id);
     }
   }
-  //next remove the element from html (if a garden, plants will be deleted as part of garden's group)
+
+  delFlag = true;
+  // next remove the element from html (if a garden, plants will be deleted as part of garden's group)
   elt.parentElement.removeChild(elt);
-  //finally, remove the element from local storage
+  
+  // finally, remove the element from local storage
   removeFromLocalStorage(elt.id);
 }
 
@@ -2403,26 +2479,18 @@ function updateLocalStorage(chgId, field, val){
 
 //////////////////////////////////////////////////////////////////////
 function hideDropDown() {
-  //check if there is already a dropDown menu and remove it
-  //there should only be one dropDown menu at a time, unless it's
-  //an adding a new plant menu, which has alphabet menus with it
-  //the dropDown class  is applied to settings, 
-  //add garden/plant, and add a plant UL menus
+  // check if there is already a dropDown menu and remove it
+  // there should only be one dropDown menu at a time, unless it's
+  // an adding a new plant menu, which has alphabet menus with it
+  // the dropDown class is applied to settings, 
+  // add garden/plant, and add a plant UL menus
   let dropMenus = document.getElementsByClassName("dropDown");
 
   for (let i = 0, len = dropMenus.length; i < len; i++ ) {
     dropMenus[0].remove();
   }
   
-  const plantInfo = document.getElementsByClassName("plantInfo");
-  let len = plantInfo.length;
-  if (len) {
-    for (let j = 0; j < len; j++) {
-      plantInfo[0].remove();
-    }
-  }
-
-  //check and hide plant info boxes:
+  // check and hide plant info boxes:
   const plantInfoBoxes = document.getElementsByClassName("plantDetails");
   len = plantInfoBoxes.length;
   if (len) {
