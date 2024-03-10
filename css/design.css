@@ -12,7 +12,7 @@ body {
   background-image: -webkit-repeating-linear-gradient(#d3e9f6, #e2ebd9, #b4b1a8);
   background-image: -moz-repeating-linear-gradient(#d3e9f6, #e2ebd9, #b4b1a8);
   background-image: -o-repeating-linear-gradient(#d3e9f6, #e2ebd9, #b4b1a8);
-  cursor: url('../favicon.png'), auto;
+  /* cursor: url('../favicon.png'), auto; */
 }
 
 /* svg place uses a canvas */

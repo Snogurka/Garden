@@ -223,53 +223,41 @@ function loadExistingDesign() {
     document.body.appendChild(initText);
   }
 }
-
   
 //////////////////////////////////////////////////////////////////////
 //settings menu drop down, called by clicking on settings button
 function settingsMenu(clickedElt) {
 
-  //if a cog icon is clicked, set the clicked element clickedElt to its parent
+  // if a cog icon is clicked, set the clicked element clickedElt to its parent
   if (clickedElt.className === "fa fa-fw fa-cog") {
     clickedElt = clickedElt.parentElement;
   }
-  //if a "month to view" is clicked
-  else if (mos.includes(clickedElt.innerText)) {
+  // if a "month view" is clicked
+  else if(mos.includes(clickedElt.innerText)) {
     let lsPlants = localStorage.aas_myGardenVs_plnts;
-    if (lsPlants){
+    if(lsPlants) {
       lsPlants = lsPlants.split(",");
+      // update header
       clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText =
         clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText.split(" - ")[0] + " - " + clickedElt.innerText;
       
-      for (let i = 0, l = lsPlants.length; i < l; i++){
+      for(let i = 0, l = lsPlants.length; i < l; i++) {
         let lsPlant = localStorage.getItem("aas_myGardenVs_plnt"+lsPlants[i]);
-        if (lsPlant) {
+        if(lsPlant) {
           lsPlant = lsPlant.split(",");
           
           //get the lsPlant element
           const plantElt = document.getElementById("p_" + lsPlants[i]);
-          //get the color shapes of the created lsPlant elements
-          const colorShapes = plantElt.getElementsByClassName("plantShapeColor");
-          //if the chosen month is in winter, remove green from non-evergreens
-          flowerGradClr(
-            colorShapes[0], 
-            lsPlant[7][1] != "e" && winterMos.includes(clickedElt.innerText) ? "transparent" : "green");
-                        
-          //if the lsPlant blooms in the selected month, color its circle
-          flowerGradClr(
-            colorShapes[1], 
-            lsPlant[9].split(';').includes(mos.indexOf(clickedElt.innerText).toString()) ? lsPlant[8] : "transparent"
-          );
           
-          //if it's an annual, set branches' display=none in cold months
-          if (lsPlant[7][1] === "a") {
-            const paths = colorShapes[0].parentElement.getElementsByTagName("path");
-            for (let i = 0, len = paths.length; i < len; i++ ) {
-              paths[i].style.display = winterMos.indexOf(clickedElt.innerText) > -1 ?  "none" : "inline";
-            }
+          // if blooms in current month
+          if (lsPlant[9].split(';').includes(mos.indexOf(clickedElt.innerText).toString())){
+            plantElt.children[0].style.fill = lsPlant[8].replace("i_","");  // plant color is in lsPlant[8]
+          } else if (lsPlant[7][1] === "e" || !winterMos.includes(clickedElt.innerText)) {  // if evergreen or non-winter month, an annual would have "a"
+            plantElt.children[0].style.fill = "green";
+          } else {
+            plantElt.children[0].style.fill = "";
           }
-          
-        }  
+        }
       }
     }
     return;
@@ -647,7 +635,7 @@ function rangeCheck(x, min, max) {
 }
 
 //////////////////////////////////////////////////////////////////////
-// call function to make a UL and add onclick functionality to each LI
+// function to make a UL, adding onclick functionality to each LI
 function addPlantMenu(menu) {
    
   //call a function to create UL with plants at the position of a click
@@ -744,14 +732,14 @@ function addPlantMenu(menu) {
       const plantLi = evt.target.innerText != "Add All Plants" ? evt.target : evt.target.parentElement.children[i];
 
       addPlant({
-        pId:null, //plant id is set to null, when creating a new plant
+        pId:null, // plant id is set to null, when creating a new plant
         x: parseFloat(xOffset),
         y: parseFloat(yOffset),
         w:Number(plantLi.getAttribute("data-avgw")),
         h:Number(plantLi.getAttribute("data-avgh")),
-        nm:plantLi.innerText, //plant's common name
-        gId:menu.gId?menu.gId:0, //a garden id, where the new plant is planted, 0 at first
-        lnm:plantLi.getAttribute("data-lnm"), //plant's latin name
+        nm:plantLi.innerText, // plant's common name
+        gId:menu.gId?menu.gId:0, // a garden id, where the new plant is planted, 0 at first
+        lnm:plantLi.getAttribute("data-lnm"), // plant's latin name
         shp:plantLi.getAttribute("data-shp"),
         clr:plantLi.getAttribute("data-bloomC"),
         blm:plantLi.getAttribute("data-bloomM")
@@ -1364,21 +1352,22 @@ function gardenFork(clickedElt) {
   }
 }
 
-//////////////////////////////////////////////////////////////////////
-//this function adds a plant to the garden, it's called by a click on li or onload
-//the plant consists of its name in color, plus size and photo, if chosen by user
+/**
+ * this function adds a plant to the garden, it's called by a click on li or onload
+ * the plant consists of its name in color, plus size and photo, if chosen by user
+ * @param {object} elt with plants specifications
+ * @returns the group with the plant
+ */
 function addPlant(elt) {
   
-  //class name for all plants and their shapes is "plant"
+  // class name for all plants and their shapes is "plant"
   elt.cls = "plant";
                  
-  //if the id of elt (pId) is 0 then this is a new plant, as opposed to 
-  //one loaded from localStorage; this new plant's pId needs to be set 
-  //to either a 1 for a very first plant (when there is nothing in  
-  //localStorage.aas_myGardenVs_plnts) or the highest number in 
-  //localStorage.aas_myGardenVs_plnts plus one
-  if (!elt.pId || elt.pId===0){ 
-    if (!localStorage.aas_myGardenVs_plnts){
+  // if the id of elt (pId) is 0, then this is a new plant, as opposed to one loaded from localStorage; 
+  // this new plant's pId needs to be set to either a 1 for a very first plant (when there is nothing in localStorage.aas_myGardenVs_plnts) 
+  // or the highest number in localStorage.aas_myGardenVs_plnts plus one
+  if(!elt.pId || elt.pId===0){ 
+    if(!localStorage.aas_myGardenVs_plnts) {
       elt.pId = 1;
       //record new plant id in the local storage plnts counter
       localStorage.setItem("aas_myGardenVs_plnts","1");
@@ -1392,10 +1381,10 @@ function addPlant(elt) {
     }
     
     //when a new plant is created, make sure it's not placed outside of screen boundaries
-    if (elt.x < 0) elt.x = 1;
-    if (elt.x > Number(svgPlace.getAttribute("width"))) {
+    if(elt.x < 0) elt.x = 1;
+    if(elt.x > Number(svgPlace.getAttribute("width"))) {
       elt.x = Number(svgPlace.getAttribute("width")) - munit;} 
-    if (elt.y > Number(svgPlace.getAttribute("height"))) {
+    if(elt.y > Number(svgPlace.getAttribute("height"))) {
       elt.y = Number(svgPlace.getAttribute("height")) - munit*1.5;}
     
     //record the new plant data in the local storage; round x,y,w,h to 2 decimals
@@ -1404,16 +1393,16 @@ function addPlant(elt) {
       `${elt.x.toFixed(1)},${elt.y.toFixed(1)},${elt.w.toFixed(1)},${elt.h.toFixed(1)},${elt.nm},${elt.gId},${elt.lnm},${elt.shp},${elt.clr},${elt.blm}`);
   }
 
-  //the group below (grp) keeps all elements of one plant together
+  // the group below (grp) keeps all elements of one plant together
   const grp = document.createElementNS(xmlns, "g");
 
-  //if the garden id is 0, the plant is free-standing, not a part of a garden
-  //note: when data is added to localStorage, null or 0 value is converted to string
+  // if the garden id is 0, the plant is free-standing, not a part of a garden
+  // note: when data is added to localStorage, null or 0 value is converted to string
   if (!elt.gId || elt.gId === "0") {
     grp.setAttribute("transform", "translate(0,0)");
     svgPlace.appendChild(grp);
   }
-  //otherwise, if garden id is not 0, put the plant in its garden (capture the translate of the garden for the plants added to the garden; the stored value combines x,y with tx,ty)
+  // otherwise, if garden id is not 0, put the plant in its garden (capture the translate of the garden for the plants added to the garden; the stored value combines x,y with tx,ty)
   else {
     let inGarden = svgPlace.getElementById(elt.gId);
     grp.setAttribute(
@@ -1424,30 +1413,27 @@ function addPlant(elt) {
     inGarden?inGarden.appendChild(grp):svgPlace.appendChild(grp);
   }
     
-  //the id attribute of the plant SVG element is prefixed with a "p_" to differentiate from garden id, where it's prefixed with a "g_"
+  // the id attr of the plant SVG element is prefixed with a "p_" to differentiate from garden id, prefixed with a "g_"
   grp.setAttribute("id", "p_" + elt.pId);
   grp.setAttribute("class", "plantGrp");
   
-  //create a text element with plant's common name
+  // create a text element with plant's common name
   elt.cls += " plantName";
   elt.txt = elt.nm.length > 12 ? elt.nm.slice(0,12) + "..." : elt.nm;
-  elt.ttl = elt.nm.length > 12 && elt.nm; //shorter ternary, for if only
-//   elt.fntSz = elt.nm.length > 15 && "smaller";
-  grp.appendChild(mkText(elt));
- 
-//   const plantNameWidth = parseInt(window.getComputedStyle(grp.children[0]).width);
-  
-  function sizeRanger(sz) {
-    let szGrp = 8;
-    if (sz > 6) szGrp = 16;
-    if (sz > 24) szGrp = 32;
-    if (sz > 72) szGrp = 48;
-    return szGrp;
+  elt.ttl = elt.nm;
+  // elt.fntSz = elt.nm.length > 15 && "smaller";
+  const plantName = mkText(elt);
+  const dt = new Date();
+  // if the plant is currently in bloom, add its flowering color;
+  if (elt.blm.split(';').includes(dt.getMonth().toString())){
+    plantName.style.fill = elt.clr;
   }
-  
-  //return the group with the plant
+  // if it's a non-winter month or if the plant is evergreen, fill leafs with green;
+  else if (["b","s","e"].includes(elt.shp[1]) || !(winterMos.includes(mos[dt.getMonth()]))) {
+    plantName.style.fill = 'green';
+  }
+  grp.appendChild(plantName);
   return grp;
-  
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1497,8 +1483,8 @@ function plantFork(tgt) {
       .then((myObj) => {
         if (delFlag) { 
           delFlag = false;
-          return; 
-          }
+          // return; //ToDo: deleting needs work
+        }
         // remove the first entry in myObj - those are column headers, not needed
         delete myObj["Latin&nbspName"];
         
@@ -1581,7 +1567,7 @@ function plantFork(tgt) {
     });
   }
 
-  //if one of the color choices is clicked, color the plant shape
+  //if one of the color choices is clicked, color the plant shape - ToDo: need color work
   else if (tgt.classList.contains("plantColor")) {
     
     //set coloredShape to the last element with plantShapeColor class
@@ -1600,7 +1586,7 @@ function plantFork(tgt) {
     };
     
     //set the color via url of a defined gradient color
-    coloredShape.setAttribute("fill", `url(#${col})`);
+    // coloredShape.setAttribute("fill", `url(#${col})`);
     //update local storage
     if (col === "green") {
       updateLocalStorage(clickedGroup.id, "color", "");
@@ -1819,6 +1805,7 @@ function getMousePosition(evt) {
 //////////////////////////////////////////////////////////////////////////////////////
 //triggered by mouse or finger down on svg; 
 function touchDown(evt) {
+  // console.log('touchDown');
   if (evt.type.substring(0,5)==="touch") {
     mobile = true;
   }
@@ -2036,6 +2023,7 @@ function dragging(evt) {
 //////////////////////////////////////////////////////////////////////////////////////
 //triggered by mouse or finger up, linked in html
 function touchUp(evt) {
+  // console.log('touch Up');
   //exit if the click is on the color group rectangle, because the click just missed the color circle
   if (evt.target.className === "colorGroupRect") return;
   
@@ -2349,6 +2337,7 @@ function focusOut(tgt) {
 //////////////////////////////////////////////////////////////////////
 //this function is triggered by double click, set in html SVG element
 function dblTouch(evt) {
+  // console.log('dbl touch');
   // clear any selected items as none are needed if not in an input field
   if (evt.target.tagName != "INPUT") window.getSelection().removeAllRanges();
   
