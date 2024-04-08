@@ -42,7 +42,7 @@ html {
 /* The overall body of this page has a background that changes from darker blue at the top to lighter blue at the bottom. 
 Font family is set for the entire page, unless specified otherwise. The margin and padding set the start of content starts, at 0.*/
 body {
-  font-family: FontAwesome, 'Big Caslon', 'Book Antiqua', 'Palatino Linotype', 'Georgia', 'serif';
+  font-family: FontAwesome, 'Palatino Linotype', 'Georgia', 'serif';
   /* height: 100vh; */
   background-repeat: no-repeat;
   background-attachment: fixed;

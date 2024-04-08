@@ -6,7 +6,6 @@
 ******************************************************************/
 ////////////////////////////
 //     global variables
-////////////////////////////
 const xmlns = "http://www.w3.org/2000/svg";
 var svgPlace = null;
 const size = 6; //size variable is used in garden & plant size calculations
@@ -14,7 +13,6 @@ const mos = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov",
 const winterMos = ["Jan", "Feb", "Oct", "Nov", "Dec"];
 ////////////////////////////
 //      moving and resizing
-////////////////////////////
 var clickedGroup = null;
 var coord = null; //coordinate of touch/click adjusted by CTM
 var offset = null; //coord adjusted by transform/translate; double purple - this is set to 1 in touchDown() when clicked on an element that shouldn't be dragged
@@ -22,7 +20,7 @@ var transform = null; //item 0 (set to translate) of clickedGroup's transforms
 var resize = null; //1: horizontal, 2: vertical, 3: both;
 var moving = false;
 var clickPos = {}; //stores cursor location upon first click
-var mobile = false;   //on the mobile devices, both touch and mouse up and down come through, thus ignore mouse on mobile
+// var mobile = false; //on the mobile devices, both touch and mouse up and down come through, thus ignore mouse on mobile 
 delFlag = false;
 ////////////////////////////
 
@@ -304,6 +302,28 @@ function settingsMenu(clickedElt) {
         svgPlace.viewBox.baseVal.width = window.screen.width * zoomer;
         svgPlace.viewBox.baseVal.height = window.screen.height * zoomer;
         return;
+      case "Export a garden":
+        let garden_data = "";
+        for (const [key, value] of Object.entries(localStorage)) {
+          if (key.slice(0,14)==="aas_myGardenVs") garden_data += (key + ": " + value);
+        }
+        const file = new Blob([garden_data], {type: "txt"});
+        if (window.navigator.msSaveOrOpenBlob) // IE10+
+          window.navigator.msSaveOrOpenBlob(file, filename);
+        else { 
+          const doc = document.createElement("a"), url = URL.createObjectURL(file);
+          doc.href = url;
+          doc.download = "GardenDesign";
+          document.body.appendChild(doc);
+          doc.click();
+          setTimeout(function() {
+              document.body.removeChild(doc);
+              window.URL.revokeObjectURL(url);  
+          }, 0); 
+        }
+        break;
+      case "Import a garden":
+        
       default:
         alert("this is yet to come");
         console.log("new change requested");
@@ -325,7 +345,7 @@ function settingsMenu(clickedElt) {
     let zoomValue = localStorage.getItem("aas_myGardenVs_zoomer") === "4" ? "in" : "out";
     clickedElt.appendChild(
       getUL (
-        {values:["Month View", `Warnings - ${warningsSetting}`, `Units - ${unitSetting}`, `Zoom - ${zoomValue}`],
+        {values:["Month View", `Warnings - ${warningsSetting}`, `Units - ${unitSetting}`, `Zoom - ${zoomValue}`, "Export a garden", "Import a garden"],
          // the below are x and y positions of the clicked settings buttom
          xPos: (clickedElt.clientWidth+5), 
          yPos: (clickedElt.clientHeight-25)})
@@ -452,24 +472,24 @@ function getUL(menu) {
       .then((myObj) => {
         //if there are plants added by user in db, append those to the list of plants
         //if plant counter exists in local storage...
-        const plantCounter = localStorage.getItem("aas_myGardenDb_rPlntsCntr");
+        const plantCounter = localStorage.getItem("gDb_rPlntsCntr");
         if (plantCounter) {
           for (let i = 0, len = plantCounter.length; i < len; i++) {
-            arrPlntVals = JSON.parse(localStorage.getItem("aas_myGardenDb_plnt"+i))
+            arrPlntVals = JSON.parse(localStorage.getItem("gDb_plnt"+i))
             myObj[arrPlntVals[0]] = arrPlntVals.slice(1);
           }
         }
-        //also remove the first entry in myObj, as those are unneeded column headers
+        // also remove the first entry in myObj, as those are unneeded column headers
         delete myObj["Latin&nbspName"];
 
-        //the returned plants are filtered, if requested
+        // the returned plants are filtered, if requested
         if (menu.type === "companions") {
-          menu.filter = myObj[menu.forPlantLN][16].toLowerCase().split(",").replace(/and |or /g, "");
+          menu.filter = myObj[menu.forPlantLN][16].toLowerCase().split(",").filter(x => !["/and","/or"].includes(x))
         }
         if (menu.type === "gName") {
           let objGardenLocation = null; 
-          if (localStorage.aas_myGardenDb_GardenLocation) {
-            objGardenLocation = JSON.parse(localStorage.aas_myGardenDb_GardenLocation);
+          if (localStorage.gDb_GardenLocation) {
+            objGardenLocation = JSON.parse(localStorage.gDb_GardenLocation);
           }
           let newFilters = [];
           for (p in objGardenLocation) {
@@ -618,7 +638,6 @@ function getUL(menu) {
       })
     .catch((err) => {
       console.log("Unable to get plants data to populate the list of available plants.");
-      throw err;
     });
   }
 
@@ -1198,7 +1217,7 @@ function gardenFork(clickedElt) {
       //if there is one, and only one, plant in the garden
       if (clickedElt.parentElement.getElementsByTagName("g").length === 1) {
         //get the name of the one plant in the garden
-        menu.values.push("Pull companions for " + clickedElt.parentElement.getElementsByClassName("plant")[0].textContent);
+        menu.values.push("Pull companions for " + clickedElt.parentElement.getElementsByClassName("plant")[0].children[0].textContent);
         otherTools = false;
       }
       //if sun and soil have been set
@@ -1563,7 +1582,6 @@ function plantFork(tgt) {
     })
     .catch((err) => {
       console.log("Unable to access or error reading plants file.");
-      throw err;
     });
   }
 
@@ -1790,8 +1808,8 @@ function sunSoilChoice(parentElt) {
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-//return the coordinates in SVG space, defined by the viewBox attribute, using the 
-//Current Transformation Matrix to convert clickPos x & y
+// return the coordinates in SVG space, defined by the viewBox attribute, using the 
+// Current Transformation Matrix to convert clickPos x & y
 function getMousePosition(evt) {
   let CTM = svgPlace.getScreenCTM();
     //for mobile, if multiple touches take the first one only
@@ -1803,18 +1821,21 @@ function getMousePosition(evt) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
-//triggered by mouse or finger down on svg; 
+// triggered by mouse or finger down on svg; 
 function touchDown(evt) {
-  // console.log('touchDown');
-  if (evt.type.substring(0,5)==="touch") {
-    mobile = true;
-  }
-  //the following block handles 'mouseup' event triggered on mobile, right after 'touchend'; on 'doubleclick' both touch and mouse events are called thus need to exit the function the second time around;
-  if (mobile) {
-    if (evt.type.substring(0,5) === "mouse") {
-      return;
-    }
-  }
+  // exit, if it's a double click
+  if (evt.detail === 2) return;
+
+  // now that I'm checking event detail, shouldn't need the following two blocks
+  // if (evt.type.substring(0,5)==="touch") {
+  //   mobile = true;
+  // }
+  // //the following block handles 'mouseup' event triggered on mobile, right after 'touchend'; on 'doubleclick' both touch and mouse events are called thus need to exit the function the second time around;
+  // if (mobile) {
+  //   if (evt.type.substring(0,5) === "mouse") {
+  //     return;
+  //   }
+  // }
   
   //if tapped on garden name, increase the font to 16px to emphasize the name change and prevent zooming
   if (evt.target.parentElement.classList.contains("editable")) {
@@ -2021,21 +2042,23 @@ function dragging(evt) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
-//triggered by mouse or finger up, linked in html
+// triggered by mouse or finger up, linked in html
 function touchUp(evt) {
-  // console.log('touch Up');
-  //exit if the click is on the color group rectangle, because the click just missed the color circle
+  // exit, if it's a double click
+  if (evt.detail === 2) return;
+  // exit if the click is on the color group rectangle, because the click just missed the color circle
   if (evt.target.className === "colorGroupRect") return;
   
-  if (evt.type.substring(0,5)==="touch") mobile = true;
-  //the following block handles 'mouseup' event triggered on mobile, right after 'touchend'; on 'doubleclick' both touch and mouse events are called thus need to exit the function the second time around;
-  if (mobile) {
-    if (evt.type.substring(0,5) === "mouse") {
-      return;
-    }
-  }
+  // now that I'm checking event detail, shouldn't need the following two commented out code
+  // if (evt.type.substring(0,5)==="touch") mobile = true; // do i care?
+  // //the following block handles 'mouseup' event triggered on mobile, right after 'touchend'; on 'doubleclick' both touch and mouse events are called thus need to exit the function the second time around;
+  // if (mobile) {
+  //   if (evt.type.substring(0,5) === "mouse") {
+  //     return;
+  //   }
+  // }
   
-  //if a plant or garden have been moved, record their new position in local storage by combining translate value with x or y; evt.target is the plant's name or garden rectangle;
+  // if a plant or garden has been moved, record their new position in local storage by combining translate value with x or y; evt.target is the plant's name or garden rectangle;
   if (clickedGroup && moving) {
     let g_tx = 0, g_ty = 0;
     if (clickedGroup.classList.contains("gardenGrp")){
@@ -2097,7 +2120,7 @@ function touchUp(evt) {
   }
   //calls forks with garden tools or plant features when a plant or garden has been tapped and there is no drag or resize; and it's not a double reaction to a click (either mouse or tap, not both)
   if (!moving && !resize && clickedGroup) {
-    //if any part of the plant is clicked, call plant- or garden- Frok, sending the clicked part as an argument;
+    //if any part of the plant is clicked, call plant- or garden- Fork, sending the clicked part as an argument;
     if (clickedGroup.classList.contains("plantGrp")){
       plantFork(evt.target);
     } 
@@ -2335,9 +2358,8 @@ function focusOut(tgt) {
 }
 
 //////////////////////////////////////////////////////////////////////
-//this function is triggered by double click, set in html SVG element
+// this function is triggered by double click, set in html SVG element
 function dblTouch(evt) {
-  // console.log('dbl touch');
   // clear any selected items as none are needed if not in an input field
   if (evt.target.tagName != "INPUT") window.getSelection().removeAllRanges();
   
@@ -2348,19 +2370,19 @@ function dblTouch(evt) {
     return;
   }
   
-  // create menu values
-  const mos = new Date;
-  const vals = ["New\xa0Garden", "New\xa0Plant", 
-              "Plant\xa0in<span>\xa0<-\xa0</span>" + 
-              mos.toLocaleString('default', {month:"short"}) + 
-              "<span>\xa0-></span>"];
-  if (localStorage.aas_myGardenVs_grdns){vals.push("Delete\xa0All\xa0Gardens")};
-  if (localStorage.aas_myGardenVs_plnts){vals.push("Delete\xa0All\xa0Plants")};
-  
   // if double clicked in SVG area display the add garden/plant menu
   if (evt.target.id === "svgArea") {
+    // create menu values
+    const mos = new Date;
+    const vals = ["New\xa0Garden", "New\xa0Plant", 
+                "Plant\xa0in<span>\xa0<-\xa0</span>" + 
+                mos.toLocaleString('default', {month:"short"}) + 
+                "<span>\xa0-></span>"];
+    if (localStorage.aas_myGardenVs_grdns) {vals.push("Delete\xa0All\xa0Gardens")};
+    if (localStorage.aas_myGardenVs_plnts) {vals.push("Delete\xa0All\xa0Plants")};
+  
     const dropDownMenu = getUL(menu = {
-      values:vals,
+      values: vals,
       xPos: (evt.pageX-5),
       yPos: (evt.pageY-40)
     });
@@ -2381,8 +2403,7 @@ function dblTouch(evt) {
         return; 
       }    
     }
-  }
-  else if (evt.target.parentElement.id[0] === "g") {
+  } else if (evt.target.parentElement.id[0] === "g") {
     if (evt.target.parentElement.id[0]==="g" &&
       !Number(localStorage.getItem("aas_myGardenVs_warnings"))) {
       if (!confirm(`Would you like to remove ${evt.target.parentElement.getElementsByClassName("editable")[0].children[0].value} and all its plants?`)) {
@@ -2392,6 +2413,7 @@ function dblTouch(evt) {
   }
   // delete the plant/garden and clear clickedGroup
   del(evt.target.parentElement);
+  hideDropDown();
   clickedGroup = null;
 }
 
@@ -2415,8 +2437,8 @@ function del(elt) {
 }
 
 //////////////////////////////////////////////////////////////////////
-//this function deletes a garden or plant from local storage using  
-//supplied pGrp (plnt or grdn) and the numeruc id (pId)
+// this function deletes a garden or plant from local storage using  
+// supplied pGrp (plnt or grdn) and the numeruc id (pId)
 function removeFromLocalStorage(fullId) {
   
   //capture the plant or garden string part in a variable
@@ -2443,8 +2465,8 @@ function removeFromLocalStorage(fullId) {
 }
 
 //////////////////////////////////////////////////////////////////////
-//this function updates the localStorage plant or garden data based on
-//the id supplied in chgId with the value val at index position ind
+// this function updates the localStorage plant or garden data based on
+// the id supplied in chgId with the value val at index position ind
 function updateLocalStorage(chgId, field, val){
 
   //ind is the position of the data fields in the localStorage string
@@ -2469,11 +2491,10 @@ function updateLocalStorage(chgId, field, val){
 //////////////////////////////////////////////////////////////////////
 function hideDropDown() {
   // check if there is already a dropDown menu and remove it
-  // there should only be one dropDown menu at a time, unless it's
-  // an adding a new plant menu, which has alphabet menus with it
-  // the dropDown class is applied to settings, 
-  // add garden/plant, and add a plant UL menus
-  let dropMenus = document.getElementsByClassName("dropDown");
+  // there should only be one dropDown menu at a time, unless
+  // it's addition of a new plant menu, which has other menus
+  // the dropDown class is applied to settings, add garden/plant, and add a plant UL menus
+  const dropMenus = document.getElementsByClassName("dropDown");
 
   for (let i = 0, len = dropMenus.length; i < len; i++ ) {
     dropMenus[0].remove();
