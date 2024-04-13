@@ -9,8 +9,8 @@
 const xmlns = "http://www.w3.org/2000/svg";
 var svgPlace = null;
 const size = 6; //size variable is used in garden & plant size calculations
-const mos = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"];
-const winterMos = ["Jan", "Feb", "Oct", "Nov", "Dec"];
+const mos = [ "Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec" ];
+const winterMos = [ "Jan", "Feb", "Oct", "Nov", "Dec" ];
 ////////////////////////////
 //      moving and resizing
 var clickedGroup = null;
@@ -30,7 +30,7 @@ function myMain(){
   
   svgPlace = document.getElementById("svgArea");
   let zoomIn = 2;
-  let zoomer = parseInt(localStorage.getItem("zoomer"),10) || 2;
+  let zoomer = parseInt(localStorage.getItem("zoomer"), 10) || 2;
   svgPlace.setAttribute("width", window.screen.width * zoomIn); // zoom in
   svgPlace.setAttribute("height", window.screen.height * zoomIn);
   svgPlace.viewBox.baseVal.x = 0;
@@ -45,8 +45,8 @@ function myMain(){
   const sunColors = {"Full":["#ffe922", "50%"], "Part":["#ddcc38", "30%"], "Shade":["#bfba71", "30%"]};
   const soilColors = {"Acidic":"rgb(160, 195, 68)", "Neutral":"rgb(166, 146, 62)", "Alkaline":"rgb(4, 56, 111)"};
 
-  for (sun in sunColors) {
-    for (soil in soilColors) {
+  for (let sun in sunColors) {
+    for (let soil in soilColors) {
       addGradient ({
         tp: "linear", 
         id: sun + "_" + soil, 
@@ -63,8 +63,11 @@ function myMain(){
     tp: "radial", 
     id: "green"
   });
+
+  // display current month
+  document.getElementById("currentMonth").innerText = mos[new Date().getMonth()];
   
-  //check if localStorage is available and load the existing design, if there is one
+  // check if localStorage is available and load the existing design, if there is one
   if(checkLocalStorage()){
     loadExistingDesign();
   }
@@ -221,25 +224,22 @@ function loadExistingDesign() {
     document.body.appendChild(initText);
   }
 }
-  
-//////////////////////////////////////////////////////////////////////
-//settings menu drop down, called by clicking on settings button
-function settingsMenu(clickedElt) {
 
-  // if a cog icon is clicked, set the clicked element clickedElt to its parent
-  if (clickedElt.className === "fa fa-fw fa-cog") {
-    clickedElt = clickedElt.parentElement;
-  }
-  // if a "month view" is clicked
-  else if(mos.includes(clickedElt.innerText)) {
+//////////////////////////////////////////////////////////////////////
+// change the garden look according to the selected month
+function changeMonth(tgt) {
+  if (tgt.id === "currentMonth") {
+    const monthMenu = getUL({values: mos});
+    monthMenu.id = "monthMenu";
+    tgt.appendChild(monthMenu);
+  } else {
     let lsPlants = localStorage.aas_myGardenVs_plnts;
-    if(lsPlants) {
+    if (lsPlants) {
       lsPlants = lsPlants.split(",");
       // update header
-      clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText =
-        clickedElt.parentElement.parentElement.parentElement.getElementsByTagName("h1")[0].innerText.split(" - ")[0] + " - " + clickedElt.innerText;
+      tgt.parentElement.parentElement.innerText = tgt.innerText;
       
-      for(let i = 0, l = lsPlants.length; i < l; i++) {
+      for (let i = 0, l = lsPlants.length; i < l; i++) {
         let lsPlant = localStorage.getItem("aas_myGardenVs_plnt"+lsPlants[i]);
         if(lsPlant) {
           lsPlant = lsPlant.split(",");
@@ -248,9 +248,9 @@ function settingsMenu(clickedElt) {
           const plantElt = document.getElementById("p_" + lsPlants[i]);
           
           // if blooms in current month
-          if (lsPlant[9].split(';').includes(mos.indexOf(clickedElt.innerText).toString())){
+          if (lsPlant[9].split(';').includes(mos.indexOf(tgt.innerText).toString())){
             plantElt.children[0].style.fill = lsPlant[8].replace("i_","");  // plant color is in lsPlant[8]
-          } else if (lsPlant[7][1] === "e" || !winterMos.includes(clickedElt.innerText)) {  // if evergreen or non-winter month, an annual would have "a"
+          } else if (lsPlant[7][1] === "e" || !winterMos.includes(tgt.innerText)) {  // if evergreen or non-winter month, an annual would have "a"
             plantElt.children[0].style.fill = "green";
           } else {
             plantElt.children[0].style.fill = "";
@@ -258,8 +258,17 @@ function settingsMenu(clickedElt) {
         }
       }
     }
-    return;
-  } 
+  }
+}
+
+//////////////////////////////////////////////////////////////////////
+// settings menu drop down, called by clicking on settings button
+function settingsMenu(clickedElt) {
+
+  // if a cog icon is clicked, set the clicked element clickedElt to its parent
+  if (clickedElt.className === "fa fa-fw fa-cog") {
+    clickedElt = clickedElt.parentElement;
+  }
   else if (clickedElt.className === "customChoice") {
     switch (clickedElt.innerText) {
       case "Warnings - on":    
@@ -279,14 +288,6 @@ function settingsMenu(clickedElt) {
         localStorage.setItem("aas_myGardenVs_units", 0);
         clickedElt.innerText = "Unit - in";
         toggleCmIn("in");
-        return;
-      case "Month View":
-        const settingsBtn = document.getElementById("btnView");
-        settingsBtn.appendChild(getUL({
-          values:mos,
-          xPos: (settingsBtn.clientWidth+5), 
-          yPos: (settingsBtn.clientHeight-25)
-        }));
         return;
       case "Zoom - out":
         zoomer = 4;
@@ -345,7 +346,7 @@ function settingsMenu(clickedElt) {
     let zoomValue = localStorage.getItem("aas_myGardenVs_zoomer") === "4" ? "in" : "out";
     clickedElt.appendChild(
       getUL (
-        {values:["Month View", `Warnings - ${warningsSetting}`, `Units - ${unitSetting}`, `Zoom - ${zoomValue}`, "Export a garden", "Import a garden"],
+        {values:[`Warnings - ${warningsSetting}`, `Units - ${unitSetting}`, `Zoom - ${zoomValue}`, "Export a garden", "Import a garden"],
          // the below are x and y positions of the clicked settings buttom
          xPos: (clickedElt.clientWidth+5), 
          yPos: (clickedElt.clientHeight-25)})
@@ -1906,138 +1907,139 @@ function touchDown(evt) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
-//moving a mouse or finger around, linked in html
-//when an element is resized, its size is adjusted by the change in mouse/finger position
-//when an element is moved, its position is set to the mouse/finger position, adjusted by svg matrix
+// moving a mouse or finger around, linked in html
+// when an element is resized, its size is adjusted by the change in mouse/finger position
+// when an element is moved, its position is set to the mouse/finger position, adjusted by svg matrix
 function dragging(evt) {
   
   //don't move the object if dragging using color circle
 //  if (!["plant", "garden"].some(clsName => evt.target.classList.contains(clsName))){
 //    return;
 //  }
-  if (clickedGroup) {
+if (evt.target.classList.length) {console.log("target class: ", evt.target.classList);}
+console.log("clicked grp", clickedGroup);
+  if (!clickedGroup) { return; }
     
+  hideDropDown();
+  
+  //mobile
+  if (evt.touches) evt = evt.touches[0];
+  
+  event.preventDefault();
+  coord = getMousePosition(evt);
+
+  
+  //RESIZING (garden only)
+  if (resize) {
+    
+    //adjustments to width and height: the X and Y of the point of click/touch minus starting X and Y point of click
+    let adjustedW = evt.clientX - clickPos.x;
+    let adjustedH = evt.clientY - clickPos.y;
+
+    
+    //remove any dropdown menus within the garden
     hideDropDown();
-    
-    //mobile
-    if (evt.touches) evt = evt.touches[0];
-    
-    event.preventDefault();
-    coord = getMousePosition(evt);
 
-    
-    //RESIZING (garden only)
-    if (resize) {
-      
-      //adjustments to width and height: the X and Y of the point of click/touch minus starting X and Y point of click
-      let adjustedW = evt.clientX - clickPos.x;
-      let adjustedH = evt.clientY - clickPos.y;
+    //the resize object is the garden rectangle
+    const resizeObj = clickedGroup.getElementsByTagName("rect")[0];
 
-      
-      //remove any dropdown menus within the garden
-      hideDropDown();
+    //the new width and height are stored in newW & newH so that they can be checked for sensibility
+    let newW = Number(resizeObj.getAttribute("width")) + adjustedW;
+    let newH = Number(resizeObj.getAttribute("height"))+ adjustedH;
 
-      //the resize object is the garden rectangle
-      const resizeObj = clickedGroup.getElementsByTagName("rect")[0];
-
-      //the new width and height are stored in newW & newH so that they can be checked for sensibility
-      let newW = Number(resizeObj.getAttribute("width")) + adjustedW;
-      let newH = Number(resizeObj.getAttribute("height"))+ adjustedH;
-
-      //the width & height can't be negative, and shouldn't be less than 1'x1' (12*6);
-      const minSize = 12 * size;
-      if (newW < minSize) {
-        newW = minSize;
-        adjustedW = 0;
-      }
-      if (newH < minSize) {
-        newH = minSize;
-        adjustedH = 0;
-      }
-
-      //update the width and height of the rectangle
-      resizeObj.setAttribute("width", newW);
-      resizeObj.setAttribute("height", newH);
-
-      //keep garden name centered or above, if not enough room for it
-      const gName = clickedGroup.getElementsByClassName("editable")[0];
-      gName.setAttributeNS(
-        null, 
-        "x", 
-        Number(resizeObj.getAttribute("x")) +
-        Number(resizeObj.getAttribute("width"))/2 -
-        Number(gName.getAttribute("width"))/2);
-
-      //check if enough room: new width newW minus the widths of sun and tools gears, from gName.desc, compared to number of characters in the garden name times munit/2 (approximate size of a letter, ~7.11)
-      if ((newW - Number(gName.getAttribute("desc"))) < 
-          Number(gName.getAttribute("width"))) {
-        gName.setAttribute("y", Number(resizeObj.getAttribute("y")) - munit * 2.7);
-      } else {
-        gName.setAttribute("y", Number(resizeObj.getAttribute("y")) - munit / 2);
-      }
-
-      //adjust the tools gear position, when its garden is resized
-      const toolGear = clickedGroup.getElementsByClassName("ulTools")[0];
-      toolGear.setAttribute("x", Number(toolGear.getAttribute("x"))+adjustedW);
-
-      //adjust the soil selector position, when its garden is resized
-      const soilGear = clickedGroup.getElementsByClassName("ulSoil")[0];
-      soilGear.setAttribute("y", Number(soilGear.getAttribute("y"))+adjustedH);
-
-      //update the size indicators
-      const elts = clickedGroup.getElementsByClassName("sizeInd");
-
-      //height
-      elts[0].setAttributeNS(
-        null, 
-        "x", 
-        Number(elts[0].getAttribute("x"))+adjustedW);
-      //update the text of the height indicators
-      elts[0].textContent = formatSizeDisplay(Number(resizeObj.getAttribute("height"))/size);
-
-      //width
-      elts[1].setAttributeNS(
-        null, 
-        "y", 
-        Number(elts[1].getAttribute("y"))+adjustedH);
-      //update the text of the width indicators
-      elts[1].textContent = formatSizeDisplay(Number(resizeObj.getAttribute("width"))/size);
-
-      //update the position of the resizing triangle
-      clickedGroup.getElementsByClassName("resize")[0].setAttributeNS(
-        null, 
-        "points",
-        createTriPts(Number(resizeObj.getAttribute("x"))+newW, 
-                     Number(resizeObj.getAttribute("y"))+newH));
-      //the sizing clickPos x & y need to be continuously updated 
-      //so that the size change is not cumulative
-      clickPos.x = evt.clientX;
-      clickPos.y = evt.clientY;
+    //the width & height can't be negative, and shouldn't be less than 1'x1' (12*6);
+    const minSize = 12 * size;
+    if (newW < minSize) {
+      newW = minSize;
+      adjustedW = 0;
+    }
+    if (newH < minSize) {
+      newH = minSize;
+      adjustedH = 0;
     }
 
-    //MOVING
-    else {
-      
-      if (offset === "NoMove") return;
-      
-      moving = true;
+    //update the width and height of the rectangle
+    resizeObj.setAttribute("width", newW);
+    resizeObj.setAttribute("height", newH);
 
-      if (clickedGroup.id[0] === "p" ||
-          coord.x - offset.x + parseFloat(clickedGroup.children[0].getAttribute("x")) > 0 && 
-          coord.x - offset.x + parseFloat(clickedGroup.children[0].getAttribute("x")) + 
-          parseFloat(clickedGroup.children[0].getAttribute("width")) <
-          Number(svgPlace.getAttribute("width")) && 
-          coord.y - offset.y + parseFloat(clickedGroup.children[0].getAttribute("y")) > 
-          parseFloat(window.getComputedStyle(document.querySelector(".navbar")).height) && 
-          coord.y - offset.y + parseFloat(clickedGroup.children[0].getAttribute("y")) + 
-          parseFloat(clickedGroup.children[0].getAttribute("height")) <
-          Number(svgPlace.getAttribute("height"))
-         ){
-        transform.setTranslate(coord.x - offset.x, coord.y - offset.y);
-        //the line below does the same as the line above
-        //clickedGroup.transform.baseVal[0].setTranslate(coord.x - offset.x, coord.y - offset.y);
-      }       
+    //keep garden name centered or above, if not enough room for it
+    const gName = clickedGroup.getElementsByClassName("editable")[0];
+    gName.setAttributeNS(
+      null, 
+      "x", 
+      Number(resizeObj.getAttribute("x")) +
+      Number(resizeObj.getAttribute("width"))/2 -
+      Number(gName.getAttribute("width"))/2);
+
+    //check if enough room: new width newW minus the widths of sun and tools gears, from gName.desc, compared to number of characters in the garden name times munit/2 (approximate size of a letter, ~7.11)
+    if ((newW - Number(gName.getAttribute("desc"))) < 
+        Number(gName.getAttribute("width"))) {
+      gName.setAttribute("y", Number(resizeObj.getAttribute("y")) - munit * 2.7);
+    } else {
+      gName.setAttribute("y", Number(resizeObj.getAttribute("y")) - munit / 2);
     }
+
+    //adjust the tools gear position, when its garden is resized
+    const toolGear = clickedGroup.getElementsByClassName("ulTools")[0];
+    toolGear.setAttribute("x", Number(toolGear.getAttribute("x"))+adjustedW);
+
+    //adjust the soil selector position, when its garden is resized
+    const soilGear = clickedGroup.getElementsByClassName("ulSoil")[0];
+    soilGear.setAttribute("y", Number(soilGear.getAttribute("y"))+adjustedH);
+
+    //update the size indicators
+    const elts = clickedGroup.getElementsByClassName("sizeInd");
+
+    //height
+    elts[0].setAttributeNS(
+      null, 
+      "x", 
+      Number(elts[0].getAttribute("x"))+adjustedW);
+    //update the text of the height indicators
+    elts[0].textContent = formatSizeDisplay(Number(resizeObj.getAttribute("height"))/size);
+
+    //width
+    elts[1].setAttributeNS(
+      null, 
+      "y", 
+      Number(elts[1].getAttribute("y"))+adjustedH);
+    //update the text of the width indicators
+    elts[1].textContent = formatSizeDisplay(Number(resizeObj.getAttribute("width"))/size);
+
+    //update the position of the resizing triangle
+    clickedGroup.getElementsByClassName("resize")[0].setAttributeNS(
+      null, 
+      "points",
+      createTriPts(Number(resizeObj.getAttribute("x"))+newW, 
+                    Number(resizeObj.getAttribute("y"))+newH));
+    //the sizing clickPos x & y need to be continuously updated 
+    //so that the size change is not cumulative
+    clickPos.x = evt.clientX;
+    clickPos.y = evt.clientY;
+  }
+
+  //MOVING
+  else {
+    
+    if (offset === "NoMove") return;
+    
+    moving = true;
+
+    if (clickedGroup.id[0] === "p" ||
+        coord.x - offset.x + parseFloat(clickedGroup.children[0].getAttribute("x")) > 0 && 
+        coord.x - offset.x + parseFloat(clickedGroup.children[0].getAttribute("x")) + 
+        parseFloat(clickedGroup.children[0].getAttribute("width")) <
+        Number(svgPlace.getAttribute("width")) && 
+        coord.y - offset.y + parseFloat(clickedGroup.children[0].getAttribute("y")) > 
+        parseFloat(window.getComputedStyle(document.querySelector(".navbar")).height) && 
+        coord.y - offset.y + parseFloat(clickedGroup.children[0].getAttribute("y")) + 
+        parseFloat(clickedGroup.children[0].getAttribute("height")) <
+        Number(svgPlace.getAttribute("height"))
+        ){
+      transform.setTranslate(coord.x - offset.x, coord.y - offset.y);
+      //the line below does the same as the line above
+      //clickedGroup.transform.baseVal[0].setTranslate(coord.x - offset.x, coord.y - offset.y);
+    }       
   }
 }
 

@@ -323,7 +323,7 @@ i.exp, i.imp {
 @media only screen and (min-width: 900px) {
   body {
 /*     scroll-snap-type: none; */
-    background-image: repeating-linear-gradient(135deg, var(--light-yellow), rgb(116, 116, 116));
+    background-image: repeating-linear-gradient(135deg, rgb(241, 241, 241), snow);
   }
   .filterRow, .filterCell {
     top: 5.3em;

@@ -21,6 +21,20 @@ canvas {
   top: 3em;
 }
 
+#currentMonth {
+  padding: 0 6px;
+  margin: 0 6px;
+  background-color: transparent;
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  border-style: groove;
+  min-width: none;
+}
+#monthMenu {
+  min-width: max-content;
+}
+
 /* drop down, used for Sun, Soil, Tools */
 .gdnBtn { 
   font-size: medium;
