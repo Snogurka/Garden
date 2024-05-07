@@ -40,7 +40,26 @@ function myMain(){
   
   // munit = my unit, the font size, if set to 14, munit is ~7.11
   munit = Math.round((Number(window.getComputedStyle(svgPlace, null).getPropertyValue("font-size").replace("px",""))/1.9 + Number.EPSILON) * 100) / 100;
-  
+
+  // add flowering patterns
+  const flower = ' id="polka" viewBox="-10,-10,20,20" width="20%" height="20%" fill="grey"';
+  // for the above flower pattern:
+  /*
+    <defs>
+    <!-- the inner circles -->
+      <pattern id="polka" viewBox="-10,-10,20,20" width="20%" height="20%" fill="grey">
+      <circle r="10"></circle>
+      </pattern>
+    </defs>
+  <!-- fill is the white part inside the circle -->
+  <!-- stroke is the border with circles, goes in addition to the radius -->
+    <circle cx="50" 
+      cy="50" 
+      r="40"
+      fill="#FFFFFF"
+      stroke-width="30"
+      stroke="url(#polka)" />
+  */
   //add linear gradients for each sun/soil combination, stored in an array
   const sunColors = {"Full":["#ffe922", "50%"], "Part":["#ddcc38", "30%"], "Shade":["#bfba71", "30%"]};
   const soilColors = {"Acidic":"rgb(160, 195, 68)", "Neutral":"rgb(166, 146, 62)", "Alkaline":"rgb(4, 56, 111)"};
