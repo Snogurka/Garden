@@ -36,7 +36,7 @@ canvas {
 }
 
 /* drop down, used for Sun, Soil, Tools */
-.gdnBtn { 
+.gdnBtn {
   font-size: medium;
   position: relative;
   fill: var(--tool-text-color);
@@ -67,7 +67,7 @@ canvas {
   left: 10%;
   width: 80%;
   line-height: 2em;
-  -webkit-user-select: none; /* Safari */        
+  -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
@@ -131,7 +131,7 @@ li {
 }
 
 .colorGroupRect {
-  fill: transparent;  
+  fill: transparent;
 }
 
 /* plant bloom colors and additional info, below text name */
@@ -147,7 +147,7 @@ li {
 }
 
 .plantInfo div{
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .hidden {
@@ -186,7 +186,7 @@ svg {
   background-color: rgba(0, 0, 50, 0.75);
   display: block;
 }
-.dropDown::-webkit-scrollbar { 
+.dropDown::-webkit-scrollbar {
   display: none;  /* Safari and Chrome */
 }
 .dropDown {
@@ -197,7 +197,7 @@ svg {
 }
 .alphabet {
   overflow: hidden;
-  min-width: 2em; 
+  min-width: 2em;
   padding: 4px 7px;
   text-align: center;
 }
@@ -206,7 +206,7 @@ svg {
 }
 .zeta {
   border-radius: 0 7px 7px 0;
-} 
+}
 
 .plantCls {
   overflow: hidden;
@@ -221,7 +221,7 @@ svg {
 }
 
 @media only screen and (max-width: 768px) {
-  .gdnBtn { 
+  .gdnBtn {
     font-size: small;
   }
   .plantName {

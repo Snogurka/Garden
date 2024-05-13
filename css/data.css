@@ -51,7 +51,7 @@ body {
 }
 
 /* image within inner buttons - todo: shouldn't need it once shovel is removed */
-.btnImg { 
+.btnImg {
   width: 2em;
   height: 2em;z-index: 9;
 }
@@ -107,7 +107,7 @@ i:hover, th:hover {
 
 td, th {
   border: 1px solid #ddd;
-  padding: 0.3  em;
+  padding: 0.3em;
   white-space: normal;
   font-size: 16px;
   z-index: 2;
@@ -168,7 +168,7 @@ th.frozenCol {
   padding: 0.3em;
   z-index: 0;
 }
-  
+
 .notesReferences > a:first-child {
   padding-left: 1em;
   overflow-x: visible;
@@ -178,7 +178,7 @@ th.frozenCol {
 .filterInput {
   /* display: none; */
   display: block;
-  padding: 0 1em; 
+  padding: 0 1em;
   color: var(--dark-blue);
   width: 100%;
   height: 110%;
@@ -291,7 +291,7 @@ i.exp, i.imp {
 /*   added on 9/24/20 for iPad scroll support */
   -webkit-overflow-scrolling: auto;
   border-radius: 7px;
-  list-style-type: none; 
+  list-style-type: none;
   text-align: left;
   padding: 5px;
   line-height: 150%;
@@ -313,10 +313,10 @@ i.exp, i.imp {
 .selectedCustomChoice {
 /*   color: var(--dark-gray); */
   font-weight: bolder;
-  background-image: repeating-radial-gradient(var(--light-yellow), var(--bright-green) 99%); 
+  background-image: repeating-radial-gradient(var(--light-yellow), var(--bright-green) 99%);
   background-color: var(--light-yellow);
 }
-/* 
+/*
   Responsiveness for desktop and tablet, width greater than 1000px
   600 for small devices; 400 for phones (which is default for 'mobile first' approach)
 */

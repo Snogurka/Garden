@@ -39,7 +39,7 @@ html {
   border-radius: 7px;
 }
 
-/* The overall body of this page has a background that changes from darker blue at the top to lighter blue at the bottom. 
+/* The overall body of this page has a background that changes from darker blue at the top to lighter blue at the bottom.
 Font family is set for the entire page, unless specified otherwise. The margin and padding set the start of content starts, at 0.*/
 body {
   font-family: FontAwesome, 'Palatino Linotype', 'Georgia', 'serif';
@@ -99,7 +99,7 @@ button {
   font-family: Arial, Helvetica, sans-serif;
   padding: 2px;
   border-radius: 7px;
-  background-color: rgb(0, 0, 77); 
+  background-color: rgb(0, 0, 77);
   color: white;
   cursor: pointer;
   max-width: 7em;
@@ -123,9 +123,9 @@ h1 {
   white-space: nowrap;
   color: #ffffcc;
 /* don't allow selection, so that user can drag objects on visual tab without selecting the title */
-  -webkit-user-select: none;   
-  -moz-user-select: none; 
-  -ms-user-select: none; 
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
   z-index: 5;
 }
@@ -136,22 +136,22 @@ h1 {
    25%  {background-color: #99cc00;}
    30%  {background-color: orange;}
    35%  {background-color: #990000;}
-   41%  {background-color: #804000;}  
-   50%  {background-color: #e0e0d1;}  
-   60%  {background-color: #b3e6ff;}  
-   75%  {background-color: #004d00;}  
-  100%  {background-color: #004d00;}  
-}  
+   41%  {background-color: #804000;}
+   50%  {background-color: #e0e0d1;}
+   60%  {background-color: #b3e6ff;}
+   75%  {background-color: #004d00;}
+  100%  {background-color: #004d00;}
+}
 @-webkit-keyframes coloranima {
     0%  {background-color: #004d00;}
    25%  {background-color: #99cc00;}
    30%  {background-color: orange;}
    35%  {background-color: #990000;}
-   41%  {background-color: #804000;}  
-   50%  {background-color: #e0e0d1;}  
-   60%  {background-color: #b3e6ff;}  
-   75%  {background-color: #004d00;}  
-  100%  {background-color: #004d00;}  
+   41%  {background-color: #804000;}
+   50%  {background-color: #e0e0d1;}
+   60%  {background-color: #b3e6ff;}
+   75%  {background-color: #004d00;}
+  100%  {background-color: #004d00;}
 }
 
 @-o-keyframes coloranima {
@@ -159,11 +159,11 @@ h1 {
    25%  {background-color: #99cc00;}
    30%  {background-color: orange;}
    35%  {background-color: #990000;}
-   41%  {background-color: #804000;}  
-   50%  {background-color: #e0e0d1;}  
-   60%  {background-color: #b3e6ff;}  
-   75%  {background-color: #004d00;}  
-  100%  {background-color: #004d00;}  
+   41%  {background-color: #804000;}
+   50%  {background-color: #e0e0d1;}
+   60%  {background-color: #b3e6ff;}
+   75%  {background-color: #004d00;}
+  100%  {background-color: #004d00;}
 }
 
 /* nav bar has a changing background (coloranima) */
@@ -248,7 +248,7 @@ h1 {
 }
 
 /* For desktop and tablet with width greater than 768px
-   (600 for small devices; 400 for phones; 
+   (600 for small devices; 400 for phones;
     768 - medium, 992 - large, 1200 - extra large)
 */
 @media only screen and (min-width: 768px) {

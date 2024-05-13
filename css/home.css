@@ -51,7 +51,7 @@ button {
   padding: 0 0.2em;
   text-decoration: none;
   color: #ffffcc;
-  
+
   -webkit-animation-name: coloranima;
   -webkit-animation-duration: 150s;
   -webkit-animation-iteration-count: infinite;
@@ -94,7 +94,7 @@ header {
   z-index: 2;
   border-width: 1px;
   border-style: solid;
-  border-image: var(--dark-to-light) 1 100%; 
+  border-image: var(--dark-to-light) 1 100%;
   border-image-outset: 2px;
 }
 .leftSide, .rightSide {
@@ -113,7 +113,7 @@ header {
 .leftSide > img, .rightSide > img {
   height: 100%;
   width: 5vw;
-} 
+}
 
 /* container keeps all the articles; mobile settings */
 main {
@@ -159,7 +159,7 @@ main {
     list-style-position: outside;
     margin: 0.5em 0 0.5em 2em;
   }
-  article li:before {    
+  article li:before {
     font-family: 'FontAwesome';
     content: '\f863';
     margin: 0 0.1em;

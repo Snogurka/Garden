@@ -2,7 +2,7 @@
    ### IMPORTANT ###
    #################
  - in this script, a plain ID number is reserved for IDs for plants (rows) added by a user;
- - for efficiency, editable contents columns support is designed around the order of those columns, 
+ - for efficiency, editable contents columns support is designed around the order of those columns,
  - those are columns Notes (3rd column, index 2, in JSON 1), Status (4th, 3, 2), Garden Location (14th, 13, 12)
  - should the column order change, update the code in allClicks(), used to be addBtnUsrChgs(),
  - & appendPlantToTable() as well as visual.js code accordingly
@@ -12,7 +12,7 @@
   var tdRowCnt = null;
   var addedRowCounter = []; // used for accessing added plants, a unique number for each
   var unqLatinNames = []; // array of unique latin names, from plants.json and added, used to enforce uniqueness
-  var filters = {}; // filters{} is a global var to support filtering multiple columns; 
+  var filters = {}; // filters{} is a global var to support filtering multiple columns;
   var newRow = null;
   var arrHeaders = [];
   const splitableCols = ["Bloom\xa0Time", "Fruit\xa0Time", "When\xa0To\xa0Plant", "When\xa0To\xa0Prune", "When\xa0To\xa0Feed", "Class", "Color", "Leaves", "Sun", "Garden\xa0Location", "Soil", "Companions", "Enemy", "Natural\xa0Habitat", "Origin", "Height", "Width"]; // an array of columns, for which values are split into individual filter choices
@@ -24,7 +24,7 @@
 function main() {
   fetch('plants.json')
     .then((resp) => {
-      return resp.json()  
+      return resp.json()
     })
     .then((json) => {
       // create the main and only table - #plants
@@ -74,16 +74,16 @@ function modifyJsonOutput(json){
 
 //////////////////////////////////////////////////////////////////////
 // add data pulled from plants.json to the table;
-// call other functions to check local storage for user added plants; 
+// call other functions to check local storage for user added plants;
 // check session storage for filtered plants and hidden columns;
 function createTblWithData(myObj) {
   var objNotes = null;
   let objStatus = null,
       objLocation = null;
-  
+
   // determine if the user's device is a desktop or mobile, record it in colSpan to be used next
   const colSpan = window.matchMedia("only screen and (max-width: 600px)").matches?3:12;
-  
+
   // start the text string to contain the body of the html table
   let txt = "<tbody>";
   // l = number of columns minus 1 (latin name, which is a key)
@@ -100,7 +100,7 @@ function createTblWithData(myObj) {
 
     // *************
     // record column names in a var, replacing html nonbreaking space with a js one
-    arrHeaders.push(myObj[k][i].replaceAll("&nbsp","\xa0"));      
+    arrHeaders.push(myObj[k][i].replaceAll("&nbsp","\xa0"));
 
     // latin name is added separately cause it's the key and only needs to be added once per object entry, thus it's here, combined with the common name
     if (i === 0) {
@@ -150,11 +150,11 @@ function createTblWithData(myObj) {
     }
     // 'Food And Water' column header - add unique title, column width is medium
     else if (i === 24){
-      txt += `<th class='colWidth2' title='During the 1st year, while the trees are getting established, they should be watered deeply (3'-5' weekly), to ensure good deep roots.'>${myObj[k][i]}`; 
+      txt += `<th class='colWidth2' title='During the 1st year, while the trees are getting established, they should be watered deeply (3'-5' weekly), to ensure good deep roots.'>${myObj[k][i]}`;
     }
     // 'Propagating' column header - add unique title, column width is medium
     else if (i === 26){
-      txt += `<th class='colWidth2' title='Cold Moist Stratification: CM30 - 30 days, CM60 - 60days.'>${myObj[k][i]}`; 
+      txt += `<th class='colWidth2' title='Cold Moist Stratification: CM30 - 30 days, CM60 - 60days.'>${myObj[k][i]}`;
     }
     // narrow column headers, colWidth1
     else if ([3, 4, 5, 6, 7, 11].includes(i)){
@@ -187,8 +187,8 @@ function createTblWithData(myObj) {
     // name column
     if (i === 0) {
       // "filterCell" is a filter cell for the name column only
-      txt += `<td class='filterCell'>` + 
-        `<input autocorrect='off' type='text' class='filterInput' placeholder='filter by ...' tabindex='${i+1}'>` + 
+      txt += `<td class='filterCell'>` +
+        `<input autocorrect='off' type='text' class='filterInput' placeholder='filter by ...' tabindex='${i+1}'>` +
         `<i class='btnHelper btnInner btnLeft fa fa-fw fa-filter' title='Filter by ${myObj[k][0].replace("&nbsp"," ")}'></i></td>`;
     }
     // add filterRow class to the last column (Picture) to disable its filtering
@@ -201,8 +201,8 @@ function createTblWithData(myObj) {
       // latin name is key, thus the col title has to be pulled from iterator k
       if (i === 1) {
         txt +=  `<i class='btnHelper btnInner btnLeft fa fa-fw fa-filter' title='Filter by ${k.replace("&nbsp"," ")}'></i></td>`;
-      } 
-      
+      }
+
       // filtering button is added to the filter cell of the name and latin columns and filtering cells of columns, listed in splitable columns array
       else if (splitableCols.includes(myObj[k][i-1].replaceAll("&nbsp","\xa0"))) {
         txt += `<i class='btnHelper btnInner btnLeft fa fa-fw fa-filter' title='Filter by ${myObj[k][i-1].replace("&nbsp"," ")}'></i></td>`;
@@ -210,7 +210,7 @@ function createTblWithData(myObj) {
     }
   }
   txt += "</tr>";
-  // remove the headers from myObj, since the headers are now recorded 
+  // remove the headers from myObj, since the headers are now recorded
   // and it's not needed for looping through data rows
   delete myObj[k];
 
@@ -218,19 +218,19 @@ function createTblWithData(myObj) {
   // loop through every row object of data returned from JSON as myObj, where Latin Name(x) is the key, Name is ind 0, Notes is 1, etc.
   for (let x in myObj) {
 
-    // add data row <tr> and place a <td> with NAME in it; 
-    txt += "<tr><td class='frozenCol'>" + myObj[x][0] + "</td>"; 
+    // add data row <tr> and place a <td> with NAME in it;
+    txt += "<tr><td class='frozenCol'>" + myObj[x][0] + "</td>";
 
     // if the local storage is available, pull Notes, Garden Location, if those exist
     if (typeof (Storage) !== "undefined") {
       try {
         objNotes = JSON.parse(localStorage.gDb_Notes);
-      } 
+      }
       catch (error) {
         // no Notes, Status, or Location recorded in local storage, no problem
       }
        try {
-        objStatus = JSON.parse(localStorage.gDb_Status); 
+        objStatus = JSON.parse(localStorage.gDb_Status);
       }
       catch (error) {
         // no Status in local storage, no problem
@@ -266,7 +266,7 @@ function createTblWithData(myObj) {
                 // update Notes in local storage, delete if objNotes is empty
                 if (Object.entries(objNotes).length) {
                   localStorage.gDb_Notes = objNotes;
-                } 
+                }
                 else {
                   localStorage.removeItem("gDb_Notes");
                 }
@@ -275,7 +275,7 @@ function createTblWithData(myObj) {
                 // else go with user entry only
                 txt += objNotes[x];
               }
-            } 
+            }
             // otherwise, use what's in plants.json
             else {
               txt += myObj[x][i];
@@ -315,10 +315,10 @@ function createTblWithData(myObj) {
             txt += `<td><img style="width:3em; height: 3em;" src='pictures/btnCog.png' alt='${myObj[x][0]}' /></td>`;
           } else {
             txt += "<td loading='lazy'>"
-              + "<img class='pic' " 
+              + "<img class='pic' "
               + "value = '" + myObj[x][i] + "' "
             // remove spaces, dashes, quotes, v., (), & from the plants' names
-              + "src='pictures/" + myObj[x][0].replace((/( |-|\(|\)|v\.|&|\"|\')/g),"") + "1.jpg' " 
+              + "src='pictures/" + myObj[x][0].replace((/( |-|\(|\)|v\.|&|\"|\')/g),"") + "1.jpg' "
               + "alt='" + myObj[x][0] + "'"
             // saving good code for handling errors in images
 //                   + "onerror='this.onerror=null; this.src=\"pictures/btnCog.png\"' "
@@ -359,7 +359,7 @@ function createTblWithData(myObj) {
       // blank cell for the picture cell
       txt += "<td title='The upload image functionality is not yet available'>image</td></tr>"
 
-      // add a table footer with text about entering new plants and list the sources; 
+      // add a table footer with text about entering new plants and list the sources;
       txt += `</tbody>
       <tfoot>`;
 
@@ -388,7 +388,7 @@ function createTblWithData(myObj) {
     txt += `<tr class="notesRefs"><td colspan=${colSpan} class="notesReferences">&nbsp;</td></tr>
   <tr class="notesRefs"><td colspan=${colSpan} class="notesReferences">&nbsp;</td></tr>`
   }
-  
+
   // add references, spanning them 3 columns on mobile, 12 on desktop, close the table tags and append the html
   txt += `<tr class="notesRefs">
     <td colspan=${colSpan} class="notesReferences">
@@ -480,15 +480,15 @@ function createTblWithData(myObj) {
   </tfoot>
   </table>`;
   table.innerHTML += txt;
-} 
+}
 
 // after the table is populated, this function creates menu lists for the I/E and View buttons in Navbar
 function menuSetup() {
   // creating the column drop down menu, used in custom view
-  addDropDown("dropColNames", arrHeaders); 
+  addDropDown("dropColNames", arrHeaders);
 
   // adding export/import menu sub choices here just to keep it together
-  // the Export/Import are separated from the rest of the choice name by no space 
+  // the Export/Import are separated from the rest of the choice name by no space
   // on purpose, this is used later in code, the rest needs to not be \xa0
   addDropDown("dropExportImport",
   ["Export\xa0Notes", "Export\xa0Status", "Export\xa0Garden Location"
@@ -512,13 +512,13 @@ function checkFilteredRowsCols() {
       else {
         // if data is filtered by size
         if (filters[i][">"] || filters[i]["<"]) {
-          table.children[0].children[1].children[i].children[0].value = 
+          table.children[0].children[1].children[i].children[0].value =
             filters[i][">"] + " - " + filters[i]["<"];
         }
         // if data is filtered with multiple choices that are not size
         else if (Array.isArray(filters[i]) && filters[i].length > 1) {
           table.children[0].children[1].children[i].children[0].value = "...";
-          } 
+          }
         // else, if one filter choice
         else {
           table.children[0].children[1].children[i].children[0].value = filters[i].toString().toLowerCase();
@@ -563,7 +563,7 @@ function impExp(tgt) {
   displayTextArea.rows = "10";
   displayDiv.appendChild(displayTextArea);
   displayTextArea.focus();
-  
+
   // cancel button closes the window
   let displayCancelBtn = document.createElement("button");
   displayCancelBtn.innerHTML = "&times;";
@@ -576,11 +576,11 @@ function impExp(tgt) {
   displayDiv.appendChild(displayDoneBtn);
   // hide the button until the correctly formatted text entry is made or until it's verified that there is data to be exported
   displayDoneBtn.style.display = "none";
-  
-  // on export, get the data from local storage, clean & display it in the text area; 
+
+  // on export, get the data from local storage, clean & display it in the text area;
   if (specs[0] === "Export") {
     displayTextArea.className = "exp";
-    
+
     displayDoneBtn.classList.add("exp");
     displayDoneBtn.classList.add("fa-cut");
     let data = JSON.parse(localStorage.getItem("gDb_" + specs[1].replace(/ /g, "")));
@@ -590,9 +590,9 @@ function impExp(tgt) {
     }
     // unhide the done button, since there is data to export
     displayDoneBtn.style.display = "block";
-    
+
     displayTextArea.value = specs[1]+'\n"';
-    
+
     let i = 0;
     for (x in data) {
       // the last entry is treated differently: it's removed because it's an empty string
@@ -615,12 +615,12 @@ function impExp(tgt) {
   // else, import is clicked; the data is pasted or entered by the user into the window; the data must be in the correct format: "name":"text"; the functionality below is added to the button to clean up and load the data to local storage; the page is then refreshed to display the additon
   else {
     displayTextArea.className = "imp";
-    
+
     displayDoneBtn.classList.add("imp");
     displayDoneBtn.classList.add("fa-upload");
     // the value indicates notes, status or location
     displayDoneBtn.value = specs[1];
-    
+
     // update assisting text for the text area
     displayTextArea.placeholder = "Paste the " + specs[1] + " data here. The data copied from "
     + "this page on another device is in the required format: \"Latin Name\":\"" + specs[1] + " text\". ";
@@ -649,7 +649,7 @@ function checkStoredData() {
     // the addedRowCounter is an array variable that stores the rows that have been added by a user to their local storage
     addedRowCounter = plantCounter.split(",");
   }
- 
+
   // check the stored plants column order; the gDb_colOrder stores the column headers in the order that the data is locally stored; whenever the order is changed in plants.json, the headers arrays won't match and the program will rearrange locally stored data and update gDb_colOrder; if there is a plant entry and no gDb_colOrder, it means the entry is very old and is in the original order - thus needs to be rearranged; if there is a change in a column name, the oldName-newName entry needs to be permanently recorded in the colNameChanges object;
   const colOrder = localStorage.getItem("gDb_colOrder");
 
@@ -696,19 +696,19 @@ function appendPlantToTable(iD) {
     let row = table.insertRow(tdRowCnt);
     // increment the table row keeper
     tdRowCnt++;
-    
+
     // assign class addedRow to the rows added by user, so that they can be accessed for editing
     row.className = "addedRows";
     row.id = iD;
-    
-    // on key up, add an 'update' button to the name field of a user added plant; 
+
+    // on key up, add an 'update' button to the name field of a user added plant;
     // if the number of children is 3, the button's already added
     row.addEventListener("keyup", function() {
       if (row.children[0].childElementCount < 3) {
         row.children[0].appendChild(addInnerButton('u', addedRowCounter[iD]));
         }
     });
-    
+
     // write the user added plants data into the table
     for (let j = 0, len = table.rows[0].cells.length; j < len; j++) {
 
@@ -723,10 +723,10 @@ function appendPlantToTable(iD) {
         newCell.appendChild(newDiv);
         // add a delete button to the name cell
         newCell.appendChild(addInnerButton('d', addedRowCounter[iD]));
-      } 
+      }
       // latin name
       else if (j === 1) {
-        // latin name (index 0) of user added plants is recorded in an unqLatinNames array; 
+        // latin name (index 0) of user added plants is recorded in an unqLatinNames array;
         unqLatinNames.push(arrStoredPlant[0]);
         newCell.contentEditable = "true";
         newCell.appendChild(document.createTextNode(arrStoredPlant[0]));
@@ -769,8 +769,8 @@ function storeNewPlant() {
     return;
   }
 
-  let recordNumber = 0;  
-  // if the length of addedRowCounter is not 0 and addedRowCounter exists, set the record number to the VALUE of the last element (length minus one) in the addedRowCounter plus one. 
+  let recordNumber = 0;
+  // if the length of addedRowCounter is not 0 and addedRowCounter exists, set the record number to the VALUE of the last element (length minus one) in the addedRowCounter plus one.
   if (addedRowCounter) {
     if (addedRowCounter.length > 0) {
       recordNumber = Number(addedRowCounter[addedRowCounter.length - 1]) + 1;
@@ -782,7 +782,7 @@ function storeNewPlant() {
 
   // when a plant is added to local, it's stored in the original order, latin name before common
   addToLocal(newRow, recordNumber);
-  
+
   // add the new plant to the table
   appendPlantToTable(recordNumber);
 
@@ -800,12 +800,12 @@ function storeNewPlant() {
       }
     }
   }
-  
+
   clearNewPlant();
 }
 
 //////////////////////////////////////////////////////////////////////
-// this function adds the user added plant data to local storage (updates 
+// this function adds the user added plant data to local storage (updates
 // or adds new), ensuring the data is in the right order
 function addToLocal(row, recordNumber) {
   if (recordNumber === undefined) recordNumber = row.id;
@@ -818,10 +818,10 @@ function addToLocal(row, recordNumber) {
     // for the common name (index 0), the text is inside the div inside td
     if (i === 0) {
       arrNewPlantVal.push(row.children[1].childNodes[0].textContent.toString());
-    } 
+    }
     else if (i === 1) {
       arrNewPlantVal.push(row.children[0].textContent.toString());
-    }    
+    }
     // for photo, place 0 until the functionality to upload photos is ready
     else if (i === arrHeaders.length - 1) {
       arrNewPlantVal.push("");
@@ -838,34 +838,34 @@ function addToLocal(row, recordNumber) {
 // when changes are made to a user-added plant, this function updates
 // the local storage and the table with those changes
 function saveEditedPlant(callingRow) {
-  
+
   // first, record the new plant in the local storage
   addToLocal(callingRow, callingRow.id);
-  
+
   // next, update the table with the new plant, pulling the new data from local storage
   appendPlantToTable(Number(callingRow.id));
-  
+
   // last, clear the row for adding new plants
   callingRow.remove();
 }
 
 //////////////////////////////////////////////////////////////////////
-// triggered when the delete button is clicked in the new plant row, 
+// triggered when the delete button is clicked in the new plant row,
 // this function starts the process of deleting a user-added plant
 function removeAddedPlant(callingRow) {
   if (!confirm("Please confirm the removal of your added plant.")) {
     return;
   }
-  
+
   // delete plant's id from addedRowCounter
   let index = addedRowCounter.indexOf(callingRow.id);
   if (index > -1) {
     addedRowCounter.splice(index, 1);
   }
-  
+
   // delete the plant entry from local storage
   localStorage.removeItem("gDb_plnt" + callingRow.id);
-  
+
   // update the row counter in local storage
   if (addedRowCounter.length > 0) {
     localStorage.setItem("gDb_rPlntsCntr", addedRowCounter);
@@ -885,7 +885,7 @@ function removeAddedPlant(callingRow) {
 function clearNewPlant() {
   for (let i = 0, len = table.rows[0].cells.length; i < len; i++) {
     if (i === 0) {
-      // name column gets special treatment, as the text is inside a childNode (div) 
+      // name column gets special treatment, as the text is inside a childNode (div)
       newRow.children[i].childNodes[0].innerText = "";
     } else {
       newRow.children[i].innerText = "";
@@ -894,7 +894,7 @@ function clearNewPlant() {
 }
 
 //////////////////////////////////////////////////////////////////////
-// add mini buttons update(u) and delete(d) functionality 
+// add mini buttons update(u) and delete(d) functionality
 // inside the name cells of plants added by user
 function addInnerButton(type) {
   let btn = document.createElement("i");
@@ -913,16 +913,16 @@ function addInnerButton(type) {
 // it adds buttons to the name of a plant whose notes, status or garden location fields are being modified
 function addBtnUsrChgs(clickedCell, e) {
   // exit, if the user is editing a plant that they've added..
-  if (clickedCell.parentElement.className === "addedRows" 
+  if (clickedCell.parentElement.className === "addedRows"
       || clickedCell.parentElement.id === "newPlantRow"
       // ..or there is not text and this wasn't a paste (note: cell is blank when the data is just pasted)
-      || !(clickedCell.innerText) && e.type != "paste"  
+      || !(clickedCell.innerText) && e.type != "paste"
       // or a tab, shift, left, up, right, down or window tab keys is pressed
-      || [9, 16, 37, 38, 39, 40, 91].includes(e.keyCode) 
+      || [9, 16, 37, 38, 39, 40, 91].includes(e.keyCode)
       // or a backspace(8), enter, or space is pressed and there is no text yet
       || [13, 32].includes(e.keyCode) && !(clickedCell.innerText.trim().length)
      ) {
-    return; 
+    return;
   };
 
   // if the text in the cell is a space(30) or a return(10), remove it by replacing with empty quotes
@@ -941,15 +941,15 @@ function addBtnUsrChgs(clickedCell, e) {
 
   // retrieve an entry stored in local storage for this plant and field
   let strStoredText = JSON.parse(localStorage.getItem("gDb_" + colName));
-  // compare user entered text to the text in local storage: 
-  // if no stored text and no text in the cell 
-  // or stored text and typed text is the same as stored 
-  let sameText = !strStoredText && !clickedCell.innerText.trim().length 
+  // compare user entered text to the text in local storage:
+  // if no stored text and no text in the cell
+  // or stored text and typed text is the same as stored
+  let sameText = !strStoredText && !clickedCell.innerText.trim().length
   || strStoredText && clickedCell.innerText.trim() === strStoredText[clickedCell.parentElement.children[1].innerText];
   // ***for special treatment of Notes***
   // or no stored text and origNotes attribute has been created and the remaining text is blank
   // or origNotes attribute has been created and the remaining text is the same as stored
-  // || !strStoredText && !clickedCell.innerText.slice(clickedCell.attributes.origNotes.length).trim().length 
+  // || !strStoredText && !clickedCell.innerText.slice(clickedCell.attributes.origNotes.length).trim().length
   // || strStoredText && clickedCell.innerText.slice(clickedCell.attributes.origNotes.length).trim() === strStoredText[clickedCell.parentElement.children[1].innerText];
 
   // the update button is the first child of the first column (name, index 0)
@@ -973,24 +973,24 @@ function addBtnUsrChgs(clickedCell, e) {
     // if the index of modified column isn't already in the button's value, add it
     if (!arrModifiedCols.includes(clickedCell.cellIndex.toString())) {
       arrModifiedCols.push(clickedCell.cellIndex);
-    } 
+    }
     // else, if the index is already in button's value but the text changes have been undone, remove
     else if (sameText) {
       arrModifiedCols.pop(clickedCell.cellIndex);
     }
-    // remove the button if all the indices have been removed from button's value; 
+    // remove the button if all the indices have been removed from button's value;
     if (arrModifiedCols.length === 0) {
       btn.parentElement.removeChild(btn);
-    } 
+    }
     // otherwise, update button's value to reflect all dirtied column indices
-    else {  
+    else {
       btn.value = arrModifiedCols.toString();
     }
-  } 
+  }
 }
 
 //////////////////////////////////////////////////////////////////////
-// this function is called when a user clicks on save changes button 
+// this function is called when a user clicks on save changes button
 // for a plant with modified notes, status, or garden location fields
 // it loads the changes into local storage
 function updateExistingPlant(btn) {
@@ -1005,13 +1005,13 @@ function updateExistingPlant(btn) {
   for (let i = 0, l = modifiedFields.length; i < l; i++) {
     // remove any spaces from columns names
     let colName = arrHeaders[Number(modifiedFields[i])].replace(/\s/g, "");
-    // if this field already has entries in local storage, retrieve them; 
+    // if this field already has entries in local storage, retrieve them;
     let parsedStoredData = {};
     // parse the results returned from local storage entries
     if (localStorage.getItem("gDb_" + colName)) {
       parsedStoredData = JSON.parse(localStorage.getItem("gDb_" + colName));
     }
-    // 
+    //
     let modifiedText = btn.parentElement.parentElement.children[Number(modifiedFields[i])].innerText;
     // if the user cleared the notes, status, etc., delete that entry from local storage
     if (modifiedText.length === 0 || modifiedText === "\n" || modifiedText === "/u21B5") {
@@ -1021,10 +1021,10 @@ function updateExistingPlant(btn) {
     else {
       parsedStoredData[btn.parentElement.parentElement.children[1].innerText] = modifiedText.trim();
     }
-    // if notes, status, location entries has been deleted for all plants 
+    // if notes, status, location entries has been deleted for all plants
     if (Object.entries(parsedStoredData).length === 0) {
       localStorage.removeItem("gDb_" + colName);
-    } 
+    }
     else {
       localStorage.setItem("gDb_" + colName, JSON.stringify(parsedStoredData));
     }
@@ -1033,19 +1033,19 @@ function updateExistingPlant(btn) {
 }
 
 //////////////////////////////////////////////////////////////////////
-// this function copies the data of an existing plant into the new  
+// this function copies the data of an existing plant into the new
 // plant row for modifying it and saving on user's local machine
 function copyRow(clickedElt) {
   let plantName = clickedElt.innerHTML;
   let tr = table.getElementsByTagName("tr");
-  let rw = 0; 
+  let rw = 0;
   // find the order number of the needed plant by searching for its name (plantName) in the array (tr) children, start at i=2 skipping headers and filters
   for (let i = 2; i < tdRowCnt; i++) {
     if (plantName === tr[i].children[0].innerText) {
       rw = i;
       break;
     }
-  } 
+  }
   // hide the menu
   clickedElt.parentElement.parentElement.removeChild(clickedElt.parentElement);
   for (let i = 0, l = newRow.children.length; i < l; i++) {
@@ -1062,7 +1062,7 @@ function copyRow(clickedElt) {
 //////////////////////////////////////////////////////////////////////
 // this function sorts the data in the table by the clicked column; it's triggered by user clicking on the column header, 1st click: asc, 2nd: desc
 function sortTable(colNum) {
-	  let i = 2, 
+	  let i = 2,
         x = 0,
         y = 0,
         xValue = null,
@@ -1080,7 +1080,7 @@ function sortTable(colNum) {
       break;
     }
   }
-    
+
   // Make a loop that will continue until no switching can be done
   while (switching) {
     // no switching has been done at first
@@ -1127,7 +1127,7 @@ function sortTable(colNum) {
 //////////////////////////////////////////////////////////////////////
 // filtering of the height/width columns' min/max range, special case
 function filterBySizeRange(evt) {
-  
+
   let clickedElt = evt.target;
   // forCell is a table data cell <td> of the Frozen Filter Row
   let forCell = clickedElt.parentElement.parentElement.parentElement;
@@ -1150,11 +1150,11 @@ function filterBySizeRange(evt) {
   filterData();
 
   // create/update the placeholder which is displayed in the filter cell, put blank when no min/max values
-  if (forCell.getElementsByClassName("inputRangeMin")[0].value.length === 0 
+  if (forCell.getElementsByClassName("inputRangeMin")[0].value.length === 0
       && forCell.getElementsByClassName("inputRangeMax")[0].value.length === 0) {
     forCell.children[0].placeholder = "";
     removeClearingBtn(forCell); // this takes care of sessionStorage too
-  } 
+  }
   else {
     forCell.children[0].placeholder =
     forCell.getElementsByClassName("inputRangeMin")[0].value
@@ -1179,7 +1179,7 @@ function filterByText(evt){
     clickedElt.parentElement.removeChild(clickedElt.parentElement.getElementsByClassName("dropUnqVals")[0]);
   }
 
-  // create/overwrite an entry in filters object with text typed or pasted    
+  // create/overwrite an entry in filters object with text typed or pasted
   filters[clickedElt.parentElement.cellIndex] = (clickedElt.value || ((evt.clipboardData || window.clipboardData).getData("text"))).toUpperCase();
 
   // filter the table data; the called function uses filters object, so it must be updated first (above)
@@ -1193,10 +1193,10 @@ function filterByText(evt){
 //////////////////////////////////////////////////////////////////////
 // response to the clicks on the filter clearing buttons
 function clearFilter(clickedElt) {
-  
+
     let forCell = clickedElt.parentElement;
     let grandpa = forCell.parentElement.parentElement;
-    
+
     // for min/max height/width ranges, remove the emptying button from grandparent & clear placeholder
     if (clickedElt.className === "inputRangeMin") {
       // if only the min value is shown in placeholder, the dash is the last character, thus clear the placeholder
@@ -1239,20 +1239,20 @@ function clearFilter(clickedElt) {
 function filterData() {
 
   let keptRows = 0;
-  
+
   // loop through table data rows starting at i = 2, skipping headers and filters
   for (let i = 2; i < tdRowCnt; i++) {
-    
+
     // set the showFlag to true, meaning every row is shown initially
     let showFlag = true;
-    
+
     // loop through the filters object to check all fields where filtering criteria are set
     for (let key in filters) {
-      
+
       // i is the row, td is the cell, key is the column index
       let td = table.rows[i].children[key];
       let cellContents = null;
-      
+
       // because of the frozenCol class, the value of column name for the user added plants is inside an input field (child 0), thus has to be accessed through a child's value
       if (key === "1" && td.children.length > 0) {
         cellContents = td.children[0].value.toUpperCase();
@@ -1260,7 +1260,7 @@ function filterData() {
         cellContents = td.textContent.toUpperCase();
       }
 
-      // when an entry is made in a height/width min/max fields 
+      // when an entry is made in a height/width min/max fields
       if (!Array.isArray(filters[key]) && typeof filters[key] === "object") {
         // the values of min & max range fields of width & height have > or < in the value
         if (filters[key][">"]) {
@@ -1333,7 +1333,7 @@ function filterData() {
       }
 
     }
-    
+
     if (showFlag) {
       table.rows[i].style.display = "";
       keptRows++;
@@ -1357,10 +1357,10 @@ function getUnqVals(forCell) {
   let dropList = document.createElement("ul");
   dropList.className = "dropUnqVals";
   forCell.appendChild(dropList);
-  
+
   // determine the name of the column by pulling its index from arrHeaders
   const colName = arrHeaders[forCell.cellIndex];
-  
+
   // columns width and height display min and max range input fields instead of unique values
   if (colName === "Height" || colName === "Width") {
     for (let i = 0; i < 2; i++) {
@@ -1383,49 +1383,49 @@ function getUnqVals(forCell) {
       dropList.append(liText);
     }
   }
-  
+
   // all other non-size splitable and long text columns
   else {
-    
+
     // the array rUnqVals holds unique values from the given column
     let rUnqVals = [];
 
     if (colName.substring(0,4) === "When") {
       rUnqVals = ["Winter", "Spring", "Summer", "Fall"];
     } else {
-      // ----------// 
+      // ----------//
       loopTableRows:
-      // ----------// 
+      // ----------//
       // loop through the table, starting at i = 2, skipping headers and filters
       for (let i = 2; i < tdRowCnt; i++) {
-        // add value to the drop down if it hasn't been hidden (display isn't none) 
+        // add value to the drop down if it hasn't been hidden (display isn't none)
         // OR the clicked column is already used for filtering (its index is in filters)
         // OR if pulling names to add a new plant
-        if (table.rows[i].style.display != "none" 
-            || filters[forCell.cellIndex] 
+        if (table.rows[i].style.display != "none"
+            || filters[forCell.cellIndex]
             || forCell.children[1].id === "btnNewPlantCopy") {
-          
+
           // if not pulling names for a user to copy a plant, don't show filtered out values in the drop down (jump out of for loop)
           if (forCell.children[1].id != "btnNewPlantCopy") {
-            
+
             // loop through filters object and exclude rows that are not included in filters
             for (key in filters) {
-              
+
               // display(keep) all unique values for the clicked column
               if (Number(key) === forCell.cellIndex) {
                 continue; // proceed to the next filter
               }
-              
+
               // for columns other than clicked, loop through cells values; keep values that have been used for filtering and are recorded in filters, jump to loopTableRows if column's cell value is in not in filters
               if (!table.rows[i].children[key].innerText.toUpperCase().split(/, | \bor\b/).filter(x=>filters[key].slice(",").includes(x))) {
                 continue loopTableRows;
               }
             }
           }
-          
+
           // for splitable columns, the cell value is split so that each choice is listed individually; for example, if the colors are blue, red, purple, they're separated and each is only listed once
-          
-          let arrCellVals = 
+
+          let arrCellVals =
               splitableCols.includes(colName)?
               table.rows[i].children[forCell.cellIndex].innerText.split(/, | \bor\b |;/):
               [table.rows[i].children[forCell.cellIndex].innerText];
@@ -1434,17 +1434,17 @@ function getUnqVals(forCell) {
           // only add the value if it's not already in the array, is not empty and not filtered out using columns other than clicked (the last one is taken care of earlier)
             if (rUnqVals.indexOf(x.trim()) === -1 && x.length > 0) {
               rUnqVals.push(x.trim());
-            } 
+            }
           })
-          
+
         }
-      } 
+      }
       // sort the drop down values alphabetically
       rUnqVals.sort();
     }
 
     let alphaFlag = null;
-    
+
     // add the drop down values to the UL dropList
     for (let i = 0, l = rUnqVals.length; i < l; i++) {
       let liText = document.createElement("li");
@@ -1454,9 +1454,9 @@ function getUnqVals(forCell) {
         alphaFlag = rUnqVals[i][0];
         liText.classList.add(rUnqVals[i][0].toLowerCase());
       }
-      
+
       // format already-selected unique values, uless pulling names to add a new plant
-      if (filters[forCell.cellIndex] 
+      if (filters[forCell.cellIndex]
           && forCell.children[1].id.toString().substr(0,11) != "btnNewPlantCopy") {
         if (filters[forCell.cellIndex].includes(rUnqVals[i].toUpperCase())) {
           liText.classList.add("selectedCustomChoice");
@@ -1465,9 +1465,9 @@ function getUnqVals(forCell) {
       liText.appendChild(document.createTextNode(rUnqVals[i]));
       dropList.append(liText);
     }
-        
+
   }
-  
+
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1487,7 +1487,7 @@ function addClearingBtn(toCell) {
 // this function removes the clearing button, first checking that it's there
 function removeClearingBtn(fromCell) {
   let delBtn = fromCell.getElementsByClassName("btnRight")[0];
-  // when removing the delete button, do the clean up: 
+  // when removing the delete button, do the clean up:
   if (delBtn) {
     // clear the cell value and placeholder
     fromCell.children[0].value = "";
@@ -1534,11 +1534,11 @@ function displayColumns(tgt) {
   // update the button text and the name of the view, stored in session storage
   if (viewOrder.indexOf(tgt.innerText) === viewOrder.length -1) {
     tgt.innerText = viewOrder[0];
-  } 
+  }
   else {
     tgt.innerText = viewOrder[viewOrder.indexOf(tgt.innerText)+1];
   }
-  
+
   // determine which columns to show, based on the view chosen
   switch (tgt.innerText) {
     case "Plan":
@@ -1556,7 +1556,7 @@ function displayColumns(tgt) {
       showColName = sessionStorage.hiddenColumns.split(",");
       break;
     }
-  
+
   // hide/show columns and update session storage, recording hidden
   // columns only, full view (default) is not recorded; not using
   // storeHiddenCol() here, as it's easier to overwrite stored entry
@@ -1589,7 +1589,7 @@ function customColumnDisplay(colNr, show) {
     $("td:nth-child(" + (colNr+1) + "),th:nth-child(" + (colNr+1) + ")").show();
     // style the clicked column's display in the drop down menu
       droppedElements.children[colNr].classList.remove("disabledCustomChoice");
-  } 
+  }
   else {
     // show the clicked column; plus 1 for jQuery;
     $("td:nth-child(" + (colNr+1) + "),th:nth-child(" + (colNr+1) + ")").hide();
@@ -1613,12 +1613,12 @@ function storeHiddenCol(colLiText, hide) {
       if (sessionStorage.hiddenColumns.split(",").indexOf(colLiText) === -1) {
 	      sessionStorage.hiddenColumns += "," + colLiText;
       }
-    } 
+    }
     // otherwise, create hiddenColumns in sessionStorage using column name supplied
     else {
       sessionStorage.hiddenColumns = colLiText;
     }
-  } 
+  }
   else {
     // check if hiddenColumns exists in sessionStorage
     if (sessionStorage.hiddenColumns) {
@@ -1633,10 +1633,10 @@ function storeHiddenCol(colLiText, hide) {
         sessionStorage.removeItem("viewName");
         document.getElementById("btnView").innerText = "Full";
         $("#btnCustomCols").hide();
-      } 
+      }
       else {
         $("#btnCustomCols").show();
-        sessionStorage.hiddenColumns = storedHiddenCols;   
+        sessionStorage.hiddenColumns = storedHiddenCols;
       }
     }
   }
@@ -1663,7 +1663,7 @@ function cleanView() {
 
 //////////////////////////////////////////////////////////////////////
 // this function is triggered by a click or key entry anywhere on the page;
-// it handles all events/functionality except: 
+// it handles all events/functionality except:
 // - update and delete inner buttons of user added plant buttons x3
 function allClicks(e) {
 
@@ -1671,7 +1671,7 @@ function allClicks(e) {
 
   // make cells editable when user double cicks on editable cell, those within notes, status, garden location
     if (e.type === "dblclick") {
-      if (tgt.classList.contains("editableCol")) {  
+      if (tgt.classList.contains("editableCol")) {
         // the following 'if block' clears selected text that always happens on double click
         if(document.selection && document.selection.empty) {
           document.selection.empty();
@@ -1700,7 +1700,7 @@ function allClicks(e) {
 
       try {
         let str = tgt.parentElement.children[0].src;
-        tgt.parentElement.children[0].src = 
+        tgt.parentElement.children[0].src =
         str.replace(
           str.match(/\d+.jpg/),
           parseInt(str.match(/\d+.jpg/))+ increment +'.jpg');
@@ -1725,7 +1725,7 @@ function allClicks(e) {
   // -- key entries -------------------------------------------------
   if (e.type === "keyup") {
     // exit the function if the key clicked is a tab (9) or changing window tabs (91) and this is not a ctrl(cmd)+delete(backspace) click(91) in the editable fields or any key is clicked inside imp/exp text area
-    if ((e.keyCode === 91 && !["filterInput","inputRangeMin","inputRangeMax"].includes(tgt.className) && !tgt.contentEditable) 
+    if ((e.keyCode === 91 && !["filterInput","inputRangeMin","inputRangeMax"].includes(tgt.className) && !tgt.contentEditable)
        || e.keyCode === 9
        || tgt.classList.contains("exp")) {
       return;
@@ -1738,12 +1738,12 @@ function allClicks(e) {
     else if (tgt.classList.contains("filterInput") && tgt.value.match(/^.+$/)) {
       filterByText(e);
     }
-    
+
     // if alphanumeric text is typed/edited in the min/max ranges of width/height columns
     else if (tgt.classList.toString().includes("inputRange") && tgt.value.match(/^.+$/)) {
       filterBySizeRange(e);
-    }  
-    
+    }
+
     // if text is deleted from filtering fields, including size ranges
     else if (["filterInput","inputRangeMin","inputRangeMax"].includes(tgt.className)
       // .. or delete/erase key or ctrl(cmnd)+delete keys are pressed until all the text is erased
@@ -1751,7 +1751,7 @@ function allClicks(e) {
              && tgt.value.length === 0) {
       clearFilter(tgt);
     }
-    
+
     // if text is typed within new plant row
     else if (tgt.id === "newPlantRow"
             || (tgt.contentEditable === "true" && tgt.parentElement.parentElement.id === "newPlantRow")) {
@@ -1760,12 +1760,12 @@ function allClicks(e) {
       // disabled until code is ready
 //       tgt.parentElement.parentElement.querySelector("#btnNewPlantSubmit").style.display = "block";
     }
-    
+
     // if changes are made to Notes, Status, or Garden Location columns
     else if (["Notes", "Status", "Garden\xa0Location"].includes(arrHeaders[tgt.cellIndex])) {
       addBtnUsrChgs(tgt, e);
     }
-    
+
     // keyup in import window
     else if (tgt.classList.contains("imp") && tgt.tagName === "TEXTAREA") {
       // if the data is in the correct format, display done button
@@ -1778,7 +1778,7 @@ function allClicks(e) {
         tgt.parentElement.children[2].style.display = "none";
       }
     }
-    
+
     // scroll through photos in the photo gallery on the arrow clicks
     else if (document.getElementById("picGal").style.display === "block") {
       let picGal = document.getElementById("picGal");
@@ -1788,26 +1788,26 @@ function allClicks(e) {
         tgt = picGal.children[2];
         pictureScroll("forward");
       }
-      
+
       else if ([37,38].includes(e.keyCode) && picGal.children[1].style.display === "block") {
         tgt = picGal.children[1];
         pictureScroll("previous");
       }
     }
-    
+
     // scroll to the right letters on letter click
     else if (document.getElementsByClassName("dropUnqVals").length) {
       let uList = document.getElementsByClassName("dropUnqVals")[0];
       let lItem = uList.getElementsByClassName(e.key.toLowerCase())[0];
       if (lItem) uList.scrollTop = lItem.offsetTop - 1;
     }
-    
+
     // all other cases - roll up all the drop down menus
     else {
       cleanView();
     }
   }
-  
+
   // -- data is pasted -------------------------------------------------
   else if (e.type === "paste") {
     // blank text is pasted
@@ -1842,7 +1842,7 @@ function allClicks(e) {
     }
     else return;
   }
-  
+
   // -- data is cut -------------------------------------------------
   else if (e.type === "cut") {
     // alphanumeric text is cut/edited in a filter field
@@ -1855,7 +1855,7 @@ function allClicks(e) {
     }
     // all text is cut from a filter field, including size ranges
     else if ((tgt.className === "filterInput"
-         || ["inputRangeMin", "inputRangeMax"].includes(tgt.className)) 
+         || ["inputRangeMin", "inputRangeMax"].includes(tgt.className))
       && tgt.value.length === 0) {
       clearFilter(tgt);
     }
@@ -1869,39 +1869,39 @@ function allClicks(e) {
     }
     else return;
   }
-  
+
   // -- mouse clicks or finger taps -------------------------------------------------
   else if (e.type === "click") {
-    
+
     // clicks on up / down speedy buttons
     if (tgt.classList.contains("btnDn")) {
       cleanView();
       goDn();
-    } 
+    }
     else if (tgt.classList.contains("btnUp")) {
       cleanView();
       goUp();
     }
-    
+
     // view settings
     // btnView is clicked: scroll through views
     else if (tgt.className === "fa fa-fw fa-cog" && tgt.parentElement.id === "btnView"
        || tgt.id === "btnView") {
-      cleanView();  
+      cleanView();
       displayColumns(tgt);
     }
-        
+
     // a click on a table header's eye icon
     else if (tgt.classList.contains("fa-eye") && tgt.parentElement.tagName === "TH") {
       customColumnDisplay(arrHeaders.indexOf(tgt.parentElement.innerText), false);
       storeHiddenCol(tgt.parentElement.innerText, true);
     }
-    
+
     // a click on an eye icon in the nav bar
     else if (tgt.className === "fas fa-eye" && tgt.parentElement.className === "navbar") {
       $("#dropColNames").toggle();
     }
-    
+
     // a click on one of the custom drop down choices (column choices)
     else if (tgt.classList.contains("customChoice") && tgt.parentNode.id === "dropColNames") {
       if (table.getElementsByTagName("TH")[arrHeaders.indexOf(tgt.innerText)].style.display === "none") {
@@ -1913,7 +1913,7 @@ function allClicks(e) {
         storeHiddenCol(tgt.innerText, true);
       }
     }
-    
+
     // an import/export button of navbar is clicked
     else if (tgt.id === "btnExportImport") {
       $("#dropExportImport").toggle();
@@ -1922,7 +1922,7 @@ function allClicks(e) {
         expImpButton[1].parentElement.parentElement.removeChild(expImpButton[1].parentElement);
       }
     }
-    
+
     // when one of the Export/Import drop down choices is clicked - /TODO: replace export/import text area with a form to avoid quote format nightmare
     else if (tgt.classList.contains("customChoice") && tgt.parentNode.id === "dropExportImport") {
       // hide the Export/Import submenu
@@ -1934,7 +1934,7 @@ function allClicks(e) {
     else if ((tgt.classList.contains("exp")||tgt.classList.contains("imp")) && tgt.tagName === "TEXTAREA") {
       return;
     }
-    
+
     // tap on the export/import close/cancel button
     else if (tgt.classList.contains("expImp") && tgt.classList.contains("btnRight")) {
       document.body.removeChild(tgt.parentElement);
@@ -1947,21 +1947,21 @@ function allClicks(e) {
       document.execCommand("copy");
       document.body.removeChild(tgt.parentElement);
     }
-    
+
     // tap on the import done/go button: format & load data into local storage
     else if (tgt.classList.contains("imp") && tgt.classList.contains("btnLeft")) {
-      
+
       // ensure the correct JSON-parseable format of imported data "Latin Name":"notes, status or location text" by splitting the text's key value pairs, replacing double quotes with two singles ane recomposing
 
-      // ..1. starting at the first double quote, thus skipping optional title, 
+      // ..1. starting at the first double quote, thus skipping optional title,
       //  split the text using delimeter: double quote follower by comma follower by optional space
       //      thus checking that all entries end with a double quote
       let txtEntries = tgt.parentElement.children[0].value.slice(
-        tgt.parentElement.children[0].value.search('"')+1, 
+        tgt.parentElement.children[0].value.search('"')+1,
         tgt.parentElement.children[0].value.length-1).split(/\",\s?\"/);
-    
-      // ..2. start the entry with a curly brace 
-      let formattedEntry = "{\"";    
+
+      // ..2. start the entry with a curly brace
+      let formattedEntry = "{\"";
 
       // ..3. scroll through entries
       for (let i = 0, len = txtEntries.length; i < len; i++) {
@@ -1979,7 +1979,7 @@ function allClicks(e) {
           }
         }
       }
-    
+
       // check if latin names of the imported entries exist
       for(key in JSON.parse(formattedEntry)){
         if (unqLatinNames.forEach(x => key.toUpperCase() === x.toUpperCase())){
@@ -1995,7 +1995,7 @@ function allClicks(e) {
     else if (tgt.tagName === "TH") {
       sortTable(e.target.cellIndex);
     }
-    
+
     // click on a filtering drop down icon
     else if (["filterRow", "filterCell"].includes(tgt.parentElement.className)
                && tgt.classList.contains("fa-filter")) {
@@ -2007,7 +2007,7 @@ function allClicks(e) {
         getUnqVals(tgt.parentElement);
       }
     }
-    
+
     // todo: need to rework filtering
     // click on a drop down choice
     else if (tgt.parentElement.parentElement
@@ -2033,7 +2033,7 @@ function allClicks(e) {
         // if the removed element was the last one in array, remove the emptying button and delete that whole entry for the object, update sessionStorage
         if (filters[forCell.cellIndex].length === 0) {
           removeClearingBtn(forCell);
-        } 
+        }
         // if there is only one selection remaining, update the filter field to show it instead of ***
         else if (filters[forCell.cellIndex].length === 1) {
           forCell.children[0].value = filters[forCell.cellIndex][0].toLowerCase();
@@ -2066,13 +2066,13 @@ function allClicks(e) {
       }
       filterData(); // todo: when reworking filters, here is the call to the needed function
     }
-    
+
     // click on filter-clearing scissors
     else if (["filterRow", "filterCell"].includes(tgt.parentElement.className)
                &&  tgt.classList.contains("fa-cut")) {
       clearFilter(tgt);
     }
-    
+
     // click on clear all filters button, upper scissors
     else if (tgt.id === "btnClearAllFilters") {
       // hide the scissors button
@@ -2129,9 +2129,9 @@ function allClicks(e) {
     else if (tgt.className === "pic") {
       openGallery(tgt);
     }
-    
+
     // if a picture gallery button is clicked
-    else if (tgt.className === "btnImg" || 
+    else if (tgt.className === "btnImg" ||
              ["btnRight","btnLeft"].includes(tgt.className) &&
              tgt.parentElement.id === "picGal"
             ) {
@@ -2152,7 +2152,7 @@ function allClicks(e) {
     // -- all other clicks -------------------------------------------------
     else {
       // clear view if a click is not on export/import or new plant's buttons
-      if (!(["expImp", "btnInner"].map(i => {return tgt.classList.contains(i)}).reduce((a,b)=> a+b) 
+      if (!(["expImp", "btnInner"].map(i => {return tgt.classList.contains(i)}).reduce((a,b)=> a+b)
             && ["btnRight","btnLeft"].map(i => {return tgt.classList.contains(i)}).reduce((a,b)=> a+b)
             || tgt.classList.toString().includes("inputRange")
             || (tgt.children[0] && tgt.children[0].classList.toString().includes("inputRange")))) {
@@ -2182,7 +2182,7 @@ function openGallery(tgt) {
   picGallery.children[1].style.display = "none";
   if (Number(tgt.attributes.value.value) > 1) {
     picGallery.children[2].style.display = "block";
-  } 
+  }
   else {
     picGallery.children[2].style.display = "none";
   }
