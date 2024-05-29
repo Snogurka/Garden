@@ -3,14 +3,14 @@
    Ids are created for each plant's and garden's groups and
    are prefixed with p_ for plants, with g_ for gardens;
 ******************************************************************/
-////////////////////////////
 //     global variables
 const xmlns = "http://www.w3.org/2000/svg";
 var svgPlace = null;
 const size = 6; //size variable is used in garden & plant size calculations
 const mos = [ "Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec" ];
 const winterMos = [ "Jan", "Feb", "Oct", "Nov", "Dec" ];
-////////////////////////////
+var currMonth = null;
+
 //      moving and resizing
 var clickedGroup = null;
 var coord = null; //coordinate of touch/click adjusted by CTM
@@ -20,11 +20,13 @@ var resize = null; //1: horizontal, 2: vertical, 3: both;
 var moving = false;
 var clickPos = {}; //stores cursor location upon first click
 var munit = 0;
-////////////////////////////
+var isMobile = false;
 
 //////////////////////////////////////////////////////////////////////
 //this function is called on window load and loads existing garden design from user's local storage
-function myMain(){
+function myMain() {
+  isMobile =  window.matchMedia("only screen and (max-width: 600px)").matches;
+
   svgPlace = document.getElementById("svgArea");
   let zoomIn = 2;
   let zoomer = parseInt(localStorage.getItem("zoomer"), 10) || 2;
@@ -36,10 +38,8 @@ function myMain(){
   svgPlace.viewBox.baseVal.height = window.screen.height * zoomer;
 
   // munit = my unit, the font size, if set to 14, munit is ~7.11
-  munit = Math.round((Number(window.getComputedStyle(svgPlace, null).getPropertyValue("font-size").replace("px",""))/1.9 + Number.EPSILON) * 100) / 100;
-
-  // add flowering patterns
-  const flower = ' id="polka" viewBox="-10,-10,20,20" width="20%" height="20%" fill="grey"';
+  munit = Math.round((Number(window.getComputedStyle(svgPlace, null)
+    .getPropertyValue("font-size").replace("px",""))/1.9 + Number.EPSILON) * 100) / 100;
 
   // add linear gradients for each sun/soil combination, stored in an array
   const sunColors = {"Full":["#ffe922", "50%"], "Part":["#ddcc38", "30%"], "Shade":["#bfba71", "30%"]};
@@ -65,16 +65,16 @@ function myMain(){
   });
 
   // display current month
-  document.getElementById("currentMonth").innerText = mos[new Date().getMonth()];
+  currMonth = new Date().getMonth();
+  document.getElementById("currentMonth").innerText = mos[currMonth];
 
   // check if localStorage is available and load the existing design, if there is one
-  if(checkLocalStorage()){
+  if (checkLocalStorage()) {
     loadExistingDesign();
   }
 
-  // if mobile, add a little flower in the top left corner - check what's needed first
-  if (window.matchMedia("only screen and (max-width: 600px)").matches) {
-    console.log('mobile detected by matchMedia');
+  // if mobile, add a little dot in the top left corner
+  if (isMobile) {
     const orientir = document.createElement("div");
     orientir.className = "orientir";
     document.body.insertBefore(orientir, document.querySelector("#svgPlace"));
@@ -85,33 +85,13 @@ function myMain(){
 // create linear gradients for the gardens
 function addGradient(specs) {
   const grad = document.createElementNS(xmlns,`${specs.tp}Gradient`);
-  grad.setAttribute('id', camelCase(specs.id));//id name must not contain spaces
+  grad.setAttribute('id', camelCase(specs.id));
 
-  if (specs.tp === "linear") {
-    grad.setAttribute('x1', "50%");
-    grad.setAttribute('x2', "50%");
-    grad.setAttribute('y1', "0%");
-    grad.setAttribute('y2', "100%");
-  }
-  else {
-    // inconspicuous flowers are colored differently
-    if (specs.id.includes("i_")) {
-      const col = colorConverter(specs.id.replace("i_",""));
-      specs.stops = {
-        "0%":[col,"0.1"],
-        "10%":[col,"0.05"],
-        "60%":[col,"0.2"]
-      }
-    } else if (!specs.stops) {
-      const col = colorConverter(specs.id);
-      specs.stops = {
-        "0%":[col,"0.9"],
-        "50%":[col,"0.7"],
-        "80%":[col,"0.3"],
-        "100%":[col,"0.1"]
-      };
-    }
-  }
+  grad.setAttribute('x1', "50%");
+  grad.setAttribute('x2', "50%");
+  grad.setAttribute('y1', "0%");
+  grad.setAttribute('y2', "100%");
+
   for (x in specs.stops) {
     const stop = document.createElementNS(xmlns ,'stop');
     stop.setAttribute("offset", x);
@@ -146,32 +126,33 @@ function checkLocalStorage() {
 }
 
 //////////////////////////////////////////////////////////////////////
-//pull previously designed gardens and plants and recreate them
+// pull previously designed gardens and plants and recreate them
 function loadExistingDesign() {
-  //  capture the number of gardens created
+  // capture the number of gardens created
   let gardens =  localStorage.aas_myGardenVs_grdns;
   if (gardens) {
     gardens = gardens.split(",");
     for (let i = 0, l = gardens.length; i < l; i++){
-      //pull gardens counter from local storage
+      // pull gardens counter from local storage
       let garden = localStorage.getItem("aas_myGardenVs_grdn"+gardens[i].toString());
-      //recreate gardens based on the counter and stored garden id, x, y, w, h, nm (name), sn (sun), sl (soil)
+      // recreate gardens based on the counter and
+      // stored garden id, x, y, w, h, nm (name), sn (sun), sl (soil)
       if (garden) {
         garden = garden.split(",");
-        addGarden(
-          {gId:gardens[i],
-           x:Number(garden[0]),
-           y:Number(garden[1]),
-           w:Number(garden[2]),
-           h:Number(garden[3]),
-           nm:garden[4].replaceAll(";;",","),
-           sn:garden[5],
-           sl:garden[6]
-          });
+        addGarden({
+          gId: gardens[i],
+          x: Number(garden[0]),
+          y: Number(garden[1]),
+          w: Number(garden[2]),
+          h: Number(garden[3]),
+          nm: garden[4].replaceAll(";;",","),
+          sn: garden[5],
+          sl: garden[6]
+        });
       }
     }
   }
-    // capture the number of plants created
+  // capture the number of plants created
   let plants = localStorage.aas_myGardenVs_plnts;
   if (plants){
     plants = plants.split(",");
@@ -179,24 +160,25 @@ function loadExistingDesign() {
       let plant = localStorage.getItem("aas_myGardenVs_plnt"+plants[i]);
       if (plant) {
         plant = plant.split(",");
-        //recreate each plant using stored values
+        // recreate each plant using stored values
         addPlant({
-          pId:plants[i],
-          x:Number(plant[0]),
-          y:Number(plant[1]),
-          w:Number(plant[2]),
-          h:Number(plant[3]),
-          nm:plant[4],  //plant name
-          gId:plant[5], //garden that the plant belons to, if any
-          lnm:plant[6], //latin name
-          shp:plant[7], //shape: tree, flower, bush, etc. & the leafiness
-          clr:plant[8], //camelCased, user choice or 1st available
-          blm:plant[9]  //array of in-bloom month numbers
+          pId: plants[i],
+          x: Number(plant[0]),
+          y: Number(plant[1]),
+          w: Number(plant[2]),
+          h: Number(plant[3]),
+          nm: plant[4],  // plant name
+          gId: plant[5], // garden that the plant belons to, if any
+          lnm: plant[6], // latin name
+          shp: plant[7], // shape: tree, flower, bush, etc. & the leafiness
+          clr: plant[8], // camelCased, user choice or 1st available
+          blm: plant[9]  // array of in-bloom month numbers
         });
       }
     }
   }
-  if (!gardens && !plants) {
+  if (!gardens && !plants && localStorage.aas_myGardenVs_warnings === "0"
+    && localStorage.aas_myGardenVs_units === "0" && localStorage.aas_myGardenVs_zoomer === "2") {
     const initText = document.createElement("div");
     initText.id = "initText";
     initText.textContent = "Welcome to the Garden Design page. "+
@@ -211,7 +193,6 @@ function loadExistingDesign() {
     closeButton.textContent = "x";
     closeButton.classList.add("btnHelper");
     closeButton.classList.add("btnClose");
-    //todo: check the evt - should not be accepted as a parameter
     closeButton.addEventListener("click", function(evt) {
       document.body.removeChild(evt.target.parentElement);
     });
@@ -223,32 +204,36 @@ function loadExistingDesign() {
 //////////////////////////////////////////////////////////////////////
 // change the garden look according to the selected month
 function changeMonth(tgt) {
-  if (tgt.id === "currentMonth") {
+  if(tgt.id === "currentMonth") {
     const monthMenu = getUL({values: mos});
     monthMenu.id = "monthMenu";
     tgt.appendChild(monthMenu);
   } else {
     let lsPlants = localStorage.aas_myGardenVs_plnts;
-    if (lsPlants) {
+    if(lsPlants) {
       lsPlants = lsPlants.split(",");
       // update header
       tgt.parentElement.parentElement.innerText = tgt.innerText;
+      currMonth = mos.indexOf(tgt.innerText);
 
-      for (let i = 0, l = lsPlants.length; i < l; i++) {
-        let lsPlant = localStorage.getItem("aas_myGardenVs_plnt"+lsPlants[i]);
+      for(let i = 0, l = lsPlants.length; i < l; i++) {
+        let lsPlant = localStorage.getItem("aas_myGardenVs_plnt" + lsPlants[i]);
         if(lsPlant) {
           lsPlant = lsPlant.split(",");
 
-          //get the lsPlant element
+          // get the lsPlant element
           const plantElt = document.getElementById("p_" + lsPlants[i]);
-
-          // if blooms in current month
-          if (lsPlant[9].split(';').includes(mos.indexOf(tgt.innerText).toString())){
-            plantElt.children[0].style.fill = lsPlant[8].replace("i_","");  // plant color is in lsPlant[8]
-          } else if (lsPlant[7][1] === "e" || !winterMos.includes(tgt.innerText)) {  // if evergreen or non-winter month, an annual would have "a"
+          // if blooms in current month:
+          if(lsPlant[9].split(';').includes(mos.indexOf(tgt.innerText).toString())) {
+            colorPlant(plantElt.children[0], plantElt.id, lsPlant[8]);
+          } else {
+            plantElt.children[0].style.textShadow = "none";
+          }
+          // if evergreen or non-winter month, an annual would have "a"
+          if(lsPlant[7][1] === "e" || !winterMos.includes(tgt.innerText)) {
             plantElt.children[0].style.fill = "green";
           } else {
-            plantElt.children[0].style.fill = "";
+            plantElt.children[0].style.fill = "var(--plant-text-color)";
           }
         }
       }
@@ -352,9 +337,10 @@ function settingsMenu(clickedElt) {
 // fast scroll to the plant that starts with a clicked letter
 function scrollToLetter(e) {
   const uList = document.getElementsByTagName("ul")[0];
+  if (!uList) return;
   const letter = isNaN(e) ? e.innerText : String.fromCharCode(e);
   const lItem = uList.getElementsByClassName(letter)[0];
-  if( lItem ) uList.scrollTop = lItem.offsetTop - 1;
+  if (lItem) uList.scrollTop = lItem.offsetTop - 1;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -370,19 +356,21 @@ function getAvgNum(origVal) {
   else if (inchVal) {finalExtracted = inchVal.map(x=>parseFloat(x));}
   else if (footVal) {finalExtracted = footVal.map(x=>parseFloat(x)*12);}
   finalExtracted = finalExtracted.reduce((a,b)=>(a+b))/finalExtracted.length.toString();
-// finalExtracted === 0?finalExtracted=1:finalExtracted; //todo: how to deal with plants without width and height?
+// finalExtracted === 0?finalExtracted=1:finalExtracted; //todo: plants without width and height?
 	return finalExtracted;
 }
 
-//////////////////////////////////////////////////////////////////////
-// this function returns UL drop down menu with the values either supplied in the menu parameter or pulled from plants json file
+/**
+ * @param {object} menu object has xPos, yPos, type, [gId], [values]
+ * @returns UL drop down menu with the values either supplied in
+ * the menu parameter or pulled from plants json file
+ */
 function getUL(menu) {
-	//the menu parameter has: xPos, yPos, type, [gId], [values]
 
-  //hide any showing menus; when the 'add new plant' choice is clicked, don't hide drop down menus
+  // hide any showing menus; when the 'add new plant' choice is clicked, don't hide drop down menus
   hideDropDown();
 
-  //the newLetter is used for adding scroll to points in the add plant menu
+  // the newLetter is used for adding scroll to points in the add plant menu
   let newLetter = null;
   let letters = [];
 
@@ -394,7 +382,7 @@ function getUL(menu) {
   const alphaMenu = document.createElement("ul");
   const zetaMenu = document.createElement("ul");
 
-  //this inner function adds supplied values to supplied UL
+  // this inner function adds supplied values to supplied UL
   function populateList(vals, toMenu) {
     for (let i = 0, l = vals.length; i < l; i++){
       const liText = document.createElement("li");
@@ -406,19 +394,19 @@ function getUL(menu) {
     }
   }
 
-  //this inner function filters all plants down to just the selected group
+  // this inner function filters all plants down to just the selected group
   function filterByGroup(tgt) {
 
     if (tgt.tagName != "LI") return;
 
-    //color all choices grey, then uncolor the selected; done via class
+    // color all choices grey, then uncolor the selected; done via class
     tgt.parentElement.childNodes.forEach(x => {
       (x === tgt || tgt.textContent === "all") ? x.classList.remove('disabledCustomChoice') : x.classList.add('disabledCustomChoice')
     });
 
     for (let i = 0, len = dropMenu.childElementCount; i < len; i++) {
       let compVal = dropMenu.children[i].getAttribute("title").split(",")[0];
-      //group the plans into generic groups
+      // group the plans into generic groups
       switch (compVal) {
         case 'brush':
         case 'grass':
@@ -436,14 +424,14 @@ function getUL(menu) {
           compVal = 'flower';
           break;
         }
-      //hide or display the menu
+      // hide or display the menu
       if (tgt.textContent === compVal || tgt.textContent === "all") {
         dropMenu.children[i].style.display = "block";
       } else {
         dropMenu.children[i].style.display = "none";
       }
     }
-    //letter shortcut menus are faded for all menus except "all"
+    // letter shortcut menus are faded for all menus except "all"
     if (tgt.textContent != "all") {
       alphaMenu.style.opacity = "0.1";
       zetaMenu.style.opacity = "0.1";
@@ -453,19 +441,19 @@ function getUL(menu) {
     }
   }
 
-  //if menu values are supplied, add them to the menu
+  // if menu values are supplied, add them to the menu
   if (menu.values) {
     populateList(menu.values, dropMenu);
   }
-  //otherwise, if menu values are not supplied, retrieve the data from the plants.json file, shared with db tab & ls
+  // otherwise, retrieve the data from the plants.json file, shared with db tab & ls
   else {
     fetch('plants.json')
       .then((res) => {
         return(res.json());
       })
       .then((myObj) => {
-        //if there are plants added by user in db, append those to the list of plants
-        //if plant counter exists in local storage...
+        // if there are plants added by user in db, append those to the list of plants
+        // if plant counter exists in local storage...
         const plantCounter = localStorage.getItem("gDb_rPlntsCntr");
         if (plantCounter) {
           for (let i = 0, len = plantCounter.length; i < len; i++) {
@@ -494,32 +482,32 @@ function getUL(menu) {
           menu.filter = newFilters;
         }
 
-        //if no plants exist for a chosen criteria, such as garden name, etc.
+        // if no plants exist for a chosen criteria, such as garden name, etc.
         if (!["all", "companions"].includes(menu.type) && (menu.filter === ", " || !menu.filter.length)) {
           const liText = document.createElement("li");
           liText.textContent = "There are no recorded plants that match this criteria.";
           dropMenu.appendChild(liText);
         }
         else {
-          //add an option to create all filtered plants; if type is all then don't need this option, as that would be too many
+          // add an option to create all filtered plants; if type is all then don't need this option, as that would be too many
           if (menu.type != "all") {
             const liText = document.createElement("li");
             liText.className = "customChoice plant";
             liText.textContent = "Add All Plants";
             dropMenu.appendChild(liText);
           }
-          //add filtered plant names to the menu
+          // add filtered plant names to the menu
           for (x in myObj) {
             if (menu.type === "all"
-                //if a plant name (0) is in the list of plantFilters, add it as a companion plant
+                // if a plant name (0) is in the list of plantFilters, add it as a companion plant
                 || menu.type === "companions" && menu.filter.includes(myObj[x][0].toLowerCase())
-                //if the plant, for which companions are pulled is itself a companion for a plant (myObj[x]) and hasn't been added to menu filter yet, add it
+                // if the plant, for which companions are pulled is itself a companion for a plant (myObj[x]) and hasn't been added to menu filter yet, add it
                 || (menu.type === "companions" &&
                     myObj[x][16].includes(menu.forPlantCN) &&
                     !(menu.filter.includes(myObj[x][1])))
-                //if the month matches
+                // if the month matches
                 || menu.type === "timeToPlant" && myObj[x][19].toLowerCase().indexOf(menu.filter) > -1
-                //if the name of current garden is local storage
+                // if the name of current garden is local storage
                 || menu.type === "gName" && menu.filter.includes(x)
                 || menu.type === "sunSoil"
                   && myObj[x][10].toLowerCase().indexOf(menu.filter[0]) > -1
@@ -528,19 +516,19 @@ function getUL(menu) {
             {
               const liText = document.createElement("li");
               liText.className = "customChoice plantName";
-              //need common(2) and latin(1) names, class(3), height(4), width(5), sun(10), image(29)
+              // need common(2) and latin(1) names, class(3), height(4), width(5), sun(10), image(29)
               liText.title = myObj[x][3]+", sun: "+myObj[x][10];
               liText.innerHTML = myObj[x][0];
               liText.setAttribute("data-lnm", x);
-              //extract average height and width
+              // extract average height and width
               liText.setAttribute("data-avgh",getAvgNum(myObj[x][4]));
               liText.setAttribute("data-avgw",getAvgNum(myObj[x][5]));
 
-              //capture the first letters of plant type
+              // capture the first letters of plant type
               let shp = ["flower","tree","vine"].includes(myObj[x][3]) ?
                 myObj[x][3][0] : "b";
 
-              //capture the leafyness
+              // capture the leafyness
 //               if (myObj[x][7].includes("semi-evergreen")) {
 //                 shp += "s"
 //               } else //semi-evergreen is rolled into evergreen for now
@@ -592,8 +580,6 @@ function getUL(menu) {
             dropMenu.children[0].innerText = "There are no recorded plants that match this criteria.";
           }
 
-          // ToDo: for later, display letter buttons only on mobile devices
-          let isMobile = false;
           // add class filtering menus when all plants are shown in the menu
           if (menu.type === "all") {
             if (isMobile) {
@@ -651,10 +637,10 @@ function rangeCheck(x, min, max) {
 // function to make a UL, adding onclick functionality to each LI
 function addPlantMenu(menu) {
 
-  //call a function to create UL with plants at the position of a click
+  // call a function to create UL with plants at the position of a click
   const dropDownMenu = getUL(menu);
 
-  //assign an onclick response that adds a plant(s)
+  // assign an onclick response that adds a plant(s)
   dropDownMenu.addEventListener("click", function(evt) {
 
     // make sure the click is on a custom choice (inside a menu)
@@ -675,13 +661,15 @@ function addPlantMenu(menu) {
     // the x1 through x4 is for current plant's offset
     let x1 = x2 = x3 = x4 = 0;
 
-    // loop through filtered plants and add them;
-    // when adding to garden, the plant is centered within the garden;
-    // otherwise, it's placed to the left of menu;
-    // if the menu was brought up too close to the left edge of the screen, the plant is placed to the right;
-    // vertically, the plant is at the position of its listing in the menu
-    // unless 'Add All Plants' option is clicked, add 1 plant
-    // because liCnt includes the 'Add All Plants' option, the itiration starts at 1, thus set liCnt to 2 for a sinlge addition
+    /* loop through filtered plants and add them;
+    when adding to garden, the plant is centered within the garden;
+    otherwise, it's placed to the left of menu;
+    if the menu was brought up too close to the left edge of the screen,
+    the plant is placed to the right;
+    vertically, the plant is at the position of its listing in the menu
+    unless 'Add All Plants' option is clicked, add 1 plant
+    because liCnt includes the 'Add All Plants' option,
+    the itiration starts at 1, thus set liCnt to 2 for a sinlge addition */
     const liCnt = evt.target.innerText === "Add All Plants" ? ar.length : 2;
     for (let i = 1; i < liCnt; i++) {
       // the x and y offsets for plants added to a garden or freestanding
@@ -727,34 +715,34 @@ function addPlantMenu(menu) {
         // Y-OFFSET: when adding all plants, space them vertically 16px apart; otherwise, the vertical placing is at the location of the name in the list;
         yOffset = evt.target.innerText === "Add All Plants" ?
           parseInt(window.getComputedStyle(evt.target.parentElement).top) + 16 * i :
-          event.pageY;
+          evt.pageY;
         // X-OFFSET: if the menu is too close (within 150px) to the left edge of the screen, add the plant on the right, otherwise - left
 //         todo: check if the x-calculation creates a result that's too long
         if (parseInt(evt.target.parentElement.style.left) < 150) {
-          //xOffset needs to include the alphabet shortcuts that all plants have on the sides
-          xOffset = menu.type === "all" ?
-            parseInt(evt.target.parentElement.nextSibling.nextSibling.style.left) + munit * 5 :
-          parseInt(evt.target.parentElement.style.left) + parseInt(window.getComputedStyle(evt.target.parentElement).width) + munit * 3;
+          // xOffset needs to include the alphabet shortcuts that all plants have on the sides
+          xOffset = menu.type === "all"
+            ? parseInt(evt.target.parentElement.nextSibling.nextSibling.style.left) + munit * 5
+            : parseInt(evt.target.parentElement.style.left) + parseInt(window.getComputedStyle(evt.target.parentElement).width) + munit * 3;
         } else {
-          xOffset = menu.type === "all" ?
-            parseInt(evt.target.parentElement.nextSibling.style.left) - parseInt(window.getComputedStyle(evt.target.parentElement).width) * 0.7 :
-          parseInt(evt.target.parentElement.style.left) - parseInt(window.getComputedStyle(evt.target.parentElement).width) * 0.7;
+          xOffset = menu.type === "all"
+            ? parseInt(evt.target.parentElement.nextSibling.style.left) - parseInt(window.getComputedStyle(evt.target.parentElement).width) * 0.7
+            : parseInt(evt.target.parentElement.style.left) - parseInt(window.getComputedStyle(evt.target.parentElement).width) * 0.7;
         }
       }
 
       const plantLi = evt.target.innerText != "Add All Plants" ? evt.target : evt.target.parentElement.children[i];
       addPlant({
-        pId:null, // plant id is set to null, when creating a new plant
+        pId: null, // plant id is set to null, when creating a new plant
         x: parseFloat(xOffset),
         y: parseFloat(yOffset),
-        w:Number(plantLi.getAttribute("data-avgw")),
-        h:Number(plantLi.getAttribute("data-avgh")),
-        nm:plantLi.innerText, // plant's common name
-        gId:menu.gId?menu.gId:0, // a garden id, where the new plant is planted, 0 at first
-        lnm:plantLi.getAttribute("data-lnm"), // plant's latin name
-        shp:plantLi.getAttribute("data-shp"),
-        clr:plantLi.getAttribute("data-bloomC"),
-        blm:plantLi.getAttribute("data-bloomM")
+        w: Number(plantLi.getAttribute("data-avgw")),
+        h: Number(plantLi.getAttribute("data-avgh")),
+        nm: plantLi.innerText, // plant's common name
+        gId: menu.gId?menu.gId:0, // a garden id, where the new plant is planted, 0 at first
+        lnm: plantLi.getAttribute("data-lnm"), // plant's latin name
+        shp: plantLi.getAttribute("data-shp"),
+        clr: plantLi.getAttribute("data-bloomC"),
+        blm: plantLi.getAttribute("data-bloomM")
       });
     }
   });
@@ -846,15 +834,15 @@ function addGardenPlantUL() {
 }
 
 //////////////////////////////////////////////////////////////////////
-//this function toggles b/w cm and inches, triggered by settings menu
+// this function toggles b/w cm and inches, triggered by settings menu
 function toggleCmIn(units) {
   let vals = ['grdns']; //, 'plnts'];todo: not done, see below
   for (let x = 0, l = vals.length; x < l; x++) {
     if (localStorage.getItem("aas_myGardenVs_"+vals[x])) {
       let counter = localStorage.getItem("aas_myGardenVs_"+vals[x]).split(",");
       for (let i = 0, l = counter.length; i < l; i++) {
-        //for each garden, update the size indicators to display in units chosen
-        //the units in local storage and settings menu are updated before this is called
+        // for each garden, update the size indicators to display in units chosen
+        // the units in local storage and settings menu are updated before this is called
         let grp = svgPlace.getElementById(vals[x][0]+"_"+counter[i]);
         if (vals[x] === "grdns") {
           grp.getElementsByClassName("sizeInd")[0].textContent =
@@ -877,18 +865,18 @@ function toggleCmIn(units) {
   }
 }
 
-//this function converts the supplied size value: if two arguments are supplied,
-//the returned result is one part (all cm or in); if one argument (all cm or in),
-//return two part size (m and cm or ft and in)
-//the incoming size is always in inches
+// this function converts the supplied size value: if two arguments are supplied,
+// the returned result is one part (all cm or in); if one argument (all cm or in),
+// return two part size (m and cm or ft and in)
+// the incoming size is always in inches
 function formatSizeDisplay(x1, x2) {
   //x = units (metric 1 or not 0), x1 = higher group (m or feet), x2 = lower group (cm or in)
     let x = Number(localStorage.aas_myGardenVs_units);
   let ind1 = "", ind2 = "", denom = 1;
   //if metric,
-  //  the incoming size that's in inches needs to be converted to cm
-  //  the denominator used for formatting is 100, otherwise 12
-  //  the displayed format will show m & cm, otherwise ' and "
+  // the incoming size that's in inches needs to be converted to cm
+  // the denominator used for formatting is 100, otherwise 12
+  // the displayed format will show m & cm, otherwise ' and "
   if (x){
     x1 *= 2.54;
     denom = 100;
@@ -901,23 +889,23 @@ function formatSizeDisplay(x1, x2) {
     ind2 = '"';
   }
 
-  //if a second argument is supplied, convert to small units and return one number
+  // if a second argument is supplied, convert to small units and return one number
   if (x2){
     return parseInt(x1*denom+x2,10);
   }
-  //if there are bigger units and a remainder, display bigger and smaller units
+  // if there are bigger units and a remainder, display bigger and smaller units
   else if ((parseInt(x1/denom,10)) && (parseInt(x1%denom,10))) {
     return parseInt(x1/denom,10)+ind1 + parseInt(x1%denom,10)+ind2;
   }
-  //if a bigger unit is 0 and smaller is available (i.e. there is a remainder)
+  // if a bigger unit is 0 and smaller is available (i.e. there is a remainder)
   else if (!(parseInt(x1/denom,10)) && (parseInt(x1%denom,10))) {
     return parseInt(x1%denom,10)+ind2;
   }
-  //if there are bigger units and no smaller units
+  // if there are bigger units and no smaller units
   else if ((parseInt(x1/denom,10)) && !(parseInt(x1%denom,10))) {
     return parseInt(x1/denom,10)+ind1;
   }
-  //otherwise display 0 and smaller unit indicator
+  // otherwise display 0 and smaller unit indicator
   else {
     return 0+ind2;
   }
@@ -926,14 +914,14 @@ function formatSizeDisplay(x1, x2) {
 //     return result;
 }
 
-//////////////////////////////////////////////////////////////////////
-//this function converts color codes to strings and back, depending on
-//the input; it also holds custom color specs
-//******** DO NOT CHANGE THE ORDER OF THE COLORS ********
+/**
+ * onvert color codes to strings and vice versa
+ * @param {color} string the code or name of color
+ * @returns rgb code or a color name, depending on the input
+*/
 function colorConverter (string) {
-
-//   todo: study the Object.freeze
-  const colorCodes = Object.freeze({
+// ******** DO NOT CHANGE THE ORDER OF THE COLORS ********
+  const colorCodes = ({
     "blue":"rgb(40, 116, 237)",
     "brown":"rgb(255, 102, 102)",
     "brownish-red":"rgb(196, 136, 124)",
@@ -946,7 +934,7 @@ function colorConverter (string) {
     "deepGreen":"rgb(0, 102, 0)",
     "deepPink":"rgb(212, 30, 90)",
     "emeraldGreen":"rgb(38, 115, 38)",
-    "gold":"rgb(217, 195, 33)",//stopped here, finish adding colors
+    "gold":"rgb(217, 195, 33)", // stopped here, finish adding colors
     "green":"rgb(50, 133, 59)",
     "greenish-white":"rgb(217, 242, 217)",
     "greenish-yellow":"rgb(230, 255, 179)",
@@ -960,85 +948,82 @@ function colorConverter (string) {
     "peach":"rgb(253, 217, 181)",
     "pink":"rgb(255, 102, 153)",
     "pinkish-lavender":"rgb(242, 211, 227)",
-//     "purple and yellow":"rgba(0,100,0,0.75)",//todo: need code instead of dark green
+//     "purple and yellow":"rgba(0,100,0,0.75)",  // todo: need code instead of dark green
     "purpleRed":"rgb(192, 0, 64)",
     "purplish-pink":"rgb(192, 96, 166)",
     "rose":"rgb(255, 153, 204)",
     "violet":"rgb(230, 130, 255)",
-    "whiteAndPurple":"rgb(240, 240, 240)",//todo: need code instead of dark green
+    "whiteAndPurple":"rgb(240, 240, 240)",  // todo: need code instead of dark green
     "yellowish-green":"rgb(198, 210, 98)",
     "yellowCenter":"rgb(200, 200, 0)"
   });
 
-  //remove i_ (used to make inconspicuous) that might be in a name
-
-	//if an rgb code is sent, return the color name
+	// if an rgb code is sent, return the color name
   if (string.slice(0,3) === "rgb") {
-    for(let key in colorCodes) {
-      if(colorCodes[key] === string) {
-          return key;
+    for (let key in colorCodes) {
+      if (colorCodes[key] === string) {
+        return key;
       }
     }
   }
-  //if a color name that needs to be converted is sent, return rgb
+  // if a color name that needs to be converted is sent, return rgb
   else if (string in (colorCodes)) {
     return colorCodes[string];
   }
-  //otherwise return a color name in camel case when needed
-  //this is used when the color isn't listed in colorCodes, but
-  //its name is valid as is or if converted to camel case notation
+  // otherwise return a color name in camel case when needed
+  // this is used when the color isn't listed in colorCodes, but
+  // its name is valid as is or if converted to camel case notation
   else {
     return camelCase(string);
   }
-
 }
 
 function camelCase(str) {
-  str = str.trim()
+  str = str.trim();
   return str.replace(/\s+(.)/g, function (match, group) {
-      return group.toUpperCase()
-    });
+    return group.toUpperCase();
+  });
 }
 
 //////////////////////////////////////////////////////////////////////
-//this function creates and saves to Local Storage an SVG group representing
-//a garden with functionality to move, resize & delete the group, rename the
-//planting area/garden, and set its sun & soil availability.
+// this function creates and saves to Local Storage an SVG group representing
+// a garden with functionality to move, resize & delete the group, rename the
+// planting area/garden, and set its sun & soil availability.
 function addGarden(elt){
 
-  //var to capture widths of sun & tools gears, used for name centering
+  // var to capture widths of sun & tools gears, used for name centering
   let widthOfSunToolsGear = 0;
 
-  //create a flag used to hide sun, tools, resize on reload;
+  // create a flag used to hide sun, tools, resize on reload;
   let oldGarden = true;
 
-  //to indicate that a NEW planting area is created as opposed to an existing one
-  //loaded from local storage, the supplied id for it is set to null, thus no gId
+  // to indicate that a NEW planting area is created as opposed to an existing one
+  // loaded from local storage, the supplied id for it is set to null, thus no gId
   if (!elt.gId) {
     oldGarden = false;
-    //when creating a NEW garden, as opposed to loading an existing one, create and record
-    //the new garden id: 1 for the first one or the stored garden counter grdnCntr plus one.
+    // when creating a NEW garden, as opposed to loading an existing one, create and record
+    // the new garden id: 1 for the first one or the stored garden counter grdnCntr plus one.
     if (!localStorage.aas_myGardenVs_grdns) {
       elt.gId = 1;
       localStorage.setItem("aas_myGardenVs_grdns","1");
     } else {
-      let IDs = localStorage.aas_myGardenVs_grdns.split(",");
+      const IDs = localStorage.aas_myGardenVs_grdns.split(",");
       elt.gId = Number(IDs[IDs.length-1])+1;
-      //add the new garded id to local storage, i.e. update garden counter
+      // add the new garded id to local storage, i.e. update garden counter
       localStorage.aas_myGardenVs_grdns += "," + elt.gId.toString();
     }
-    //record the new garden area data in local storage and update the total garden count; round x,y,w,h to 2 decimal places
+    // record the new garden area data in local storage and update the total garden count; round x,y,w,h to 2 decimal places
     localStorage.setItem("aas_myGardenVs_grdn"+elt.gId,
                          elt.x.toFixed(1) + "," + elt.y.toFixed(1) + "," +
                          elt.w.toFixed(1) + "," + elt.h.toFixed(1) + "," +
                          elt.nm + "," + elt.sn + "," + elt.sl);
   }
 
-  //class is always "garden" for a garden, so setting it here
+  // class is always "garden" for a garden, so setting it here
   elt.cls = "garden";
 
-  //the group, grp, below keeps all elements of one garden
-  //together so that they move together in the SVG area
+  // the group, grp, below keeps all elements of one garden
+  // together so that they move together in the SVG area
   var grp = document.createElementNS(xmlns, "g");
   grp.setAttribute("transform", "translate(0,0)");
   grp.setAttribute("id", "g_"+elt.gId);
@@ -1048,8 +1033,8 @@ function addGarden(elt){
   // the rectangle (rect) of the planting area (garden)
   grp.appendChild(mkRect(elt));
 
-  //create a sun drop down button using supplied text value, stored in
-  //sn var for an existing garden and sun icon "\uf185" for a new garden
+  // create a sun drop down button using supplied text value, stored in
+  // sn var for an existing garden and sun icon "\uf185" for a new garden
   gardenElt = mkText({
     x:elt.x+munit*0.5,
     y:elt.y+munit*2,
@@ -1059,7 +1044,7 @@ function addGarden(elt){
   widthOfSunToolsGear += gardenElt.getBoundingClientRect().width;
   if (oldGarden) {gardenElt.setAttribute("display", "none");}
 
-  //create the garden tool box - a gear icon drop down
+  // create the garden tool box - a gear icon drop down
   gardenElt = mkText({
     x:elt.x + Number(grp.children[0].getAttribute("width"))-munit*3,
     y:elt.y+munit*2,
@@ -1071,26 +1056,26 @@ function addGarden(elt){
   if (oldGarden) {gardenElt.setAttribute("display", "none");}
 
 
-  //the following creates a "Garden Name" editable text element using supplied value for an existing garden and "New Garden" for a new one; for y-value, check if there is enough room:  width of parent minus approximate width of sun and tools gears, from elt.desc, compared to number of characters in the garden name multiplied by munit (7.37) (approximate size of a letter); if not enough room, y is adjusted so that the; garden name is placed above the garden;
+  // the following creates a "Garden Name" editable text element using supplied value for an existing garden and "New Garden" for a new one; for y-value, check if there is enough room:  width of parent minus approximate width of sun and tools gears, from elt.desc, compared to number of characters in the garden name multiplied by munit (7.37) (approximate size of a letter); if not enough room, y is adjusted so that the; garden name is placed above the garden;
   let nmY = elt.y-munit/2;
   let nmW = 150;
   if (elt.w - widthOfSunToolsGear < nmW) {
     nmY = elt.y-munit*2.7;
   }
   grp.appendChild(mkForeignObj({
-      //center the garden name: parent's x and w less half of garden name width
-      x:(elt.x + elt.w/2 - nmW/2),
-      y:nmY,
-      w:nmW,
-      h:25,
-      desc:widthOfSunToolsGear,
-      cls:"editable",
-      tg:"input",
-      txt:elt.nm
-    }));
+    // center the garden name: parent's x and w less half of garden name width
+    x:(elt.x + elt.w/2 - nmW/2),
+    y:nmY,
+    w:nmW,
+    h:25,
+    desc:widthOfSunToolsGear,
+    cls:"editable",
+    tg:"input",
+    txt:elt.nm
+  }));
 //   gardenElt.setAttribute("contentEditable", "true");
 
-  //create the soil indicator - drop down
+  // create the soil indicator - drop down
   gardenElt = mkText({
     x:elt.x + munit / 2,
     y:elt.y + Number(grp.children[0].getAttribute("height"))-munit,
@@ -1159,6 +1144,8 @@ function createTriPts(x, y) {
 //this function provides decision making for when a garden is clicked
 function gardenFork(clickedElt) {
 
+  if (clickedElt.id === "svgArea") return;
+
   //capture the x&y along with tX&tY of the garden
   const gnX = Number(clickedElt.parentElement.children[0].getAttribute("x")) + clickedElt.parentElement.transform.baseVal.getItem("translate").matrix.e;
   const gnY = Number(clickedElt.parentElement.children[0].getAttribute("y")) + clickedElt.parentElement.transform.baseVal.getItem("translate").matrix.f;
@@ -1220,12 +1207,12 @@ function gardenFork(clickedElt) {
     }
 
     const dropDownMenu = getUL(menu);
-    dropDownMenu.addEventListener("click", function() {
-      chgGarden(event.target, clickedElt);
+    dropDownMenu.addEventListener("click", function(evt) {
+      chgGarden(evt.target, clickedElt);
     });
     document.body.appendChild(dropDownMenu);
 
-    //"btn" argument below is the element that triggers the dropdown
+    // "btn" argument below is the element that triggers the dropdown
     function chgGarden(tgt, btn) {
 
       //if sun or soil "drop down" choice is clicked
@@ -1319,38 +1306,26 @@ function gardenFork(clickedElt) {
     }
   }
 
-  //display editing buttons (sun choices, garden name, toolbox) when a garden is clicked
+  // display editing buttons (sun choices, garden name, toolbox) when a garden is clicked
   else if (clickedElt.classList.contains("garden")){
-
     hideDropDown();
 
-    //if the cicked garden is a simple container, it doesn't have sizers, thus exit - ToDo: WOULD THIS EVER HAPPEN?
-    if (!clickedElt.parentElement.getElementsByClassName("gdnBtn").length)
-      {
-        console.log("a garden with nothing in it, a simple container, with no sizers!");
-        // %%%% delete debugger before release
-        // debugger;
-        return;
-      }
-
-    //number of garden objects to hide - set to 7, instead of
-    //let l = clickedElt.parentElement.childElementCount;
-    //to only toggle sun, soil, tools, and sizers
+    // number of garden objects to hide
     let l = 8;
 
-    //toggle the display of the size, sun and toolbox drop down buttons, not their choices
-    //not the sun or toolbox drop down choices
+    // toggle the display of the size, sun and toolbox drop down buttons,
+    // not their choices, not the sun or toolbox drop down choices
     if (clickedElt.parentElement.getElementsByClassName("resize")[0].getAttribute("display") != "none") {
 
-      //start at 1, because 0 is the rect
+      // start at 1, because 0 is the rect
       for (let i = 1; i < l;  i++){
-        //2 is the name
-        if (i===3){continue;}
+        // 2 is the name
+        if (i===3) continue;
         clickedElt.parentElement.children[i].setAttribute("display", "none");
       }
     } else {
       for (let i = 1; i < l; i++){
-        if (i===3){continue;}
+        if (i===3) continue;
         clickedElt.parentElement.children[i].setAttribute("display", "block");
       }
     }
@@ -1359,8 +1334,8 @@ function gardenFork(clickedElt) {
 }
 
 /**
- * this function adds a plant to the garden, it's called by a click on li or onload
- * the plant consists of its name in color, plus size and photo, if chosen by user
+ * adds a plant; called by a click on li or onload
+ * the plant consists of its name, size and photo
  * @param {object} elt with plants specifications
  * @returns the group with the plant
  */
@@ -1371,14 +1346,14 @@ function addPlant(elt) {
   // if the id of elt (pId) is 0, then this is a new plant, as opposed to one loaded from localStorage;
   // this new plant's pId needs to be set to either a 1 for the very first plant
   // or the highest number in localStorage.aas_myGardenVs_plnts plus one
-  if(!elt.pId || elt.pId===0) {
+  if(!elt.pId) {
     if(!localStorage.aas_myGardenVs_plnts) {
       elt.pId = 1;
       // record new plant id in the local storage plnts counter
       localStorage.setItem("aas_myGardenVs_plnts","1");
     } else {
       // pull all IDs into an array
-      let IDs = localStorage.aas_myGardenVs_plnts.split(",");
+      const IDs = localStorage.aas_myGardenVs_plnts.split(",");
       // take the last (highest) ID and add one to it
       elt.pId = Number(IDs[IDs.length-1])+1;
       // record new plant id in the local storage plnts counter
@@ -1421,38 +1396,41 @@ function addPlant(elt) {
   }
 
   // the id attr of the plant SVG element is prefixed with a "p_" to differentiate from garden id, which prefixed with a "g_"
-  grp.setAttribute("id", "p_" + elt.pId);
+  grp.setAttribute("id", `p_${elt.pId}`);
   grp.setAttribute("class", "plantGrp");
 
   // create a text element with plant's common name
-  elt.cls += " plantName";
   elt.txt = elt.nm.length > 12 ? elt.nm.slice(0,12) + "..." : elt.nm;
   elt.ttl = elt.nm;
   // elt.fntSz = elt.nm.length > 15 && "smaller";
+  // ToDo: work needs to be done about doubled plant name and/or title?
   const plantName = mkText(elt);
-  const dt = new Date();
-  // if the plant is currently in bloom, add its flowering color;
-  if (elt.blm.split(';').includes(dt.getMonth().toString())){
-    bloom(plantName, elt.clr);
+
+  // if the plant is currently in bloom, add its flower color;
+  if (elt.blm.split(';').includes(currMonth.toString())) {
+    colorPlant(plantName, `p_${elt.pId}`, elt.clr);
   }
   // if it's a non-winter month or if the plant is evergreen, fill 'leafs' with green;
-  else if (["b","s","e"].includes(elt.shp[1]) || !(winterMos.includes(mos[dt.getMonth()]))) {
+  else if (["b","s","e"].includes(elt.shp[1]) || !(winterMos.includes(mos[currMonth]))) {
     plantName.style.fill = 'green';
+    // plantName.style.fontWeight = '900';
   }
   grp.appendChild(plantName);
   return grp;
 }
 
-//////////////////////////////////////////////////////////////////////
-// click on a plant; called from touchUp()
-// toggles plant's: pic, size, info, flowering colors
+/**
+ * toggle plant's pic, size, info, flowering colors; called when clicked on a plant, touchUp
+ * @param {*} tgt clicked element
+ */
 function togglePlantInfo(tgt) {
-  // toggle the display of plant's details: size, flower colors, info; if plant's colors are displayed - hide all info
-  if (clickedGroup.getElementsByClassName("colorGroupRect")[0]) {
+  // hide all the info if plant's colors are displayed
+  if (clickedGroup.classList.contains("displayPlantInfo")) {
+    clickedGroup.classList.remove("displayPlantInfo");
     hideDropDown();
     return;
   }
-
+  clickedGroup.classList.add("displayPlantInfo");
   // specifications
   const sd = localStorage.getItem("aas_myGardenVs_plnt" + clickedGroup.id.substring(2,clickedGroup.id.length)).split(",");
   const specs = {
@@ -1512,26 +1490,17 @@ function togglePlantInfo(tgt) {
         if (!plantColors.includes("green"))plantColors.unshift("green");
       }
 
-      // padding the color group rectangle 2px on all side by adjusting to w/h and x/y
-      const colorRect = document.createElementNS(xmlns, "rect");
-      colorRect.setAttribute("class", "colorGroupRect plantDetails");
-      colorRect.setAttribute("x", specs.x + plantNameWidth / 2 - (plantColors.length) * 16 - 2);
-      colorRect.setAttribute("y", specs.y + munit * 4 - 10 - 2);
-      colorRect.setAttribute("width", plantColors.length * 32 + 4);
-      colorRect.setAttribute("height", 20 + 4);
-      tgt.parentElement.appendChild(colorRect);
-
       for (let i = 0, l = plantColors.length; i < l; i++) {
-        colorRect.parentElement.appendChild(
-          mkCircle({
-            x:specs.x + plantNameWidth / 2 - (plantColors.length - 1) * 16 + 32 * i,
-            y:specs.y + munit * 4,
-            r:10,
-            clr:colorConverter(camelCase(plantColors[i])),
-            cls:"plantColor plantDetails",
-            ttl:inconspicuousFlag&&plantColors[i]!="green"?"inconspicuous "+plantColors[i]:plantColors[i]
-            })
-        );
+        const colorBtn = document.createElement("button");
+        colorBtn.className = "plantColor plantDetails";
+        colorBtn.style.left = specs.x + specs.xOffset  + plantNameWidth / 2 - (plantColors.length - 1) * 16 + 32 * i + "px";
+        colorBtn.style.top = specs.y + specs.yOffset + munit + "px";
+        console.log('color from file:', plantColors[i], "cameled:", camelCase(plantColors[i]), "sent:", (inconspicuousFlag ? "i_" : "") + camelCase(plantColors[i]));
+        colorBtn.style.backgroundColor = colorConverter(camelCase(plantColors[i]));
+        colorBtn.addEventListener("click", () => {
+          colorPlant(tgt, tgt.parentElement.id, (inconspicuousFlag ? "i_" : "") + camelCase(plantColors[i]));
+        });
+        document.body.appendChild(colorBtn);
       }
 
       // Add OTHER INFO fields - plant info div
@@ -1565,38 +1534,33 @@ function togglePlantInfo(tgt) {
   });
 }
 
-//////////////////////////////////////////////////////////////////////
-// create text shadow that represents plant in bloom
-const bloom = (plant, color) => {
-  const flowerSize = color[0] === 'i' ? '1' : '7';
-  color = color[0] === 'i' ? color.slice(2) : color;
+/**
+ * add text shadow to represent plant in bloom
+ * @param {HTMLElement} plant text element for the plant
+ * @param {string} pId plant id
+ * @param {string} color plant color name (not code), include i_ for inconspicuous
+ */
+function colorPlant(plant, pId, color) {
+  console.log('received color:', color);
+  const formattedColor = colorConverter(color.replace("i_",""));
+  const flowerSize = color[0] === 'i' ? 5 : 7;
   plant.style.textShadow = `
-    0 -5px ${flowerSize-2}px ${color},
-    0 -6px ${flowerSize-1}px ${color},
-    0 -7px ${flowerSize}px ${color}`;
-    plant.style.fill = "green";
+    0 -5px 5px ${formattedColor},
+    -5px -3px 5px ${formattedColor},
+    -5px -3px 5px ${formattedColor}`;
+  plant.style.fill = "green";
+  updateLocalStorage(pId, "color", color === "green" ? "" : color);
 }
 
-//////////////////////////////////////////////////////////////////////
-// click on a plant's color; called from touchUp()  ToDo: needs work
-function colorPlant (tgt) {
-  // format the color name - to be used as gradient id, it needs to have i_ for inconspicuous and the rest should be in camelCase
-  const col =
-    tgt.textContent.includes("inconspicuous")
-    ? "i_" + camelCase(tgt.textContent.replace("inconspicuous ",""))
-    : camelCase(tgt.textContent);
-  bloom(tgt.parentElement.children[0], col);
-  // update local storage
-  updateLocalStorage(clickedGroup.id, "color", col === "green" ? "" : col);
-}
-
-//////////////////////////////////////////////////////////////////////
-// this function creates an SVG text, using x, y, class name, text and event (optional) supplied
+/**
+ * create an SVG text element
+ * @param {object} specs include x, y, class name, text
+ * @returns an SVG text element
+ */
 function mkText(specs) {
   const txtElt = document.createElementNS(xmlns, "text");
   if (specs.lnm) txtElt.setAttribute("desc", specs.lnm);
   if (specs.clr) txtElt.setAttribute("fill", specs.clr);
-  if (specs.fntSz) txtElt.setAttribute("font-size", specs.fntSz);
   if (specs.ttl) {
     const txtTitle = document.createElementNS(xmlns, "title");
     txtTitle.innerHTML = specs.ttl;
@@ -1610,6 +1574,11 @@ function mkText(specs) {
   return txtElt;
 }
 
+/**
+ * create an SVG rectangle element representing a garden
+ * @param {object} specs include x, y, width, height, class name
+ * @returns an SVG rect element
+ */
 const mkRect = (specs) => {
   let rectElt = document.createElementNS(xmlns, "rect");
   rectElt.setAttribute("x", specs.x);  //arguments: namespace=null, varName="x", varValue=x
@@ -1648,127 +1617,130 @@ function mkForeignObj(elt) {
   return foreigner;
 }
 
+/*
 // ToDo: reuse plant shape logic to color plant name
-function drawPlantShape(plantGroup, specs) {
-  // evergreen tree: always a green triangle
-  // evergreen vine: green drooping vine-lines
-  // all other evergreen & biennial: branches & green circle
-  // deciduous vines: greenish-brown vines, green in non-winter months
-  // annual: in warm months only, brances & green circle
-  // all other (perennial, deciduous): branches, and in warm months - green circle;
+// function drawPlantShape(plantGroup, specs) {
+//   // evergreen tree: always a green triangle
+//   // evergreen vine: green drooping vine-lines
+//   // all other evergreen & biennial: branches & green circle
+//   // deciduous vines: greenish-brown vines, green in non-winter months
+//   // annual: in warm months only, brances & green circle
+//   // all other (perennial, deciduous): branches, and in warm months - green circle;
 
-  const dt = new Date;
-  //leafy and flowery shapes are used to hold shapes with leafs (branches, trianlge) and shapes with flowers
-  let leafyShape = null;
-  let floweryShape = null;
+//   const dt = new Date;
+//   //leafy and flowery shapes are used to hold shapes with leafs (branches, trianlge) and shapes with flowers
+//   let leafyShape = null;
+//   let floweryShape = null;
 
-  //tree(t) evergreen(e)
-  if (specs.shp === "te") {
+//   //tree(t) evergreen(e)
+//   if (specs.shp === "te") {
 
-    //make an evergreen tree triangle
-    leafyShape = document.createElementNS(xmlns, "polygon");
-    leafyShape.setAttribute("class", specs.cls + " plantShapeColor");
-    leafyShape.setAttribute(
-      "points",
-      `${specs.x+specs.w/2}, ${specs.y} ${specs.x+specs.w}, ${specs.y+specs.h} ${specs.x}, ${specs.y+specs.h}`
-    );
-    plantGroup.appendChild(leafyShape);
+//     //make an evergreen tree triangle
+//     leafyShape = document.createElementNS(xmlns, "polygon");
+//     leafyShape.setAttribute("class", specs.cls + " plantShapeColor");
+//     leafyShape.setAttribute(
+//       "points",
+//       `${specs.x+specs.w/2}, ${specs.y} ${specs.x+specs.w}, ${specs.y+specs.h} ${specs.x}, ${specs.y+specs.h}`
+//     );
+//     plantGroup.appendChild(leafyShape);
 
-    //create a smaller triangle to hold the flowering effect for a conical evergreen tree
-    floweryShape = document.createElementNS(xmlns, "polygon");
-    floweryShape.setAttribute("class", specs.cls + " plantShapeColor plantFlowerShapeColor");
-    floweryShape.setAttribute(
-      "points",
-      `${specs.x + specs.w/2}, ${specs.y + specs.h*0.1} ${specs.x + specs.w*0.9}, ${specs.y + specs.h*0.6} ${specs.x + specs.w*0.1}, ${specs.y + specs.h*0.6}`
-    );
-    plantGroup.appendChild(floweryShape);
-  }
-  //not evergreen trees
-  else {
-    const numOfBranches = specs.shp[0] === "v" ? 6 : 4;
-    const spread = Math.round(specs.w / numOfBranches);
+//     //create a smaller triangle to hold the flowering effect for a conical evergreen tree
+//     floweryShape = document.createElementNS(xmlns, "polygon");
+//     floweryShape.setAttribute("class", specs.cls + " plantShapeColor plantFlowerShapeColor");
+//     floweryShape.setAttribute(
+//       "points",
+//       `${specs.x + specs.w/2}, ${specs.y + specs.h*0.1} ${specs.x + specs.w*0.9}, ${specs.y + specs.h*0.6} ${specs.x + specs.w*0.1}, ${specs.y + specs.h*0.6}`
+//     );
+//     plantGroup.appendChild(floweryShape);
+//   }
+//   //not evergreen trees
+//   else {
+//     const numOfBranches = specs.shp[0] === "v" ? 6 : 4;
+//     const spread = Math.round(specs.w / numOfBranches);
 
-    for (let i = 0; i < numOfBranches; i++) {
-      const shapeElt = document.createElementNS(xmlns, "path");
-      shapeElt.setAttributeNS(null, "class", specs.cls + " shape");
-      shapeElt.setAttributeNS(
-        null,
-        "d",
-        specs.shp[0] != "v" ?
-        `m ${specs.x + spread * i} ${specs.y} 
-         c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1} 
-           ${specs.w * 0.2 * (1 - i)} ${specs.w * 0.5} 
-           ${specs.w / 2 - spread * i} ${specs.h}` :
-        `m ${specs.x + specs.w / 2} ${specs.y} 
-         c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1} 
-           ${specs.w * 0.2 * (3 - i)} ${specs.w * 0.5} 
-           ${specs.w / 2 - spread * i} ${specs.h}`
-      );
-      if (specs.shp[1] === "a") {
-        shapeElt.style.display = winterMos.includes(mos[dt.getMonth()]) ?  "none" : "inline";
-      }
-      plantGroup.appendChild(shapeElt);
-    }
+//     for (let i = 0; i < numOfBranches; i++) {
+//       const shapeElt = document.createElementNS(xmlns, "path");
+//       shapeElt.setAttributeNS(null, "class", specs.cls + " shape");
+//       shapeElt.setAttributeNS(
+//         null,
+//         "d",
+//         specs.shp[0] != "v" ?
+//         `m ${specs.x + spread * i} ${specs.y}
+//          c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1}
+//            ${specs.w * 0.2 * (1 - i)} ${specs.w * 0.5}
+//            ${specs.w / 2 - spread * i} ${specs.h}` :
+//         `m ${specs.x + specs.w / 2} ${specs.y}
+//          c ${specs.w * 0.1 * (1 - i)} ${specs.w * 0.1}
+//            ${specs.w * 0.2 * (3 - i)} ${specs.w * 0.5}
+//            ${specs.w / 2 - spread * i} ${specs.h}`
+//       );
+//       if (specs.shp[1] === "a") {
+//         shapeElt.style.display = winterMos.includes(mos[currMonth]) ?  "none" : "inline";
+//       }
+//       plantGroup.appendChild(shapeElt);
+//     }
 
-    //also for all plants that aren't evergreen trees, add two circles for leaves and flowers
+//     //also for all plants that aren't evergreen trees, add two circles for leaves and flowers
 
-    //set a radius to be used for leafs/flowers
-    specs.r = specs.w/2;
-    //adjust specs for leaf/flower circle
-    specs.x += specs.w/2;
-    specs.y += specs.h/2;
-    specs.cls = specs.cls + " plantShapeColor";
+//     //set a radius to be used for leafs/flowers
+//     specs.r = specs.w/2;
+//     //adjust specs for leaf/flower circle
+//     specs.x += specs.w/2;
+//     specs.y += specs.h/2;
+//     specs.cls = specs.cls + " plantShapeColor";
 
-    //add a circle for leafs
-    leafyShape = mkCircle(specs);
-    plantGroup.appendChild(leafyShape);
+//     //add a circle for leafs
+//     leafyShape = mkCircle(specs);
+//     plantGroup.appendChild(leafyShape);
 
-    //adjust the radius for flowers
-    specs.r = specs.w/1.7;
-    //add a circle to use for flowering
-    floweryShape = mkCircle(specs);
+//     //adjust the radius for flowers
+//     specs.r = specs.w/1.7;
+//     //add a circle to use for flowering
+//     floweryShape = mkCircle(specs);
 
-    //add a circle for flowers
-    plantGroup.appendChild(floweryShape);
+//     //add a circle for flowers
+//     plantGroup.appendChild(floweryShape);
 
-  }
+//   }
 
-  //if it's a non-winter month or if the plant is evergreen, fill leafs with green;
-  flowerGradClr(leafyShape,
-                (["b","s","e"].includes(specs.shp[1]) || !(winterMos.includes(mos[dt.getMonth()]))) ?
-                "green" : "transparent");
-  //if the plant is currently in bloom, add its flowering color;
-  flowerGradClr(floweryShape,
-                specs.blm.split(';').includes(dt.getMonth().toString()) ?
-                specs.clr : "transparent");
+//   //if it's a non-winter month or if the plant is evergreen, fill leafs with green;
+//   flowerGradClr(leafyShape,
+//                 (["b","s","e"].includes(specs.shp[1]) || !(winterMos.includes(mos[currMonth]))) ?
+//                 "green" : "transparent");
+//   //if the plant is currently in bloom, add its flowering color;
+//   flowerGradClr(floweryShape,
+//                 specs.blm.split(';').includes(currMonth.toString()) ?
+//                 specs.clr : "transparent");
 
-}
-//////////////////////////////////////////////////////////////////////
-//draw 'flowering' triangle or circle
-function flowerGradClr(flowerShape, color, shp, mo) {
+// }
+// //////////////////////////////////////////////////////////////////////
+// //draw 'flowering' triangle or circle
+// function flowerGradClr(flowerShape, color, shp, mo) {
 
-  if(!svgPlace.querySelector("defs").querySelector("#"+camelCase(color))) {
-    addGradient({
-      tp:'radial',
-      id:color
-    });
-  }
-  flowerShape.setAttribute("fill",` url(#${camelCase(color)})`);
-}
+//   if(!svgPlace.querySelector("defs").querySelector("#"+camelCase(color))) {
+//     addGradient({
+//       tp:'radial',
+//       id:color
+//     });
+//   }
+//   flowerShape.setAttribute("fill",` url(#${camelCase(color)})`);
+// }
+*/
 
 
-//////////////////////////////////////////////////////////////////////
-//this function creates a circle, used for flower color toggle buttons
-//and non-evergreen non-tree flowers
+/**
+ * create a circle, used for flower color toggle buttons
+ * @param {object} specs includes x & y position, radius, class
+ * @returns SVG circle
+ */
 function mkCircle(specs) {
-
   const cirElt = document.createElementNS(xmlns, "circle");
   cirElt.setAttribute("cx", specs.x);
   cirElt.setAttribute("cy", specs.y);
   cirElt.setAttribute("r", specs.r);
   cirElt.setAttribute("class", specs.cls);
 
-  //the flower color toggle buttons are filled with color here too
+  // the flower color toggle buttons are filled with color here too
   if (specs.ttl) {
     cirElt.setAttribute("fill", specs.clr);
     const cirTitle = document.createElementNS(xmlns, "title");
@@ -1779,8 +1751,8 @@ function mkCircle(specs) {
 }
 
 //////////////////////////////////////////////////////////////////////
-//this function provides garden color changing functionality
-//for sun and soil dropdowns; parentElt is the parent of clicked element;
+// this function provides garden color changing functionality
+// for sun and soil dropdowns; parentElt is the parent of clicked element;
 function sunSoilChoice(parentElt) {
   //fill with URL of color gradient for selected sun/soil combo
   parentElt.children[0].setAttribute("fill",
@@ -1811,25 +1783,14 @@ function touchDown(evt) {
   // exit, if it's a double click
   if (evt.detail === 2) return;
 
-  // now that I'm checking event detail, shouldn't need the following two blocks
-  // if (evt.type.substring(0,5)==="touch") {
-  //   mobile = true;
-  // }
-  // //the following block handles 'mouseup' event triggered on mobile, right after 'touchend'; on 'doubleclick' both touch and mouse events are called thus need to exit the function the second time around;
-  // if (mobile) {
-  //   if (evt.type.substring(0,5) === "mouse") {
-  //     return;
-  //   }
-  // }
-
-  //if tapped on garden name, increase the font to 16px to emphasize the name change and prevent zooming
+  // if tapped on garden name, increase the font to 16px to emphasize the name change and prevent zooming
   if (evt.target.parentElement.classList.contains("editable")) {
     evt.target.style.fontSize = "16px";
   }
 
-  //the some() method executes the callback function once for each element in the array until it finds the one where the call back returns a true value
+  // the some() method executes the callback function once for each element in the array until it finds the one where the call back returns a true value
   if (["garden", "resize", "gdnBtn", "plant", "plantColor"].some(clsName => evt.target.classList.contains(clsName))) {
-    //check if it's a resize
+    // check if it's a resize
     if (evt.target.classList.contains("resize")) {
       if (evt.target.classList.contains("shapeH")) {
         resize = 1;
@@ -1845,36 +1806,36 @@ function touchDown(evt) {
     }
 
 
-    //mobile
+    // mobile
     if (evt.touches)
       evt = evt.touches[0];
 
-    //the clickedGroup is set to a group that's the parent of evt.target
+    // the clickedGroup is set to a group that's the parent of evt.target
     if (!clickedGroup){
       clickedGroup = evt.target.parentElement;
     }
 
 
-    //set original click X & Y for resizing
+    // set original click X & Y for resizing
     if (resize){
       clickPos.x = evt.clientX;
       clickPos.y = evt.clientY;
     }
 
-    //adjust clicked point by SVG's viewbox
+    // adjust clicked point by SVG's viewbox
     offset = ["resize", "gdnBtn", "plantColor"].some(clsName => evt.target.classList.contains(clsName)) ? "NoMove" : getMousePosition(evt);
 
-    //get all of clickedGroup's transforms
+    // get all of clickedGroup's transforms
     let transforms = clickedGroup.transform.baseVal;
 
-    //ensure the first transform is a translate transform; if the first transform
-    //is not a translation or the element does not have a transform, then add one
+    // ensure the first transform is a translate transform; if the first transform
+    // is not a translation or the element does not have a transform, then add one
     if (transforms.getItem(0).type !== SVGTransform.SVG_TRANSFORM_TRANSLATE || transforms.length === 0) {
       let translate = svgPlace.createSVGTransform();
       translate.setTranslate(0, 0);
       clickedGroup.transform.baseVal.insertItemBefore(translate, 0);
     }
-    //get initial translation amount (traslate is set above to item 0)
+    // get initial translation amount (traslate is set above to item 0)
     transform = transforms.getItem(0);
     offset.x -= transform.matrix.e;
     offset.y -= transform.matrix.f;
@@ -1895,42 +1856,36 @@ function touchDown(evt) {
 // when an element is resized, its size is adjusted by the change in mouse/finger position
 // when an element is moved, its position is set to the mouse/finger position, adjusted by svg matrix
 function dragging(evt) {
-
-  //don't move the object if dragging using color circle
-//  if (!["plant", "garden"].some(clsName => evt.target.classList.contains(clsName))){
-//    return;
-//  }
-// if (evt.target.classList.length) {console.log("target class: ", evt.target.classList);}
-// console.log("clicked grp", clickedGroup);
-  if (!clickedGroup) { return; }
-
+// don't move the object if dragging anything other than a plant, a garden, or a resizer
+  // if (!clickedGroup || !["plant", "garden", "resize"].some(clsName => evt.target.classList.contains(clsName))){
+  //   return;
+  // }
+  if (!clickedGroup) return;
+  // if (!["plant", "garden", "resize"].some(clsName => evt.target.classList.contains(clsName))) return;
+  // remove any dropdown menus within the garden
   hideDropDown();
 
-  //mobile
+  // mobile
   if (evt.touches) evt = evt.touches[0];
 
-  event.preventDefault();
+  evt.preventDefault();
   coord = getMousePosition(evt);
 
-  //RESIZING (garden only)
+  // RESIZING (garden only)
   if (resize) {
 
-    //adjustments to width and height: the X and Y of the point of click/touch minus starting X and Y point of click
+    // adjustments to width and height: the X and Y of the point of click/touch minus starting X and Y point of click
     let adjustedW = evt.clientX - clickPos.x;
     let adjustedH = evt.clientY - clickPos.y;
 
-
-    //remove any dropdown menus within the garden
-    hideDropDown();
-
-    //the resize object is the garden rectangle
+    // the resize object is the garden rectangle
     const resizeObj = clickedGroup.getElementsByTagName("rect")[0];
 
-    //the new width and height are stored in newW & newH so that they can be checked for sensibility
+    // the new width and height are stored in newW & newH so that they can be checked for sensibility
     let newW = Number(resizeObj.getAttribute("width")) + adjustedW;
     let newH = Number(resizeObj.getAttribute("height"))+ adjustedH;
 
-    //the width & height can't be negative, and shouldn't be less than 1'x1' (12*6);
+    // the width & height can't be negative, and shouldn't be less than 1'x1' (12*6);
     const minSize = 12 * size;
     if (newW < minSize) {
       newW = minSize;
@@ -1941,11 +1896,11 @@ function dragging(evt) {
       adjustedH = 0;
     }
 
-    //update the width and height of the rectangle
+    // update the width and height of the rectangle
     resizeObj.setAttribute("width", newW);
     resizeObj.setAttribute("height", newH);
 
-    //keep garden name centered or above, if not enough room for it
+    // keep garden name centered or above, if not enough room for it
     const gName = clickedGroup.getElementsByClassName("editable")[0];
     gName.setAttributeNS(
       null,
@@ -1954,7 +1909,7 @@ function dragging(evt) {
       Number(resizeObj.getAttribute("width"))/2 -
       Number(gName.getAttribute("width"))/2);
 
-    //check if enough room: new width newW minus the widths of sun and tools gears, from gName.desc, compared to number of characters in the garden name times munit/2 (approximate size of a letter, ~7.11)
+    // check if enough room: new width newW minus the widths of sun and tools gears, from gName.desc, compared to number of characters in the garden name times munit/2 (approximate size of a letter, ~7.11)
     if ((newW - Number(gName.getAttribute("desc"))) <
         Number(gName.getAttribute("width"))) {
       gName.setAttribute("y", Number(resizeObj.getAttribute("y")) - munit * 2.7);
@@ -1962,53 +1917,53 @@ function dragging(evt) {
       gName.setAttribute("y", Number(resizeObj.getAttribute("y")) - munit / 2);
     }
 
-    //adjust the tools gear position, when its garden is resized
+    // adjust the tools gear position, when its garden is resized
     const toolGear = clickedGroup.getElementsByClassName("ulTools")[0];
     toolGear.setAttribute("x", Number(toolGear.getAttribute("x"))+adjustedW);
 
-    //adjust the soil selector position, when its garden is resized
+    // adjust the soil selector position, when its garden is resized
     const soilGear = clickedGroup.getElementsByClassName("ulSoil")[0];
     soilGear.setAttribute("y", Number(soilGear.getAttribute("y"))+adjustedH);
 
-    //update the size indicators
+    // update the size indicators
     const elts = clickedGroup.getElementsByClassName("sizeInd");
 
-    //height
+    // height
     elts[0].setAttributeNS(
       null,
       "x",
       Number(elts[0].getAttribute("x"))+adjustedW);
-    //update the text of the height indicators
+    // update the text of the height indicators
     elts[0].textContent = formatSizeDisplay(Number(resizeObj.getAttribute("height"))/size);
 
-    //width
+    // width
     elts[1].setAttributeNS(
       null,
       "y",
       Number(elts[1].getAttribute("y"))+adjustedH);
-    //update the text of the width indicators
+    // update the text of the width indicators
     elts[1].textContent = formatSizeDisplay(Number(resizeObj.getAttribute("width"))/size);
 
-    //update the position of the resizing triangle
+    // update the position of the resizing triangle
     clickedGroup.getElementsByClassName("resize")[0].setAttributeNS(
       null,
       "points",
       createTriPts(Number(resizeObj.getAttribute("x"))+newW,
                     Number(resizeObj.getAttribute("y"))+newH));
-    //the sizing clickPos x & y need to be continuously updated
-    //so that the size change is not cumulative
+    // the sizing clickPos x & y need to be continuously updated
+    // so that the size change is not cumulative
     clickPos.x = evt.clientX;
     clickPos.y = evt.clientY;
   }
 
-  //MOVING
+  // MOVING
   else {
 
     if (offset === "NoMove") return;
 
     moving = true;
 
-    if (clickedGroup.id[0] === "p" ||
+    if (clickedGroup?.id[0] === "p" ||
         coord.x - offset.x + parseFloat(clickedGroup.children[0].getAttribute("x")) > 0 &&
         coord.x - offset.x + parseFloat(clickedGroup.children[0].getAttribute("x")) +
         parseFloat(clickedGroup.children[0].getAttribute("width")) <
@@ -2020,8 +1975,8 @@ function dragging(evt) {
         Number(svgPlace.getAttribute("height"))
         ){
       transform.setTranslate(coord.x - offset.x, coord.y - offset.y);
-      //the line below does the same as the line above
-      //clickedGroup.transform.baseVal[0].setTranslate(coord.x - offset.x, coord.y - offset.y);
+      // the line below does the same as the line above
+      // clickedGroup.transform.baseVal[0].setTranslate(coord.x - offset.x, coord.y - offset.y);
     }
   }
 }
@@ -2029,12 +1984,11 @@ function dragging(evt) {
 //////////////////////////////////////////////////////////////////////////////////////
 // triggered by mouse or finger up, linked in html
 function touchUp(evt) {
-  // exit, if it's a double click
-  if (evt.detail === 2) return;
-  // exit if the click is on the color group rectangle, because the click just missed the color circle
-  if (evt.target.className === "colorGroupRect") return;
+  // exit if there is no clicked group or it's a double click or a click is on plantColor
+  if (!clickedGroup || evt.detail === 2 || evt.target.className === "plantColor") return;
 
   // now that I'm checking event detail, shouldn't need the following two commented out code
+  // todo: test on mobile and delete the commented out code
   // if (evt.type.substring(0,5)==="touch") mobile = true; // do i care?
   // //the following block handles 'mouseup' event triggered on mobile, right after 'touchend'; on 'doubleclick' both touch and mouse events are called thus need to exit the function the second time around;
   // if (mobile) {
@@ -2098,16 +2052,9 @@ function touchUp(evt) {
 
   // when a plant or garden is tapped and there is no drag or resize and it's not a double reaction to a click (either mouse or tap, not both)
   if (!moving && !resize && clickedGroup) {
-    //if click on plant name (plant class)
-    if (clickedGroup.classList.contains("plantGrp") && evt.target.classList.contains("plant")){
+    if (clickedGroup.classList.contains("plantGrp") && evt.target.classList.contains("plant")) { // if click on plant name (plant class)
       togglePlantInfo(evt.target);
-    }
-    // if click on plant's color
-    else if (clickedGroup.classList.contains("plantGrp") && evt.target.classList.contains("plantColor")){
-      colorPlant(evt.target);
-    }
-    // if click on garden
-    else if (clickedGroup.classList.contains("gardenGrp")){
+    } else if (clickedGroup.classList.contains("gardenGrp")) { // if click on garden
       gardenFork(evt.target);
     }
   }
@@ -2135,17 +2082,15 @@ function touchUp(evt) {
 }
 
 //////////////////////////////////////////////////////////////////////
-//when a plant or a garden is moved, this function is called to check
-//if any of the plants are in any gardens; the check is performed by
-//comparing plants' and gardens' x & y positions adjusted by translate
-//x & y, recorded in localStorage;
-//todo: the plant should "show" that it's been moved in or out of a garden by
-//toggling an outline (stroke) around the name
+// when a plant or a garden is moved, this function is called to check
+// if any of the plants are in any gardens; the check is performed by
+// comparing plants' & gardens' x & y positions adjusted by translate
+// x & y, recorded in localStorage;
 function checkForIntersect(counter, scrollThrough){
 
-  //capture x, y, tx, ty, w, h specs for each element of the supplied counter
-  //if the supplied counter is for gardens, the elt will contain garden specs
-  //and the clickedGroup is a plant and vice versa
+  // capture x, y, tx, ty, w, h specs for each element of the supplied counter
+  // if the supplied counter is for gardens, the elt will contain garden specs
+  // and the clickedGroup is a plant and vice versa
   let specs = {};
   counter.forEach(elt => {
     let ls = localStorage.getItem("aas_myGardenVs_"+scrollThrough+elt).split(",");
@@ -2179,26 +2124,26 @@ function checkForIntersect(counter, scrollThrough){
         id:"g_" + specs[elt]["id"]
       }
 
-      //if a moved plant is already in a garden, remove parent's tx/ty to get plant's true coordinates
+      // if a moved plant is already in a garden, remove parent's tx/ty to get plant's true coordinates
       if (clickedGroup.parentElement.id[0] === "g") {
         plant.x += clickedGroup.parentElement.transform.baseVal.getItem("translate").matrix.e;
         plant.y += clickedGroup.parentElement.transform.baseVal.getItem("translate").matrix.f;
       }
 
-      //if a plant's location overlaps with a garden
+      // if a plant's location overlaps with a garden
       if (plantOverlapsGarden(plant, garden)){
         addPlantToGarden(clickedGroup, svgPlace.getElementById("g_"+elt));
         return;
       }
-      //if a plant has been moved out of a garden and not placed into a new garden,
-      //meaning its gId is still equal to id of garden that it's not in, remove it
+      // if a plant has been moved out of a garden and not placed into a new garden,
+      // meaning its gId is still equal to id of garden that it's not in, remove it
       else if (clickedGroup.parentElement.id === "g_"+elt) {
         removePlantFromGarden(clickedGroup, svgPlace.getElementById("g_"+elt));
       }
     }
 
-    //a GARDEN is moved around - it moves the plants with it, so only need
-    //to check if a new plant has been added to a garden during the move or
+    // a GARDEN is moved around - it moves the plants with it, so only need
+    // to check if a new plant has been added to a garden during the move or
     //if a garden has lost some plants during resizing
     else {
       plant = {
@@ -2222,14 +2167,14 @@ function checkForIntersect(counter, scrollThrough){
         plant.ty += garden.ty;
       }
 
-      //if a garden(clickedGroup) is moved or resized to include a plant
-      //(elt), that isn't already a part of a garden, add it to the garden
+      // if a garden(clickedGroup) is moved or resized to include a plant
+      // (elt), that isn't already a part of a garden, add it to the garden
       if (plant.gId === "0" && plantOverlapsGarden(plant, garden)){
         addPlantToGarden(svgPlace.getElementById("p_"+elt), clickedGroup);
       }
-      //otherwise, only when resizing, remove the plants that have been in the
-      //garden, if they're being left out during resize; during moving, the
-      //plants will remain in the garden;
+      // otherwise, only when resizing, remove the plants that have been in the
+      // garden, if they're being left out during resize; during moving, the
+      // plants will remain in the garden;
       else if (plant.gId === clickedGroup.id && resize && !plantOverlapsGarden(plant, garden)) {
         removePlantFromGarden(svgPlace.getElementById("p_"+elt), clickedGroup)
       }
@@ -2239,18 +2184,17 @@ function checkForIntersect(counter, scrollThrough){
 
 //////////////////////////////////////////////////////////////////////
 function plantOverlapsGarden (plant, garden) {
-  if(plant.x >= garden.x
+  if (plant.x >= garden.x
      && plant.y >= garden.y
      && plant.x <= garden.x + garden.w
      && plant.y <= garden.y + garden.h
-    )
-  {return true;}
-  else {return false;}
+    ){ return true; }
+  else { return false; }
 }
 
 //////////////////////////////////////////////////////////////////////
-//when a plant is moved into a garden,
-//its translate x/y are adjusted by garden's
+// when a plant is moved into a garden,
+// its translate x/y are adjusted by garden's
 function addPlantToGarden(plant, garden) {
 
   //if a plant is moved into garden, not within a garden

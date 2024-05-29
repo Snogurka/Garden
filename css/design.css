@@ -37,7 +37,7 @@ canvas {
 
 /* drop down, used for Sun, Soil, Tools */
 .gdnBtn {
-  font-size: medium;
+  font-size: small;
   position: relative;
   fill: var(--tool-text-color);
   padding: 3px;
@@ -63,7 +63,7 @@ canvas {
 } */
 #initText {
   position: absolute;
-  top: 10%;
+  top: 12%;
   left: 10%;
   width: 80%;
   line-height: 2em;
@@ -105,8 +105,8 @@ li {
   font-size: medium;
 }
 
-.plantName {
-  width: 13em;
+.plant, .plantName {
+  width: 10em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -126,12 +126,20 @@ li {
 }
 
 .orientir {
-  position: fixed;
-  fill: white;
+  position: absolute;
+  top: 60px;
+  left: 2px;
+  border: 3px solid var(--plant-text-color);
+  border-radius: 50%;
 }
 
-.colorGroupRect {
+/* .colorGroupRect {
   fill: transparent;
+} */
+.plantColor {
+  position: absolute;
+  height: 30px;
+  width: 30px;
 }
 
 /* plant bloom colors and additional info, below text name */
@@ -210,7 +218,7 @@ svg {
 
 .plantCls {
   overflow: hidden;
-  width: 17em;
+  width: 18.5em;
 }
 .plantCls li {
   float: left;
@@ -220,11 +228,17 @@ svg {
   color: var(--dark-gray);
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (min-width: 768px) {
   .gdnBtn {
-    font-size: small;
+    font-size: medium;
   }
   .plantName {
-    width: 10em;
+    width: 13em;
+  }
+  .orientir {
+    display: none;
+  }
+  .plantCls {
+    width: 17em;
   }
 }
