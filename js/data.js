@@ -146,7 +146,7 @@ function createTblWithData(myObj) {
     }
     // 'Days To' column header - add unique title, column width is medium
     else if (i === 21){
-      txt += `<th class='colWidth2' title='Days To... g: germination, h: harvest, m: maturity.'>${myObj[k][i]}`;
+      txt += `<th class='colWidth2' title='Days To - f: flower, g: germination, h: harvest, m: maturity.'>${myObj[k][i]}`;
     }
     // 'Food And Water' column header - add unique title, column width is medium
     else if (i === 24){

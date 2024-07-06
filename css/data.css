@@ -202,7 +202,7 @@ th.frozenCol {
 }
 /* filtering by size input fields */
 .inputRangeMin, .inputRangeMax {
-  max-width: 4em;
+  max-width: 3em;
   height: 2em;
   margin-right: 5px;
   text-align: right;

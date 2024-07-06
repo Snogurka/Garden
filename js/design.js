@@ -1495,7 +1495,6 @@ function togglePlantInfo(tgt) {
         colorBtn.className = "plantColor plantDetails";
         colorBtn.style.left = specs.x + specs.xOffset  + plantNameWidth / 2 - (plantColors.length - 1) * 16 + 32 * i + "px";
         colorBtn.style.top = specs.y + specs.yOffset + munit + "px";
-        console.log('color from file:', plantColors[i], "cameled:", camelCase(plantColors[i]), "sent:", (inconspicuousFlag ? "i_" : "") + camelCase(plantColors[i]));
         colorBtn.style.backgroundColor = colorConverter(camelCase(plantColors[i]));
         colorBtn.addEventListener("click", () => {
           colorPlant(tgt, tgt.parentElement.id, (inconspicuousFlag ? "i_" : "") + camelCase(plantColors[i]));
@@ -1541,13 +1540,16 @@ function togglePlantInfo(tgt) {
  * @param {string} color plant color name (not code), include i_ for inconspicuous
  */
 function colorPlant(plant, pId, color) {
-  console.log('received color:', color);
   const formattedColor = colorConverter(color.replace("i_",""));
-  const flowerSize = color[0] === 'i' ? 5 : 7;
-  plant.style.textShadow = `
-    0 -5px 5px ${formattedColor},
-    -5px -3px 5px ${formattedColor},
-    -5px -3px 5px ${formattedColor}`;
+  if (color[0] === 'i') {
+    plant.style.stroke = formattedColor;
+    plant.style.strokeWidth = "1px";
+  } else {
+    plant.style.textShadow = `
+    0 -7px 5px ${formattedColor},
+    0 -7px 5px ${formattedColor},
+    0 -7px 5px ${formattedColor}`;
+  }
   plant.style.fill = "green";
   updateLocalStorage(pId, "color", color === "green" ? "" : color);
 }
