@@ -37,9 +37,9 @@ function myMain() {
   svgPlace.viewBox.baseVal.width = window.screen.width * zoomer; // use twice or 2.5 the screen width
   svgPlace.viewBox.baseVal.height = window.screen.height * zoomer;
 
-  // munit = my unit, the font size, if set to 14, munit is ~7.11
-  munit = Math.round((Number(window.getComputedStyle(svgPlace, null)
-    .getPropertyValue("font-size").replace("px",""))/1.9 + Number.EPSILON) * 100) / 100;
+  // munit = my unit, about a half of the font size
+  munit = Math.round((parseInt(window.getComputedStyle(svgPlace, null)
+    .getPropertyValue("font-size"),10)/2 + Number.EPSILON) * 100) / 100;
 
   // add linear gradients for each sun/soil combination, stored in an array
   const sunColors = {"Full":["#ffe922", "50%"], "Part":["#ddcc38", "30%"], "Shade":["#bfba71", "30%"]};
@@ -213,7 +213,7 @@ function changeMonth(tgt) {
     if(lsPlants) {
       lsPlants = lsPlants.split(",");
       // update header
-      tgt.parentElement.parentElement.innerText = tgt.innerText;
+      tgt.parentElement.parentElement.innerText = tgt.innerText; // here
       currMonth = mos.indexOf(tgt.innerText);
 
       for(let i = 0, l = lsPlants.length; i < l; i++) {
@@ -228,6 +228,7 @@ function changeMonth(tgt) {
             colorPlant(plantElt.children[0], plantElt.id, lsPlant[8]);
           } else {
             plantElt.children[0].style.textShadow = "none";
+            plantElt.children[0].style.stroke = "none";
           }
           // if evergreen or non-winter month, an annual would have "a"
           if(lsPlant[7][1] === "e" || !winterMos.includes(tgt.innerText)) {
@@ -238,6 +239,7 @@ function changeMonth(tgt) {
         }
       }
     }
+    changeMonth(document.getElementById("currentMonth"));
   }
 }
 
@@ -466,7 +468,7 @@ function getUL(menu) {
 
         // the returned plants are filtered, if requested
         if (menu.type === "companions") {
-          menu.filter = myObj[menu.forPlantLN][16].toLowerCase().split(",").filter(x => !["/and","/or"].includes(x))
+          menu.filter = myObj[menu.forPlantLN][16].toLowerCase().replaceAll(" ","").split(",").filter(x => !["/and","/or"].includes(x))
         }
         if (menu.type === "gName") {
           let objGardenLocation = null;
@@ -1056,22 +1058,21 @@ function addGarden(elt){
   if (oldGarden) {gardenElt.setAttribute("display", "none");}
 
 
-  // the following creates a "Garden Name" editable text element using supplied value for an existing garden and "New Garden" for a new one; for y-value, check if there is enough room:  width of parent minus approximate width of sun and tools gears, from elt.desc, compared to number of characters in the garden name multiplied by munit (7.37) (approximate size of a letter); if not enough room, y is adjusted so that the; garden name is placed above the garden;
-  let nmY = elt.y-munit/2;
-  let nmW = 150;
-  if (elt.w - widthOfSunToolsGear < nmW) {
-    nmY = elt.y-munit*2.7;
-  }
+  // create "Garden Name", an editable text element, using supplied value for an existing garden or "New Garden" for a new one; for y-value, check if there is enough room: width of parent (garden) minus approximate width of sun and tools gears, from elt.desc, compared to number of characters in the garden name multiplied by munit; if not enough room, y is adjusted to place the garden name above the garden;
+  const nmW = 150;
+  const nmY = elt.w - widthOfSunToolsGear < nmW
+    ? elt.y-munit * 2.7
+    : elt.y-munit / 2;
   grp.appendChild(mkForeignObj({
     // center the garden name: parent's x and w less half of garden name width
-    x:(elt.x + elt.w/2 - nmW/2),
-    y:nmY,
-    w:nmW,
-    h:25,
-    desc:widthOfSunToolsGear,
-    cls:"editable",
-    tg:"input",
-    txt:elt.nm
+    x: elt.x + elt.w / 2 - nmW/2,
+    y: nmY,
+    w: nmW,
+    h: 25,
+    desc: widthOfSunToolsGear,
+    cls: "editable",
+    tg: "input",
+    txt: elt.nm
   }));
 //   gardenElt.setAttribute("contentEditable", "true");
 
@@ -1462,13 +1463,17 @@ function togglePlantInfo(tgt) {
       const g_x_pos = specs.inGdn ? tgt.parentElement.parentElement.transform.baseVal.getItem("translate").matrix.e : 0;
       const g_y_pos = specs.inGdn ? tgt.parentElement.parentElement.transform.baseVal.getItem("translate").matrix.f : 0;
 
+      const xColorPos = specs.x + specs.xOffset + g_x_pos;
+      const yColorPos = specs.y + specs.yOffset + g_y_pos;
+
       // add plant picture, if there is one
       const pic = document.createElement("img");
       if (parseInt(myObj[plantLatinName][28])) {
         const plantCommonName = tgt.children.length ? tgt.children[0].innerHTML : tgt.innerHTML;
         pic.className = "plantPic plantDetails";
-        pic.style.left = specs.x + specs.xOffset + plantNameWidth / 2 - offset * 2 + g_x_pos + "px";
-        pic.style.top = specs.y + specs.yOffset - offset * 4.5 + munit * 2 + g_y_pos + "px";
+        // image plantPic's width is 100px, adjusting x-pos by half to the left
+        pic.style.left = xColorPos + plantNameWidth / 2 - 50 + "px";
+        pic.style.top = yColorPos - offset * 4.5 + munit * 2 + "px";
         pic.src = `pictures/${plantCommonName.replace((/( |-|\(|\)|v\.|&|\"|\')/g),"")}1.jpg`;
         pic.alt = plantCommonName;
         document.body.appendChild(pic);
@@ -1493,8 +1498,8 @@ function togglePlantInfo(tgt) {
       for (let i = 0, l = plantColors.length; i < l; i++) {
         const colorBtn = document.createElement("button");
         colorBtn.className = "plantColor plantDetails";
-        colorBtn.style.left = specs.x + specs.xOffset  + plantNameWidth / 2 - (plantColors.length - 1) * 16 + 32 * i + "px";
-        colorBtn.style.top = specs.y + specs.yOffset + munit + "px";
+        colorBtn.style.left = xColorPos + munit - plantColors.length / 2 * 16 + 32 * i + "px";
+        colorBtn.style.top = yColorPos + munit + "px";
         colorBtn.style.backgroundColor = colorConverter(camelCase(plantColors[i]));
         colorBtn.addEventListener("click", () => {
           colorPlant(tgt, tgt.parentElement.id, (inconspicuousFlag ? "i_" : "") + camelCase(plantColors[i]));
@@ -1505,8 +1510,8 @@ function togglePlantInfo(tgt) {
       // Add OTHER INFO fields - plant info div
       const plantInfo = document.createElement("div");
       plantInfo.className = "plantInfo plantDetails";
-      plantInfo.style.left = specs.x + specs.xOffset + plantNameWidth / 2 - 100 + g_x_pos + "px";
-      plantInfo.style.top = specs.y + specs.yOffset + offset + munit * 2 + g_y_pos + "px";
+      plantInfo.style.left = xColorPos + plantNameWidth / 2 - 100 + "px";
+      plantInfo.style.top = yColorPos + offset + munit * 2 + "px";
       document.body.appendChild(plantInfo);
 
       // add plant size

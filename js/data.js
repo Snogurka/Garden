@@ -134,11 +134,11 @@ function createTblWithData(myObj) {
     }
     // Soil column header - add unique title, column width is narrow
     else if (i === 18){
-      txt += `<th class='colWidth1' title='Soil pH: circumneutral - near neutral, ph 6.8-7.2, acidic - below 6.8, alkaline - above 7.2. Moisture: hydric - abundant, mesic - moderate, xeric - dry.'>${myObj[k][i]}`;
+      txt += `<th class='colWidth2' title='Soil pH: circumneutral - near neutral, ph 6.8-7.2, acidic - below 6.8, alkaline - above 7.2. Moisture: hydric - abundant, mesic - moderate, xeric - dry.'>${myObj[k][i]}`;
     }
     // 'How To Plant' column header - add unique title, column width is medium
     else if (i === 19){
-      txt += `<th class='colWidth3' title='In general, plant: rhizomatous, tap, fibrous root at 1" below soil surface; bulbs, ferns, grasses - shallow; trees, shrubs & vines keep at the same level;'>${myObj[k][i]}`;
+      txt += `<th class='colWidth3' title='In general, plant: rhizomatous, tap, fibrous root at 1" below soil surface; bulbs, ferns, grasses - shallow; trees, shrubs & vines keep at the same level. CM(#) means Cold Moist Stratify (days).'>${myObj[k][i]}`;
     }
     // 'When To Plant' column header - add unique title, column width is medium
     else if (i === 20){
@@ -151,10 +151,6 @@ function createTblWithData(myObj) {
     // 'Food And Water' column header - add unique title, column width is medium
     else if (i === 24){
       txt += `<th class='colWidth2' title='During the 1st year, while the trees are getting established, they should be watered deeply (3'-5' weekly), to ensure good deep roots.'>${myObj[k][i]}`;
-    }
-    // 'Propagating' column header - add unique title, column width is medium
-    else if (i === 26){
-      txt += `<th class='colWidth2' title='Cold Moist Stratification: CM30 - 30 days, CM60 - 60days.'>${myObj[k][i]}`;
     }
     // narrow column headers, colWidth1
     else if ([3, 4, 5, 6, 7, 11].includes(i)){

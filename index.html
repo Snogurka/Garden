@@ -9,7 +9,6 @@
     <meta charset="utf-8"/>
     <!-- <link rel="icon" href="/favicon.ico"/> -->
     <link rel="icon" href="/faviconHome.ico"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/main.css">
@@ -49,6 +48,11 @@
 
       <h3>Notes from my garden...</h3>
 
+      <article class="wide">
+        <img loading="lazy" src="pictures/Home15.jpg" alt="Swallowtail on Marigolds"/>
+        <p>Still can't get the abundance of flowers in the flower patch but the Golden finches are there in the morning for the cone flowers and rudbeckia.</p>
+        <p class="date">Jun 2024</p>
+      </article>
       <article>
         <img loading="lazy" src="pictures/Home12.jpg" alt="Bumblebee on a flowering rosermary bush."/>
         <p>
@@ -58,6 +62,8 @@
         <br>
         <p>The rosemary continued to flower all through the winter and into spring. Now, in March, it's one of very few food sources for an early honey bee, that's been visiting the plant every day.</p>
         <p class="date">Mar 2022</p>
+        <br>
+        <p>TIL, if you break a rosemary branch and stick it into ground, it will very likely root and you'll have a new rosemary plant.</p>
       </article>
 
       <article>
@@ -68,7 +74,7 @@
         <p class="date">Aug 2021</p>
       </article>
 
-      <article class="wide">
+      <article class="wide archive">
         <img loading="lazy" src="pictures/Home8.jpg" alt="Bumblebee in Swamp Leather Flower"/>
         <img loading="lazy" src="pictures/Home9.jpg" alt="Bumblebee in Swamp Leather Flower"/>
         <p>
@@ -77,7 +83,7 @@
         <div class="date">Oct 2020</div>
       </article>
 
-      <article>
+      <article class="archive">
         <img loading="lazy" src="pictures/Home7.jpg" alt="Bumblbees on Milkweed"/>
         <p>
           The swallowtail butterflies are frequent visitors of the Butterfly Bush. These Buddleja bushes are enjoyed by many flying creatures, including different types of bees, butterflies, hummingbirds and hummingbird moths. It's hard to let go of such an abundant
@@ -86,7 +92,7 @@
         <div class="date">Oct 2020</div>
       </article>
 
-      <article>
+      <article class="archive">
         <img loading="lazy" src="pictures/Home6.jpg" alt="Bumblebee in Swamp Leather Flower"/>
         <p>
           The Swamp Leather Flower doesn't offer abundant foliage but its flowers are delicate, small and very beautiful. Here is one visited by a bumblebee. I've planted my Swamp Leather Flower with Coral Honeysuckle for more green. The Swamp Leather Flower dies to the ground in winter and comes back in spring, so it doesn't get as big as its neighboring honeysuckle. The flowers are mostly at your eye level, perfect for viewing pleasure.
@@ -94,7 +100,7 @@
         <div class="date">Summer 2020</div>
       </article>
 
-      <article class="wide">
+      <article class="wide archive">
         <img loading="lazy" src="pictures/Home5.jpg" alt="Bumblbees on Milkweed"/>
         <p>
           The milkweed pictured here must be the healthiest in my garden. The monarchs tend to ignore it, for reasons not entirely clear to me, maybe because it is on the hairy side. Whatever the reason, the milkweed continues to thrive and gets to keep all its leaves. It's been popular with bees, bumble and honey, as well as one butterfly. At one point this summer of 2020, there were 20 bumble bees
@@ -103,7 +109,7 @@
         <div class="date">Summer 2020</div>
       </article>
 
-      <article>
+      <article class="archive">
         <img loading="lazy" src="pictures/Home4.jpg" alt="Hummingbird on Beebalm"/>
         <p>
           This year I've started a row of native flowers along the road that gets some sun and some partial sun.
@@ -192,6 +198,14 @@
       </footer>
       <canvas id="canvas"></canvas>
     </main>
+
+      <!-- Load React, have to add this before the closing </body> tab. -->
+      <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+      <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+      <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+      <!-- Load our React component. -->
+      <script src="like_button.js"></script>
+
 
   </body>
   <script src="js/home.js"></script>
